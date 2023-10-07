@@ -1,0 +1,131 @@
+.searchResult
+{
+    border: 1px solid #797777;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+.searchResult:hover{
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+}
+
+.routeTime{
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.startRoute{
+    color: #236550;
+}
+
+.distanceRoute{
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.dotDistance{
+    border: 2px dotted #ccc;
+    height: 0;
+    flex: 1;
+    padding: 0 10px;
+}
+
+.hourRoute{
+
+}
+
+.endRoute{
+    color: #11738e
+}
+
+.routeLocation{
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.routePoint{
+
+}
+
+.endPoint{
+    text-align: right;
+
+}
+
+.busType
+{
+    margin-top: 10px;
+    color: #616060;
+    display: inline-block;
+
+}
+
+.typeIcon{
+    margin-right: 10px;
+}
+
+.seatBlank{
+    float: right;
+    margin-top: 10px;
+    text-align: right;
+    color: red;
+    font-weight: 500;
+}
+
+.split{
+    height: 0;
+    border: 1px solid #e6e1e1;
+    margin: 10px 0;
+}
+
+.note{
+    width: 60%;
+    max-width: 60%;
+    font-size: 13px;
+    display: inline-block;
+    font-weight: 400;
+}
+
+.ticketPrice{
+    float: right;
+    color: #2e94ee;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: right
+}
+
+.bookTicket{
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    margin-top: 10px;
+}
+
+.bookBtn{
+
+    background-color: #fac83f;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 5px;
+    width: 20%;
+    text-align: center;
+}
+
+.bookBtn:hover{
+    cursor: pointer;
+    box-shadow: 0 0 4px #727171;
+}
+
+
+
+
+

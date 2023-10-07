@@ -1,0 +1,25 @@
+.prime-btn{
+    font-size: 15px;
+    font-weight: 700;
+    min-width: 200px;
+    color: #ffffff;
+    border: none;
+    border-radius: 15px;
+    background-color: #13b9f0;
+    padding: 10px;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.6);
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; */
+}
+
+.prime-btn:hover
+{
+    border: 2px solid;
+}
+
+.prime-btn:active
+{
+    background-color: #055e7b;
+}

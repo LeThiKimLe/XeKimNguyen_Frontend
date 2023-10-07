@@ -1,0 +1,131 @@
+.trip_container{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.trip_wrapper{
+    width: 100%;
+    max-width: 1024px;
+    display: flex;
+    gap: 20px;
+}
+
+.trip_infor{
+    flex: 3
+}
+
+.trip_sum{
+    flex: 1;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    position: sticky;
+    top: 10px;
+    height: max-content;
+    background-color: rgb(246, 240, 130);
+}
+
+.infor_segment{
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0px 10px 8px #ccc;
+    margin-bottom: 10px;
+}
+
+.pick_area{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.sum_title{
+    text-align: center;
+
+}
+.sum_infor{
+    display: flex;
+    gap: 30px;
+    margin: 10px 0;
+
+}
+.sum_infor_title{
+    font-weight: 600;
+    min-width: 100px;
+
+}
+.sum_infor_value{
+    font-weight: 400;
+}
+
+.user_infor_container{
+    display: flex;
+    gap: 20px;
+}
+
+.infor_box{
+    flex: 1;
+    margin-left: 20px;
+}
+
+.infor_box h2{
+    margin: 20px 0;
+}
+
+.personal_infor{
+    text-align: center;
+    position: relative;
+
+}
+
+.personal_infor::after{
+    content: "";
+    height: 80%;
+    position: absolute;
+    right: -10px;
+    border-left: 1px solid #ccc;
+    top: 50%;
+    transform: translateY(-50%);
+
+}
+
+.policy_infor h2{
+    text-align: center;
+    
+}
+
+.policy_content{
+    padding: 10px;
+
+}
+
+.infor_confirm{
+    margin-left: 26px;
+}
+
+.infor_confirm input{
+    transform: scale(2);
+    margin-right: 10px;
+}
+
+.inputContain{
+    width: 87% !important;
+}
+
+.payment_direct{
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0 40px 0;
+    align-items: center;
+    min-height: 100px;
+}
+
+.payment_direct span{
+    font-size: 20px;
+    font-weight: 700;
+    margin-left: 30px;
+}
