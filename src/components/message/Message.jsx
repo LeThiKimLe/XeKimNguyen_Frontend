@@ -22,7 +22,7 @@ const Message = ({message, messagetype}) => {
             })
         }, 0);
         return () => clearTimeout(timer)
-    })
+    },[message])
 
     return (
         <div>

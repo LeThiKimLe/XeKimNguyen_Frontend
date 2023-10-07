@@ -241,7 +241,7 @@ const Login = () =>
                                         {inputLogin.map((input) => (
                                             <FormInput key={input.id} {...input} value={valuesLogin[input.name]} onChange={onChangeLogin} ></FormInput>  
                                         ))}
-                                        <Button className='btnLogin' text="Đăng nhập" asyncFunction={handleLogin}></Button>
+                                        <button className='btnLogin' text="Đăng nhập" onClick={handleLogin}>Login</button>
                                     </form>
                             </TabPanel>
                             <TabPanel>

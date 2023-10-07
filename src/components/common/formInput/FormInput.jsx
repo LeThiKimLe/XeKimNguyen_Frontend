@@ -18,6 +18,7 @@ const FormInput = (props) => {
                 onChange={onChange}
                 onBlur={handleFocus}
                 focused={focused.toString()}
+                required= {required}
                 // onFocus={()=> lastItem===true && setFocused(true)}
                 className="inputInput"/>
             <span className="inputError">{errorMessage}</span>
