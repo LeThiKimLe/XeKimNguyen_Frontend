@@ -1,32 +1,3 @@
-.container{
-    margin: 20px 0px 100px 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.loginContainer{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 80px;
-    margin: 20px 0;
-    width: 100%;
-    max-width: 1024px;
-}
-
-.loginImg img{
-    width: 400px;
-    height: 400px;
-    object-fit:cover;
-}
-
-.formContainer
-{
-    width: 100%;
-
-}
-
 .tab{
     display: flex;
     gap: 20px;
@@ -162,43 +133,3 @@
     font-size: 2rem;
     text-align: center;
   }
-
-
-.btnLogin{
-  background-color: #4fc6ed;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  margin-top: 30px;
-}
-
-.btnLogin:hover{
-  background-color: #39A2DB;
-  box-shadow: 0 0 3px #000;
-}
-
-.btnLogin:active{
-  background-color: aqua;
-}
-
-.tab-content {
-  position: relative;
-}
-
-.fade-enter {
-  opacity: 0;
-}
-
-.fade-enter.fade-enter-active {
-  opacity: 1;
-  transition: opacity 300ms ease-in-out;
-}
-
-.slide-enter {
-  transform: translateX(100%);
-}
-
-.slide-enter.slide-enter-active {
-  transform: translateX(0%);
-  transition: transform 300ms ease-in-out;
-}

@@ -1,35 +1,37 @@
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter, Routes, Route,  Switch , useNavigate } from "react-router-dom";
-import Home from './pages/home/Home';
-import List from './pages/list/List';
-import Trip from './pages/trip/Trip';
-import Login from './pages/login/Login';
-import Profile from './pages/profile/Profile';
-import Schedule from './pages/schedule/Schedule';
-import Ticket from './pages/ticket/Ticket';
-import Bill from './pages/bill/Bill';
-import Contacts from './pages/contacts/Contacts';
-import About from './pages/about/About';
+import { BrowserRouter, Routes, Route, Switch, useNavigate} from "react-router-dom";
+import Home from './pages/home';
+import List from './pages/list';
+import Trip from './pages/trip';
+import Login from './pages/login';
+import Profile from './pages/profile';
+import Schedule from './pages/schedule';
+import Ticket from './pages/ticket';
+import Bill from './pages/bill';
+import Contacts from './pages/contacts';
+import About from './pages/about';
 
 function App() {
 
-  return (
-      <BrowserRouter>
-          <Routes>
-              <Route path="/" element={<Home/>}></Route>
-              <Route path="/trips" element={<List/>}></Route>
-              <Route path="/login" element={<Login/>}></Route>
-              <Route path="/trip/:id" element={<Trip/>}></Route>
-              <Route path="/profile" element={<Profile/>}></Route>
-              <Route path="/schedule" element={<Schedule/>}></Route>
-              <Route path="/ticket" element={<Ticket/>}></Route>
-              <Route path="/bill" element={<Bill/>}></Route>
-              <Route path="/about" element={<About/>}></Route>
-              <Route path="/contacts" element={<Contacts/>}></Route>
-          </Routes>
-      </BrowserRouter>
-  );
+    return (
+        <div>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Home />}></Route>
+                    <Route path="/trips" element={<List />}></Route>
+                    <Route path="/login" element={<Login />}></Route>
+                    <Route path="/trip/:id" element={<Trip />}></Route>
+                    <Route path="/profile/:action" element={<Profile />}></Route>
+                    <Route path="/schedule" element={<Schedule />}></Route>
+                    <Route path="/ticket" element={<Ticket />}></Route>
+                    <Route path="/bill" element={<Bill />}></Route>
+                    <Route path="/about" element={<About />}></Route>
+                    <Route path="/contacts" element={<Contacts />}></Route>
+                </Routes>
+            </BrowserRouter>
+        </div>
+    );
 }
 
 export default App;

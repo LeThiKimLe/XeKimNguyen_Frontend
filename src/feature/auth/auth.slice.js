@@ -1,0 +1,131 @@
+import { createSlice } from "@reduxjs/toolkit";
+import authThunk from "./auth.service";
+
+const login_user = JSON.parse(localStorage.getItem("current_user"));
+
+const initialState = {
+    user: login_user ? login_user : null,
+    isLoggedIn: login_user ? true : false,
+    message: '',
+    error: false,
+    loading: false,
+    loggingOut: false
+}
+
+const authSlice = createSlice({
+    name: 'auth',
+    initialState,
+    reducers: {
+        reset: (state) => {
+            state.message = '';
+            state.error = null;
+          },
+        confirmlogout: (state) => {
+            state.loggingOut = true
+        },
+        logout: (state) => {
+            state.isLoggedIn = false
+            state.user = null
+            state.loggingOut = false
+        },
+        cancelogout: (state) => {
+            state.loggingOut = false
+        }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(authThunk.login.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(authThunk.login.fulfilled, (state, action) => {
+                state.loading = false
+                state.isLoggedIn = true
+                state.user = action.payload
+            })
+            .addCase(authThunk.login.rejected, (state, action) => {
+                state.error = true
+                state.loading = false
+                state.message = action.payload
+            })
+            .addCase(authThunk.register.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(authThunk.register.fulfilled, (state, action) => {
+                state.loading = false
+                state.message = action.payload.message || "Đăng ký thành công. Hãy đăng nhập lại"
+                state.error = false
+            })
+            .addCase(authThunk.register.rejected, (state, action) => {
+                state.error = true
+                state.loading = false
+                state.message = action.payload
+            })
+            .addCase(authThunk.logout.fulfilled, (state) => {
+                state.isLoggedIn = false
+            })
+            .addCase(authThunk.getOTP.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(authThunk.getOTP.fulfilled, (state, action) => {
+                state.loading = false
+                state.message = action.payload.message || "Đã gửi OTP thành công"
+                state.error = false
+            })
+            .addCase(authThunk.getOTP.rejected, (state, action) => {
+                state.error = true
+                state.loading = false
+                state.message = action.payload
+            })
+            .addCase(authThunk.validateOTP.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(authThunk.validateOTP.fulfilled, (state, action) => {
+                state.loading = false
+                state.message = action.payload.message || "Xác thực số điện thoại thành công"
+                state.error = false
+            })
+            .addCase(authThunk.validateOTP.rejected, (state, action) => {
+                state.error = true
+                state.loading = false
+                state.message = action.payload
+            })
+            .addCase(authThunk.updateProfile.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(authThunk.updateProfile.fulfilled, (state, action) => {
+                state.loading = false
+                state.message = action.payload.message || "Cập nhật thông tin thành công"
+                state.error = false
+                state.user = action.payload.user
+            })
+            .addCase(authThunk.updateProfile.rejected, (state, action) => {
+                state.error = true
+                state.loading = false
+                state.message = action.payload
+            })
+    }
+})
+
+export const authActions = authSlice.actions;
+export const selectIsLoggedIn = (state) => state.auth.isLoggedIn
+export const selectLoading = (state) => state.auth.loading
+export const selectMessage = (state) => state.auth.message
+export const selectError = (state) => state.auth.error
+export const selectLogout = (state) => state.auth.loggingOut
+export const selectUser = (state) => state.auth.user
+export const selectUserRoleId = (state) => {
+    if (state.auth.user)
+    {
+        if (state.auth.user.user.customerId)
+            return 1;
+        if (state.auth.user.user.driver)
+            return 4;
+        if (state.auth.user.user.staff)
+            if (state.auth.user.user.staff.adminId)
+                return 3
+            return 2
+    }
+    return 0
+}
+
+export default authSlice.reducer
