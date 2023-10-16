@@ -7,6 +7,11 @@
     border-radius: 15px;
     background-color: #13b9f0;
     padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: auto;
 }
 
 .prime_btn:hover

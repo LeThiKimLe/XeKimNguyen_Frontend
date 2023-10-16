@@ -4,8 +4,8 @@ const initialState = {
     loading: false
 }
 
-const profileSlice = createSlice({
-    name: 'profile',
+const ticketSlice = createSlice({
+    name: 'ticket',
     initialState,
     reducers:{
         setActive: (state, action) => {
@@ -15,8 +15,8 @@ const profileSlice = createSlice({
     }
 })
 
-export const selectActive = (state) => state.profile.active
+export const selectActive = (state) => state.ticket.active
 
-export const profileAction = profileSlice.actions;
+export const ticketAction = ticketSlice.actions;
 
-export default profileSlice.reducer
+export default ticketSlice.reducer

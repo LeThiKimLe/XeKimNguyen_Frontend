@@ -278,4 +278,70 @@ export const createListRoutes = () => {
         }
     }
 
-    
+export const BOOKING_INFOR = {
+    code: 'VAZ5UY',
+    status: 'success',
+    message: 'Vé được đặt thành công',
+    ticketNumber: 2,
+    route: {
+        id : 12,
+        distance : 666,
+        departure : {
+            id: 9,
+            name: "Đà Nẵng"
+        },
+        destination : {
+            id: 10,
+            name: "Đà Lạt"
+        },
+        price : 450000,
+        schedule : "Đại Lộc -> Vĩnh Điện -> Tam Kỳ -> Quãng Nam -> Quãng Ngãi -> Quy Nhơn -> Tuy Hòa -> Ninh Hòa -> Đà Lạt",
+        parents : null,
+        hours : 17
+    },
+    trip: {
+        id: 1,
+        departDate: '20-12-2023',
+        departTime: '18h',
+        ticketPrice: 250000,
+    },
+    user: {
+        id: 1232,
+        name: 'Kim Lệ',
+        tel: '0909090909',
+        email: '123@gmail.com',
+    },
+    pickPoint: {
+        id: 17,
+        name: 'Bến xe Miền Đông'
+    },
+    transaction: {
+        id: '12345678',
+        transaction_type: 'Thanh toán',
+        amount: 500000,
+        paymentMethod: 'MoMo',
+        paymentTime: '19:16:29 10-10-2023',
+        status: 'Thành công'
+    },
+    tickets: [
+        { 
+            code: '930958230583',
+            seat: 'A3',
+            billCode: '249873598347', 
+        },
+        { 
+            code: '930958230584',
+            seat: 'A5',
+            billCode: '249873598348', 
+        },
+        { 
+            code: '930958230585',
+            seat: 'A7',
+            billCode: '249873598349', 
+        }
+    ],
+    bus: {
+        id: 123,
+        licensePlate: '51C-78971'
+    }
+}

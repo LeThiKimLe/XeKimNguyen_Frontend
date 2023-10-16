@@ -4,7 +4,7 @@ import Select from 'react-select'
 
 const FormInput = (props) => {
     const [focused, setFocused] = useState(false)
-    const {label, errorMessage, onChange, id, name, required,type, options, roles, editable, readOnly, ...inputProps } = props;
+    const {label, errorMessage, onChange, id, name, required,type, options, roles, editable, readOnly, className, inputWidth, ...inputProps } = props;
     const handleFocus = (e) => {
         setFocused(true)
     }
@@ -19,13 +19,15 @@ const FormInput = (props) => {
         onChange(selected)
     }
 
+   
+
     return (
-        <div className={styles.formInput}>
+        <div className={`${styles.formInput} ${className? className: ''}`}>
             <label className={styles.inputLabel}> 
                 {label} 
                 <span className={styles['input-required']}> {required? '*':''} </span>
             </label>
-            <div className={styles.inputContain}>
+            <div className={styles.inputContain} style={{width: inputWidth ? inputWidth : '60%'}}>
             {type !== 'select' ?  
                 (<input {...inputProps}
                     name={name}

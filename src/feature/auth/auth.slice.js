@@ -19,6 +19,7 @@ const authSlice = createSlice({
         reset: (state) => {
             state.message = '';
             state.error = null;
+            console.log('reset'+state.message)
           },
         confirmlogout: (state) => {
             state.loggingOut = true
@@ -116,7 +117,7 @@ export const selectUser = (state) => state.auth.user
 export const selectUserRoleId = (state) => {
     if (state.auth.user)
     {
-        if (state.auth.user.user.customerId)
+        if (state.auth.user.user.customer)
             return 1;
         if (state.auth.user.user.driver)
             return 4;

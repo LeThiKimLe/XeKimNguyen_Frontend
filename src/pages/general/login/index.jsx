@@ -146,12 +146,12 @@ const Login = () => {
         dispatch(authThunk.login({username: valuesLogin.username, password: valuesLogin.password}))
             .unwrap()
             .then(() => {
+                dispatch(authActions.reset());
                 navigate('/')
             })
             .catch((error) => {
                 console.log('fail')
             })
-        dispatch(authActions.reset());
     }
 
     useEffect(() => {
@@ -179,6 +179,7 @@ const Login = () => {
             .unwrap()
             .then(() => {
                 setValuesSignup({ ...valuesSignup, process: 1 })
+                dispatch(authActions.reset())
             })
             .catch((error) => {
                 console.log(error)
@@ -191,6 +192,7 @@ const Login = () => {
             .unwrap()
             .then(() => {
                 setValuesSignup({ ...valuesSignup, process: 2 })
+                dispatch(authActions.reset())
             })
             .catch((error) => {
                 console.log(error)
@@ -205,9 +207,9 @@ const Login = () => {
                                     password: valuesSignup.password}))
             .unwrap()
             .then(() => {
-
                 cancelSignup()
                 setSelectedTab(0)
+                dispatch(authActions.reset())
             })
             .catch((error) => {
                 console.log(error)
@@ -245,11 +247,11 @@ const Login = () => {
                                     <Tab>Đăng ký</Tab>
                                 </TabList>
                                 <TabPanel>
-                                    <form action="" ref={formLogin} onSubmit={handleLogin}>
+                                    <form action="" ref={formLogin} onSubmit={handleLogin} className={styles.formInfor}>
                                         {inputLogin.map((input) => (
-                                            <FormInput key={input.id} {...input} value={valuesLogin[input.name]} onChange={onChangeLogin} ></FormInput>
+                                            <FormInput key={input.id} {...input} value={valuesLogin[input.name]} onChange={onChangeLogin}></FormInput>
                                         ))}
-                                        <Button text="Đăng nhập"></Button>
+                                        <Button text="Đăng nhập" className={styles.btnLogin} ></Button>
                                     </form>
 
                                     {loading &&

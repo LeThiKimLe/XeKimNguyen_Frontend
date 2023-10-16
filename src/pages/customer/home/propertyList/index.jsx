@@ -1,5 +1,5 @@
 import styles from './styles.module.css'
-import SectionTitle from '../sectionTitle'
+import SectionTitle from '../../../../components/common/sectionTitle'
 import { useTranslation } from 'react-i18next';
 
 const PropertyList = () =>

@@ -5,7 +5,7 @@ import React ,{ memo } from 'react';
 const Button = (props) => {
     const {text, loading, onClick, className, ...exprops} = props
     return (
-        <button className={`${className? className : ''} ${styles.prime_btn}`} type='submit' onClick={onClick ? onClick : null} {...exprops}>
+        <button className={`${styles.prime_btn} ${className? className : ''} ${styles.prime_btn}`} type='submit' onClick={onClick ? onClick : null} {...exprops}>
             {loading === true ? (
                 <>
                 <ClipLoader color="#ffffff" size={15} />

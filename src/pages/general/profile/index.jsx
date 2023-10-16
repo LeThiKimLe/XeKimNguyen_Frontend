@@ -99,18 +99,19 @@ const Profile = () => {
             .unwrap()
             .then(() => {
                 setIsUpdating(false)
+                dispatch(authActions.reset());
             })
             .catch((error) => {
                 console.log('fail')
             })
-            dispatch(authActions.reset());
         }
         else
         {
             setIsUpdating(true)
         }
-        
     }
+
+    console.log('message' + message)
 
     return (
         <div>

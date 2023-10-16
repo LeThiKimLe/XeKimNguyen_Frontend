@@ -155,3 +155,28 @@ export const UPDATE_INFOR = [
         editable: [4]
     }
 ]
+
+export const TICKET_INFOR = [
+    {
+        id: 1,
+        name: "tel",
+        type: "text",
+        placeholder: "Số điện thoại",
+        errorMessage: "Sai số điện thoại",
+        label: "Số điện thoại",
+        pattern: "^0[0-9]{9,10}$",
+        required: true,
+        
+    },
+    {
+        id: 2,
+        name: "booking_code",
+        type: "text",
+        placeholder: "Mã đặt vé",
+        errorMessage: "Mã đặt vé phải đúng 6 ký tự, không chứa ký tự đặc biệt",
+        label: "Mã đặt vé",
+        pattern: "^[A-Z0-9]{6}$",
+        required: true,
+        
+    }
+]

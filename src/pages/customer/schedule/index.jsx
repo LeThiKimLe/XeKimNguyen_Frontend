@@ -82,14 +82,13 @@ const Schedule = () => {
                             </div>
                         </div>
                         {filteredRoute.map((route) => (
-                            <Route route={route} reverse={route.departure.name.toLowerCase().indexOf(departure) !==-1 ? false : true}>
+                            <Route  key={route.id}
+                                    route={route} 
+                                    reverse={route.departure.name.toLowerCase().indexOf(departure) !==-1 ? false : true}>
                             </Route>
                         ))}
                     </div>
                 </div>
-
-                
-
             </div>
         </>
     )
