@@ -19,7 +19,7 @@
 
 .headerList{
     display: flex;
-    gap: 40px;
+    gap: 50px;
 }
 
 .headerListItem{
@@ -29,14 +29,13 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
-
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid var(--primary-color);
 }
 
 .headerListItem.active{
-    border: 1px solid white;
-    padding: 10px;
-    border-radius: 20px;
-
+    border-color: white;
 }
 
 
@@ -54,13 +53,12 @@
     border-radius: 5px;
 }
 .headerSearch{
-    /* height: 50px; */
     background-color: white;
     border: 3px solid #febb02;
-    padding: 20px 0px;
+    padding: 20px 0px 40px 0;
     border-radius: 5px;
     position: absolute;
-    bottom: -75px;
+    bottom: -93px;
     width: 100%;
     max-width: 1024px;
     z-index: 2;
@@ -116,12 +114,16 @@
 .tripTypeBox
 {
     color: gray;
-    margin: 5px 0px;
+    margin: 5px 20px;
+    display: flex;
+    gap: 20px
 }
 
 .tripTypeBoxItem
 {
     margin: 0px 5px;
+    display: flex;
+    gap: 5px;
 }
 
 .tripTypeBoxItem:hover
@@ -152,30 +154,6 @@
     border: 1px solid  hsl(0, 0%, 80%);
 
 }
-
-
-/* .departPicker::after
-{
-    content: "Departure Date";
-    position: absolute;
-    top: -16px;
-    left: 4px;
-    font-size: 12px;
-    color: #4fc6ed;
-    font-weight: 500;
-
-} */
-
-/* .returnPicker::after
-{
-    content: "Return Date";
-    position: absolute;
-    top: -16px;
-    left: 4px;
-    font-size: 12px;
-    color: #4fc6ed;
-    font-weight: 500;
-} */
 
 .form-control{
     min-height: auto;
@@ -312,10 +290,15 @@
     border: 1px solid #4fc6ed;
     cursor: pointer;
     font-weight: 500;
-    font-size: 30px;
     border-radius: 10px;
     padding: 0;
-    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.optionCounterButton span{
+    font-size: 24px; 
 }
 
 .optionCounterButton:active

@@ -75,20 +75,28 @@ const validateOTP = createAsyncThunk('auth/verify-otp', async({telno, otp}, thun
     }
 })
 
-const updateProfile = createAsyncThunk('auth/edit-account', async({name, address, email, img, gender}, thunkAPI) => {
+const updateProfile = createAsyncThunk('profile/update', async ({updatedInfor}, thunkAPI) => {
     try{
-        const response = await axiosClient.post('account/edit', {name, address, email, img, gender})
-        localStorage.setItem("current_user", JSON.stringify(response.user))
+        const response = await axiosClient.post('user/edit',
+                                            { tel: updatedInfor.tel,
+                                              name: updatedInfor.name,
+                                              email: updatedInfor.email,
+                                              address: updatedInfor.address,
+                                              img: updatedInfor.img,
+                                              gender: updatedInfor.gender.value
+                                            })
+        localStorage.setItem("current_user", JSON.stringify(response))
         return response
     }
-    catch(error){
+    catch (error){
         const message =
         (error.response && error.response.data && error.response.data.message) ||
         error.message ||
         error.toString();
         return thunkAPI.rejectWithValue(message);
     }
-})
+} 
+)
 
 const authThunk = {
     register,

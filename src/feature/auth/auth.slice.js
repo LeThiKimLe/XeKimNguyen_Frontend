@@ -96,7 +96,7 @@ const authSlice = createSlice({
                 state.loading = false
                 state.message = action.payload.message || "Cập nhật thông tin thành công"
                 state.error = false
-                state.user = action.payload.user
+                state.user = action.payload
             })
             .addCase(authThunk.updateProfile.rejected, (state, action) => {
                 state.error = true

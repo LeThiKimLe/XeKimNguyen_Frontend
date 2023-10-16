@@ -35,7 +35,6 @@ const FormInput = (props) => {
                     focused={focused.toString()}
                     required= {required}
                     readOnly = {readOnly ? readOnly : false}
-                    // onFocus={()=> lastItem===true && setFocused(true)}
                     className={`${styles.inputInput} ${readOnly ? styles.readonly : ''}`}/>)
                 :
                 (

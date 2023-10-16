@@ -1,16 +1,15 @@
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Routes, Route, Switch, useNavigate} from "react-router-dom";
-import Home from './pages/home';
-import List from './pages/list';
-import Trip from './pages/trip';
-import Login from './pages/login';
-import Profile from './pages/profile';
-import Schedule from './pages/schedule';
-import Ticket from './pages/ticket';
-import Bill from './pages/bill';
-import Contacts from './pages/contacts';
-import About from './pages/about';
+import Home from './pages/customer/home';
+import List from './pages/customer/list';
+import Trip from './pages/customer/trip';
+import Login from './pages/general/login';
+import Profile from './pages/general/profile';
+import Schedule from './pages/customer/schedule';
+import Ticket from './pages/customer/ticket';
+import Bill from './pages/customer/bill';
+import About from './pages/customer/about';
 
 function App() {
 
@@ -27,7 +26,6 @@ function App() {
                     <Route path="/ticket" element={<Ticket />}></Route>
                     <Route path="/bill" element={<Bill />}></Route>
                     <Route path="/about" element={<About />}></Route>
-                    <Route path="/contacts" element={<Contacts />}></Route>
                 </Routes>
             </BrowserRouter>
         </div>

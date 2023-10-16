@@ -6,7 +6,7 @@ const Button = (props) => {
     const {text, loading, onClick, className, ...exprops} = props
     return (
         <button className={`${className? className : ''} ${styles.prime_btn}`} type='submit' onClick={onClick ? onClick : null} {...exprops}>
-            {loading ? (
+            {loading === true ? (
                 <>
                 <ClipLoader color="#ffffff" size={15} />
                 <span>{text}</span>
@@ -19,9 +19,9 @@ const Button = (props) => {
 }
 
 export const OptionButton = React.forwardRef((props,ref) => {
-    const {text} = props
+    const {text, className, ...btnprops} = props
     return (
-        <button className={styles.option_btn} {...props} ref={ref? ref : null}>
+        <button className={`${styles.option_btn} ${className ? className : '' }`} {...btnprops} ref={ref? ref : null}>
             {text}
         </button>
     )
