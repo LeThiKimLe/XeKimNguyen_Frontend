@@ -1,5 +1,11 @@
 .container{
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin: 20px 0;
+}
+
+.wrapper{
+    width: 100%;
+    max-width: 1024px;
+    
 }
