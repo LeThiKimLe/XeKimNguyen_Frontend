@@ -48,7 +48,7 @@ const Ticket = () => {
                                 <FormInput key={infor.id} {...infor} 
                                            value={searchInfor[infor.name]} 
                                            onChange={handleSearchInfor}
-                                           inputWidth = '73%'
+                                           inputWidth = '100%'
                                            className={styles.inputInfor}>
                                 </FormInput>
                             ))

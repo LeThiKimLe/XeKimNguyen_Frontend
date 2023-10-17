@@ -74,6 +74,7 @@
 .downloadQR{
     margin-top: 5px;
     text-decoration: underline;
+    margin-left: 5px;
 }
 
 .downloadQR:hover{
@@ -103,7 +104,8 @@
 }
 
 .qrCode{
-    margin: 20px 0;
+    margin: 15px 0;
+    display: inline-block;
 }
 
 .ticketInfor{
@@ -125,5 +127,10 @@
 .ticketDetail span:last-child{
     text-align: right;
     color: #212121;
+}
+
+.copyBtn:hover{
+    cursor: pointer;
+
 }
 

@@ -173,10 +173,33 @@ export const TICKET_INFOR = [
         name: "booking_code",
         type: "text",
         placeholder: "Mã đặt vé",
-        errorMessage: "Mã đặt vé phải đúng 6 ký tự, không chứa ký tự đặc biệt",
+        errorMessage: "Mã đặt vé phải đúng 6 ký tự, không chứa ký tự thường và đặc biệt",
         label: "Mã đặt vé",
         pattern: "^[A-Z0-9]{6}$",
         required: true,
         
+    }
+]
+
+export const BILL_INFOR = [
+    {
+        id: 1,
+        name: "billCode",
+        type: "number",
+        placeholder: "Mã số hóa đơn",
+        errorMessage: "",
+        label: "Mã hóa đơn",
+        pattern: "",
+        required: true,
+    },
+    {
+        id: 2,
+        name: "captchaCode",
+        type: "text",
+        placeholder: "Nhập mã xác thực có trong hình",
+        errorMessage: "Mã xác thực có đúng 6 ký tự",
+        label: "Mã xác thực",
+        pattern: "^[a-zA-Z0-9]{6}$",
+        required: true,
     }
 ]
