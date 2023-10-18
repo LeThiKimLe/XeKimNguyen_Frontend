@@ -6,7 +6,8 @@
                 "ticket": "Check Ticket",
                 "invoice": "Invoice",
                 "contact": "Contacts",
-                "about": "About Us"
+                "about": "About Us",
+                "other": "Other"
             },
         "welcome": "Wanna to travel through VietNam? Let's book XeKimNguyen",
         "promo": "Create your account. Start your first booking with discount",
@@ -46,6 +47,10 @@
                 "property_desc": "XeKimNguyen serves more than 50 long-distance and intercity bus trips every day."
             }
         ]
+    },
+    "comment":{
+        "title": "OUR CUSTOMERS'S THOUGHT",
+        "slogan": "We're trying our best to deliver best service to passengers"
     },
     "filter":{
         "title": "Seach",

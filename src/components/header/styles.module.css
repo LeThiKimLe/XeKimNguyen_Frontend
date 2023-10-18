@@ -4,6 +4,7 @@
     display: flex;
     justify-content: center;
     position: relative;
+    z-index: 2;
 }
 
 .headerContainer
@@ -11,6 +12,14 @@
     width: 100%;
     max-width: 1024px;
     margin: 20px 0px 100px 0px;
+}
+
+.headerTitle{
+   
+}
+
+.headerDesc{
+    
 }
 
 .headerContainer.listMode{
@@ -32,12 +41,77 @@
     padding: 10px;
     border-radius: 20px;
     border: 1px solid var(--primary-color);
+    position: relative;
+}
+
+.headerListItem::after{
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 20px;
+    background-color: transparent;
+    top: 100%;
+}
+
+.headerListItem:hover{
+    background-color: rgba(237, 244, 159, 0.3);
+    cursor: pointer;
 }
 
 .headerListItem.active{
     border-color: white;
 }
 
+.headerListItem:hover .subMenu{
+    display: block
+}
+
+.subMenu{
+    display: none;
+    position: absolute;
+    list-style-type: none;
+    box-shadow: 0 0 3px 3px rgb(0, 0, 0, 0.3);
+    border-radius: 10px;
+    top: 50px;
+    left: 0;
+    padding: 0;
+    z-index: 20;
+}
+
+.subMenu:hover{
+    cursor: pointer;
+}
+
+.subMenuItem{
+    color: var(--primary-color);
+    background-color: white;
+    padding: 10px;
+    display: flex;
+    gap: 20px;
+    min-width: 200px;
+    text-decoration: none;
+    align-items: center;
+}
+
+.subMenuItem svg{
+    width: 20px;
+}
+
+.subMenu li:first-child .subMenuItem{
+    border-radius: 10px 10px 0 0;
+}
+
+.subMenu li:last-child .subMenuItem{
+    border-radius: 0 0 10px 10px;
+}
+
+.subMenuItem:hover{
+    background-color: rgb(231, 227, 227);
+}
+
+.subMenuItem.active{
+    background-color: rgb(231, 227, 227);
+}
 
 .headerDesc{
     margin: 20px 0px;
@@ -52,40 +126,159 @@
     cursor: pointer;
     border-radius: 5px;
 }
+
+
+@media only screen and (min-width: 1000px) {
+    /* styles for devices with a minimum screen width of 480px */
+ 
 .headerSearch{
     background-color: white;
     border: 3px solid #febb02;
     padding: 20px 0px 40px 0;
     border-radius: 5px;
     position: absolute;
-    bottom: -93px;
+    /* bottom: -93px; */
     width: 100%;
     max-width: 1024px;
-    z-index: 2;
+    z-index: 2
 }
 
 .headerSearchList
 {
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    gap: 20px;
+    /* padding: 0px 15px; */
+}
+
+.groupItem{
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    margin: 10px 0;
-    padding: 0px 15px;
+    justify-content: center;
+    gap: 20px;
 }
 
 .headerSearchItem{
-    margin: 0 7px;
     display: flex;
     align-items: center;
     gap: 10px;
     position: relative;
     flex: 1;
+    min-width: 190px;
+    max-width: 230px;
 }
 
-.headerSearchItem:not(:last-child)::after{
+.dot{
+    display: none
+}
+
+.datePicker{
+    max-width: 150px;
+}
+
+}
+
+@media only screen and (min-width: 542px) and (max-width: 1000px){
+
+.headerSearch{
+    background-color: white;
+    border: 3px solid #febb02;
+    padding: 10px 0px 20px 0;
+    border-radius: 5px;
+    position: absolute;
+    /* bottom: -93px; */
+    width: 100%;
+    height: max-content;
+    z-index: 2
+}
+
+.headerSearchList
+{
+    display: flex; 
+    align-items: center;
+    justify-content: space-around;
+    margin: 10px 0;
+}
+
+.groupItem{
+    display: block;
+    flex: 1;
+    padding: 0 20px;
+}
+
+.headerSearchItem{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    flex: 1;
+    margin-bottom: 10px;
+}
+
+.headerSearchItem svg{
+    width: 40px;
+}
+
+.headerSearchItem::after{
+    display: none;
+}
+
+.dot{
+    height: 40px;
+    border-left: 3px dotted #757474;
+    margin-left: 19px;
+}
+
+.datePicker{
+    max-width: none;
+}
+
+
+}
+
+@media only screen and (max-width: 542px) {
+
+.headerSearch{
+    background-color: white;
+    border: 3px solid #febb02;
+    padding: 10px 0px 20px 0;
+    border-radius: 5px;
+    position: absolute;
+    /* bottom: -93px; */
+    width: 100%;
+    height: max-content;
+    z-index: 2
+}
+
+.headerSearchList
+{
+    display: block; 
+    margin: 10px 0;
+    padding: 0px 15px;
+}
+
+.headerSearchItem{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    flex: 1;
+    margin-bottom: 10px;
+}
+
+.headerSearchItem::after{
+    display: none
+}
+
+}
+
+
+.headerSearchItem::after{
     content: "";
     position: absolute;
-    right: 0;
+    right: -10px;
     top: 50%;
     height: 23px;
     border-right: 1px solid #000;
@@ -152,7 +345,6 @@
     padding:7px;
     border-radius: 5px;
     border: 1px solid  hsl(0, 0%, 80%);
-
 }
 
 .form-control{
@@ -226,12 +418,17 @@
 
 .ticketAmount
 {
-    /* flex: 0.9; */
-    margin-left: 10px;
+    flex: 0;
+    min-width: max-content;
+    /* margin-left: 10px;
     display: flex;
     align-items: center;
     gap: 10px;
-    position: relative;
+    position: relative; */
+}
+
+.ticketAmount::after{
+    display: none;
 }
 
 .returnDate
@@ -264,7 +461,7 @@
 }
 
 .searchButton{
-    min-width: 200px;
+    min-width: 250px;
     color: white;
     font-weight: 600;
     border: none;
@@ -310,7 +507,6 @@
     position: relative;
     display: flex;
     align-items: center;
-
 }
 
 /* .ticketChange::after
@@ -344,6 +540,6 @@
 }
 
 .selectArea{
-    margin-right: 20px;
+    /* margin-right: 20px; */
     flex: 1;
 }

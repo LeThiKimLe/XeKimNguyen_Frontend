@@ -7,6 +7,8 @@ import Featured from './featured'
 import PropertyList from './propertyList'
 import { useState, useEffect } from 'react';
 import Loading from '../../../components/loading'
+import Comment from './comment'
+import { COMMENT_LIST } from '../../../utils/test_data'
 
 
 const Home = () => {
@@ -29,7 +31,7 @@ const Home = () => {
                     (<Loading></Loading>) : (
                         <>
                             <Featured></Featured>
-                            <PropertyList></PropertyList>
+                            <Comment listComment={COMMENT_LIST}></Comment>
                         </>
                     )
                 }

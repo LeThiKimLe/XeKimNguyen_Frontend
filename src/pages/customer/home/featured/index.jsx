@@ -1,4 +1,5 @@
 import styles from './styles.module.css'
+import './featured.css'
 import SectionTitle from '../../../../components/common/sectionTitle'
 import { useTranslation } from 'react-i18next';
 import Slider from 'react-slick'
@@ -23,23 +24,27 @@ const Featured = () => {
               settings: {
                 slidesToShow: 3,
                 slidesToScroll: 3,
+                initialSlide: 3,
                 infinite: true,
-                dots: true
+                dots: true,
+                arrows: true
               }
             },
             {
-              breakpoint: 740,
+              breakpoint: 1000,
               settings: {
                 slidesToShow: 2,
                 slidesToScroll: 2,
-                initialSlide: 2
+                initialSlide: 2,
+                arrows: false
               }
             },
             {
               breakpoint: 480,
               settings: {
                 slidesToShow: 1,
-                slidesToScroll: 1
+                slidesToScroll: 1,
+                arrows: false
               }
             }
           ]

@@ -393,3 +393,236 @@ export const BILL_TEST_DATA = {
         }
     }
 }
+
+export const COMMENT_LIST = [
+    {
+        id: 1,
+        rate: 4,
+        comment: "Tài xế lái rất lụa, lạng lách tốt",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: true
+        },
+        sendDate: '21-10-2023'
+    },
+    {
+        id: 2,
+        rate: 5,
+        comment: "Từ chỗ nhà chờ mình có được cho ghế ngồi đợi. Xe mới, sạch sẽ, tốt, không có mùi xe cũ, có bánh nước, giường 2 người bằng kích cỡ giường cũ nhưng bỏ cái kệ bên cạnh ra, nằm một mình rất thoải mái, chăn gối cũng ok. Xe theo lịch rời bến muộn nhất lúc 11h nhưng 10h50 đã đi làm mình không kịp nhận đồ gửi. Vẫn là theo lịch 8h mới về tới nhà nhưng 6h mình đã tới nơi.",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: false
+        },
+        sendDate: '21-10-2023'
+    },
+    {
+        id: 3,
+        rate: 2,
+        comment: "Từ chỗ nhà chờ mình có được cho ghế ngồi đợi. Xe mới, sạch sẽ, tốt, không có mùi xe cũ, có bánh nước, giường 2 người bằng kích cỡ giường cũ nhưng bỏ cái kệ bên cạnh ra, nằm một mình rất thoải mái, chăn gối cũng ok.",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: true
+        },
+        sendDate: '21-10-2023'
+    },
+    {
+        id: 4,
+        rate: 4,
+        comment: "Tài xế lái rất lụa, lạng lách tốt. Từ chỗ nhà chờ mình có được cho ghế ngồi đợi. Xe mới, sạch sẽ, tốt, không có mùi xe cũ, có bánh nước, giường 2 người bằng kích cỡ giường cũ nhưng bỏ cái kệ bên cạnh ra, nằm một mình rất thoải mái.",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: true
+        },
+        sendDate: '21-10-2023'
+    },
+    {
+        id: 5,
+        rate: 4,
+        comment: "Tài xế lái rất lụa, lạng lách tốt",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: false
+        },
+        sendDate: '21-10-2023'
+    },
+    {
+        id: 6,
+        rate: 4,
+        comment: "Tài xế lái rất lụa, lạng lách tốt",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: false
+        },
+        sendDate: '21-10-2023'
+    },
+    {
+        id: 7,
+        rate: 4,
+        comment: "Tài xế lái rất lụa, lạng lách tốt",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: false
+        },
+        sendDate: '21-10-2023'
+    },
+    {
+        id: 8,
+        rate: 4,
+        comment: "Tài xế lái rất lụa, lạng lách tốt",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: false
+        },
+        sendDate: '21-10-2023'
+    },
+    {
+        id: 9,
+        rate: 4,
+        comment: "Tài xế lái rất lụa, lạng lách tốt",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: false
+        },
+        sendDate: '21-10-2023'
+    },
+    {
+        id: 10,
+        rate: 4,
+        comment: "Tài xế lái rất lụa, lạng lách tốt",
+        state: "Duyệt",
+        trip: {
+            departDate: '20-10-2023',
+            departTime: '18h',
+            route: {
+                departure: {
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    name: "TP. Hồ Chí Minh"
+                }
+            }
+        },
+        reviewer: {
+            name: 'Lê Trung Nguyên',
+            gender: false
+        },
+        sendDate: '21-10-2023'
+    }
+]

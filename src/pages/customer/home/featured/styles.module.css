@@ -4,6 +4,7 @@
     max-width: 1024px;
     text-align: center;
     margin-top: 50px;
+    z-index: 2;
 }
 
 .featured{
@@ -50,29 +51,4 @@
     margin: auto;
     font-size: 10px;
     font-weight: 600;
-}
-
-.slick-arrow{
-    background-color: aqua;
-}
-
-.slick-prev{
-    z-index: 10;
-    left: -21px !important;
-    transform: translate(0, -100%) !important;
-    color: white !important;
-}
-
-.slick-next{
-    right: -5px !important;
-    transform: translate(0, -100%) !important;
-    color: white !important;
-}
-
-.slick-prev:before, .slick-next:before{
-    content: '→';
-    font-family: 'slick';
-    font-size: 40px !important;
-    line-height: 1;
-    color: #4fc6ed !important;
 }
