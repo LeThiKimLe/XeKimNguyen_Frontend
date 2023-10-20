@@ -14,8 +14,9 @@ import { Outlet, Link } from "react-router-dom";
 import SearchBox from './searchBox';
 
 import MediaQuery from 'react-responsive';
+import { memo } from 'react';
 
-const Header = ({ type, active }) => {
+const Header = ({ type, active, listRoute }) => {
 
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
@@ -25,6 +26,7 @@ const Header = ({ type, active }) => {
     const handleNavigate = (linkId) => {
         setActiveLink(linkId);
     };
+
 
     return (
         <>
@@ -106,7 +108,7 @@ const Header = ({ type, active }) => {
                         </MediaQuery>
                     </div>
                     {type !== "list" && (
-                        <SearchBox></SearchBox>
+                        <SearchBox listRoute = {listRoute}></SearchBox>
                     )}
                 </div>
             </div>
@@ -115,4 +117,4 @@ const Header = ({ type, active }) => {
     )
 }
 
-export default Header
+export default memo(Header)

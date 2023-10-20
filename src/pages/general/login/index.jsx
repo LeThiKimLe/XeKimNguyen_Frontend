@@ -15,6 +15,7 @@ import { selectLoading, selectMessage, selectError } from '../../../feature/auth
 import { authActions } from '../../../feature/auth/auth.slice'
 import authThunk from '../../../feature/auth/auth.service'
 import { ClipLoader } from 'react-spinners';
+import { useMediaQuery } from 'react-responsive'
 
 const Login = () => {
 
@@ -56,7 +57,7 @@ const Login = () => {
             placeholder: "Số điện thoại",
             errorMessage: "Sai số điện thoại",
             label: "Số điện thoại",
-            // pattern: "^0[0-9]{9,10}$",
+            pattern: "^0[0-9]{9,10}$",
             required: true
         },
         {
@@ -66,7 +67,7 @@ const Login = () => {
             placeholder: "Mật khẩu",
             errorMessage: "Mật khẩu có ít nhất 6 ký tự",
             label: "Mật khẩu",
-            // pattern: "^.{6,}$",
+            pattern: "^.{6,}$",
             required: true
         },
     ]
@@ -81,7 +82,7 @@ const Login = () => {
             label: "Số điện thoại",
             pattern: "^0[0-9]{9,10}$",
             required: true,
-            
+
         },
         {
             id: 2,
@@ -92,7 +93,7 @@ const Login = () => {
             label: "Họ và tên",
             pattern: "^.{1,30}$",
             required: true,
-            
+
         },
         {
             id: 3,
@@ -102,7 +103,7 @@ const Login = () => {
             errorMessage: "",
             label: "Email",
             required: true,
-            
+
         },
         {
             id: 4,
@@ -113,7 +114,7 @@ const Login = () => {
             label: "Mật khẩu",
             pattern: "^.{6,}$",
             required: true,
-        
+
         },
         {
             id: 5,
@@ -124,7 +125,6 @@ const Login = () => {
             label: "Nhập lại mật khẩu",
             pattern: valuesSignup.password,
             required: true,
-            
         },
         {
             id: 6,
@@ -135,7 +135,6 @@ const Login = () => {
             label: "Nhập mã OTP",
             pattern: "^[0-9]{6}$",
             required: true,
-            
         }
     ]
 
@@ -143,7 +142,7 @@ const Login = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        dispatch(authThunk.login({username: valuesLogin.username, password: valuesLogin.password}))
+        dispatch(authThunk.login({ username: valuesLogin.username, password: valuesLogin.password }))
             .unwrap()
             .then(() => {
                 dispatch(authActions.reset());
@@ -201,10 +200,12 @@ const Login = () => {
 
     const handleSignUp = (e) => {
         e.preventDefault()
-        dispatch(authThunk.register({tel: valuesSignup.telnum,
-                                    name: valuesSignup.name,
-                                    email: valuesSignup.email,
-                                    password: valuesSignup.password}))
+        dispatch(authThunk.register({
+            tel: valuesSignup.telnum,
+            name: valuesSignup.name,
+            email: valuesSignup.email,
+            password: valuesSignup.password
+        }))
             .unwrap()
             .then(() => {
                 cancelSignup()
@@ -229,6 +230,9 @@ const Login = () => {
         );
     }
 
+    const isBigScreen = useMediaQuery({ query: '(min-width: 1046px)' })
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1046px)' })
+
     return (
         <>
             {message !== '' && <Message message={message} messagetype={error ? 2 : 1} />}
@@ -237,14 +241,16 @@ const Login = () => {
                 <Header type="list" />
                 <div className={styles.container}>
                     <div className={styles.loginContainer}>
-                        <div className={styles.loginImg}>
-                            <img src={loginImg} alt="" />
-                        </div>
-                        <div className={styles.formContainer}>
+                        {isBigScreen &&
+                            <div className={styles.loginImg}>
+                                <img src={loginImg} alt="" />
+                            </div>
+                        }
+                        <div className={isBigScreen ? styles.formContainerBig : styles.formContainerSmall}>
                             <Tabs className="Tabs" selectedIndex={selectedTab} onSelect={index => setSelectedTab(index)}>
                                 <TabList>
                                     <Tab onClick={cancelSignup}>Đăng nhập</Tab>
-                                    <Tab>Đăng ký</Tab>
+                                    <Tab>{` Đăng ký `}</Tab>
                                 </TabList>
                                 <TabPanel>
                                     <form action="" ref={formLogin} onSubmit={handleLogin} className={styles.formInfor}>
@@ -252,6 +258,7 @@ const Login = () => {
                                             <FormInput key={input.id} {...input} value={valuesLogin[input.name]} onChange={onChangeLogin}></FormInput>
                                         ))}
                                         <Button text="Đăng nhập" className={styles.btnLogin} ></Button>
+                                        <div className={styles.subLink}> <i> Chưa có tài khoản ? </i> <a href="#" onClick={()=> setSelectedTab(1)}> Đăng ký </a> </div>
                                     </form>
 
                                     {loading &&
@@ -264,13 +271,14 @@ const Login = () => {
                                     {valuesSignup.process === 0 && (
                                         <form action="" ref={formGetOTP} onSubmit={handleGetOTP}>
                                             <FormInput key={inputSignup[0].id} {...inputSignup[0]} value={valuesSignup.telnum} onChange={onChangeSignup}></FormInput>
-                                            <Button  text="Nhận mã OTP"></Button>
+                                            <Button text="Nhận mã OTP" className={styles.btnLogin}></Button>
+                                            <div className={styles.subLink}> <i> Đã có tài khoản ? </i> <a href="#" onClick={()=> setSelectedTab(0)}> Đăng nhập </a> </div>
                                         </form>
                                     )}
                                     {valuesSignup.process === 1 && (
                                         <form action="" ref={formValidOTP} onSubmit={handleValidateOTP}>
                                             <FormInput key={inputSignup[5].id} {...inputSignup[5]} value={valuesSignup.otp} onChange={onChangeSignup}></FormInput>
-                                            <Button  text="Xác thực mã OTP"></Button>
+                                            <Button text="Xác thực mã OTP" className={styles.btnLogin}></Button>
                                         </form>
                                     )}
                                     {valuesSignup.process === 2 && (
@@ -278,17 +286,16 @@ const Login = () => {
                                             {inputSignup.slice(1, 5).map((input) => (
                                                 <FormInput key={input.id} {...input} value={valuesSignup[input.name]} onChange={onChangeSignup} ></FormInput>
                                             ))}
-                                            <Button text="Hoàn tất đăng ký"></Button>
+                                            <Button text="Hoàn tất đăng ký" className={styles.btnLogin}></Button>
                                         </form>
                                     )}
-                                    {loading===true ? (
+                                    {loading === true ? (
                                         <div className={styles.loading_icon}>
                                             <ClipLoader color="#febb02" size={30} />
-                                        </div> ) : null
+                                        </div>) : null
                                     }
                                 </TabPanel>
                             </Tabs>
-
                         </div>
                     </div>
                 </div>

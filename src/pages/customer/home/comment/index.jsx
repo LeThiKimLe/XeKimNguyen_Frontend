@@ -59,6 +59,7 @@ const Comment = ({listComment}) => {
                 {listComment.map((comment) => (
                 
                 <div key={comment.id} className={styles.commentWrapper}>
+                  <div className={styles.commentInner}>
                     <div style={{display: 'flex', gap: '15px'}}>
                         <img src={comment.reviewer.gender=== true? female : male} alt="" style={{width: '50px'}}/>
                         <div >
@@ -78,6 +79,7 @@ const Comment = ({listComment}) => {
                         <br></br>
                         { `Ngày ${comment.trip.departDate}`}
                     </i>
+                    </div>
                     </div>
                 </div>
               

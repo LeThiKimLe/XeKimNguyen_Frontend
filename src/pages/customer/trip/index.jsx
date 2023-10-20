@@ -173,11 +173,6 @@ const Trip = () => {
         }
     }, [selectedSeats, message.messagetype]);
 
-    // useEffect(()=>{
-    //     if (message.message!=='')
-    //         setMessage({message:'', messagetype:2})
-    // }, [message.message])
-
     return (
         <>
             {message.message!=='' && <Message message={message.message} messagetype={message.messagetype} />}

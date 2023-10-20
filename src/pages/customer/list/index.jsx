@@ -7,7 +7,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faLocationDot, faMagnifyingGlass, faRightLeft } from "@fortawesome/free-solid-svg-icons"
 import { format } from 'date-fns';
 import SearchItem from './searchItem'
-import { el } from 'date-fns/locale'
+import { TRIP_DATA } from '../../../utils/test_data'
+import { useSelector } from 'react-redux'
+import { selectSearchInfor } from '../../../feature/search/seach.slice'
+import { search } from 'slick/finder'
+
 
 const List = () => {
 
@@ -94,14 +98,14 @@ const List = () => {
         })
     }
 
-    const location = useLocation()
-    const [destination, setDestination] = useState(location.state.destinatePlace)
-    const [origin, setOrigin] = useState(location.state.originPlace)
-    const [startDate, setStartDate] = useState(location.state.startDate)
-    const [returnDay, setReturnDate] = useState(location.state.returnDate)
-    const [numberTicket, setNumberTicket] = useState(location.state.numberTicket)
+    const searchInfor = useSelector(selectSearchInfor)
+    const [destination, setDestination] = useState(searchInfor.searchRoute.destination.name)
+    const [origin, setOrigin] = useState(searchInfor.searchRoute.departure.name)
+    const [startDate, setStartDate] = useState(searchInfor.departDate)
+    const [returnDay, setReturnDate] = useState(searchInfor.arrivalDate)
+    const [numberTicket, setNumberTicket] = useState(searchInfor.numberTicket)
     const startDay = format(new Date(startDate), 'dd/MM/yyyy');
-
+    
     return (
         <div>
             <Navbar></Navbar>

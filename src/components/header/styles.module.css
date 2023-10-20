@@ -140,7 +140,7 @@
     /* bottom: -93px; */
     width: 100%;
     max-width: 1024px;
-    z-index: 2
+    z-index: 3
 }
 
 .headerSearchList
@@ -191,7 +191,7 @@
     /* bottom: -93px; */
     width: 100%;
     height: max-content;
-    z-index: 2
+    z-index: 3
 }
 
 .headerSearchList
@@ -249,7 +249,7 @@
     /* bottom: -93px; */
     width: 100%;
     height: max-content;
-    z-index: 2
+    z-index: 3
 }
 
 .headerSearchList

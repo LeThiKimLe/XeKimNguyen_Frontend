@@ -19,7 +19,6 @@ const authSlice = createSlice({
         reset: (state) => {
             state.message = '';
             state.error = null;
-            console.log('reset'+state.message)
           },
         confirmlogout: (state) => {
             state.loggingOut = true

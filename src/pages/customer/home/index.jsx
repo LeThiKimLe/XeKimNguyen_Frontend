@@ -9,15 +9,25 @@ import { useState, useEffect } from 'react';
 import Loading from '../../../components/loading'
 import Comment from './comment'
 import { COMMENT_LIST } from '../../../utils/test_data'
-
+import { useSelector } from 'react-redux'
+import { selectListRoute } from '../../../feature/route/route.slice'
+import routeThunk from '../../../feature/route/route.service'
+import { useDispatch } from 'react-redux'
 
 const Home = () => {
     const [loading, setLoading] = useState(true);
-
+    const dispatch = useDispatch()
+    const listRoute = useSelector(selectListRoute)
     useEffect(() => {
-        const loadData = async () => {
-            await new Promise((r) => setTimeout(r, 1000));
-            setLoading(false);
+        const loadData = () => {
+            dispatch(routeThunk.getRoute())
+            .then(() => {
+                setLoading(false);
+            }
+            )
+            .catch((error)=>{
+                console.log(error)
+            });
         };
         loadData();
     }, [])
@@ -25,18 +35,18 @@ const Home = () => {
     return (
         <div>
             <Navbar></Navbar>
-            <Header active="home"></Header>
-            <div className={styles.homeContainer}>
-                {loading ?
-                    (<Loading></Loading>) : (
-                        <>
-                            <Featured></Featured>
-                            <Comment listComment={COMMENT_LIST}></Comment>
-                        </>
-                    )
-                }
+            <div style={{position:'relative'}}>
+            {loading ? (<Loading></Loading>) : 
+            (
+                <>
+                { listRoute.length >0 && <Header active="home" listRoute={listRoute}></Header>}
+                    <div className={styles.homeContainer}> 
+                        <Featured></Featured>
+                        <Comment listComment={COMMENT_LIST}></Comment>    
+                    </div>
+                </>
+            )}
             </div>
-            
             <Footer></Footer>
         </div>
     )

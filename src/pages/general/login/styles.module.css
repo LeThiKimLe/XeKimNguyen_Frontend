@@ -21,10 +21,13 @@
     object-fit:cover;
 }
 
-.formContainer
+.formContainerBig
 {
     width: 100%;
+}
 
+.formContainerSmall{
+    width: 60%;
 }
 
 .formInfor{
@@ -32,16 +35,8 @@
 }
 
 .btnLogin{
-  
-}
-
-.btnLogin:hover{
-  background-color: #39A2DB;
-  box-shadow: 0 0 3px #000;
-}
-
-.btnLogin:active{
-  background-color: aqua;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .tab-content {
@@ -50,4 +45,17 @@
 
 .loading_icon{
   margin-top: 15px;
+}
+
+.subLink{
+  display: none;
+  font-size: 14px;
+}
+
+@media only screen and (max-width: 754px){
+
+  .subLink{
+    display: block
+  }
+
 }

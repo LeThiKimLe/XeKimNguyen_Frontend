@@ -6,10 +6,12 @@ import { useRef, useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faArrowRightArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import Route from './route'
+import { useSelector } from 'react-redux'
+import { selectListRoute } from '../../../feature/route/route.slice'
 
 const Schedule = () => {
-    const listRoute = useRef(ROUTE_DATA)
-    const [filteredRoute, setFilteredRoute] = useState(listRoute.current)
+    const listRoute = useSelector(selectListRoute)
+    const [filteredRoute, setFilteredRoute] = useState(listRoute)
     const [exchange, setExchange] = useState(true)
     const [departure, setDeparture] = useState('')
     const [destination, setDestination] = useState('')
@@ -34,7 +36,7 @@ const Schedule = () => {
 
     useEffect(()=>{
 
-        var updatedRoute = [...listRoute.current];
+        var updatedRoute = [...listRoute];
         var depQuery = departure.toLowerCase()
         var desQuery = destination.toLowerCase()
 

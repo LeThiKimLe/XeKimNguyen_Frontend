@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { searchAction } from '../../feature/search/seach.slice';
 import { selectSearchInfor } from '../../feature/search/seach.slice';
 import { createListRoutes } from '../../utils/test_data'
-import { useState, useRef, useCallBack, useEffect, useMemo } from 'react'
+import { useState, useRef, useCallBack, useEffect, useMemo, memo } from 'react'
 import Message from '../message';
 import { ROUTE_DATA } from '../../utils/test_data';
 import { faBus, faHouse, faTicket, faFileInvoice, faPhone, faUsers, faCalendarDays, faLocationDot, faTicketSimple } from "@fortawesome/free-solid-svg-icons"
@@ -16,8 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import { format, parse } from 'date-fns';
 import MediaQuery from 'react-responsive';
 
-const SearchBox = () => {
-    const list_route = useRef(ROUTE_DATA)
+
+const SearchBox = ({listRoute}) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch()
     const searchInfor = useSelector(selectSearchInfor)
@@ -27,20 +27,29 @@ const SearchBox = () => {
     const originPlaceInput = useRef(null);
     const [message, setMessage] = useState({ content: '', repeat: 0 })
     const navigate = useNavigate()
+    const today = new Date();
+    const twoMonthsLater = new Date();
+    twoMonthsLater.setMonth(today.getMonth() + 2);
 
     const setSearchInfor = (propName, propValue) => {
         dispatch(searchAction.setSearch({ propName: propName, propValue: propValue }))
+    }
+
+    const handleOriginPlace = (place) => {
+        setDestinatePlace('')
+        setOriginPlace(place)
+        dispatch(searchAction.resetRoute())
+        console.log(searchInfor)
     }
 
     const checkOrigin = () => {
         if (originPlace === '') {
             originPlaceInput.current.focus();
             setMessage({ content: 'Hãy chọn điểm đi', repeat: Date.now() })
-
         }
         else {
             setDestinatePlace('')
-            setMessage('')
+            setMessage({content:'', repeat:0})
         }
     }
 
@@ -59,16 +68,29 @@ const SearchBox = () => {
     }
 
     const handleSearch = () => {
-        navigate('/trips');
+        console.log('Check')
+        console.log(searchInfor.searchRoute)
+        if (searchInfor.searchRoute)
+        {
+            console.log('Chuyển trang')
+            setMessage({ content: '', repeat: 0 })
+            navigate('/trips');
+        }
+        else{
+            setMessage({ content: 'Hãy chọn điểm đi và điểm đến', repeat: Date.now() })
+        }
     }
 
     useEffect(() => {
         if (destinatePlace !== '') {
-            const selectedTrip = list_route.current.filter((route) => route.id === destinatePlace.value.id)[0]
-            setSearchInfor('seachRoute', selectedTrip)
+            console.log('Cập nhập route')
+            const selectedTrip = listRoute.filter((route) => route.id === destinatePlace.value.id)[0]
+            setSearchInfor('searchRoute', selectedTrip)
             setSearchInfor('turn', destinatePlace.value.turn)
         }
     }, [destinatePlace])
+    console.log('re-render')
+    console.log(searchInfor)
 
     return (
         <>
@@ -101,7 +123,7 @@ const SearchBox = () => {
                     </label>
                 </div>
                 <div className={styles.headerSearchList}>
-                    <div className={styles.groupItem} class={styles.locationGroup}>
+                    <div className={`${styles.groupItem} ${styles.locationGroup}`}>
                         <div className={styles.headerSearchItem}>
                             <FontAwesomeIcon icon={faBus} className={styles.headerIcon} />
                             <div className={styles.selectArea}>
@@ -109,7 +131,7 @@ const SearchBox = () => {
                                 <Select options={listDeparture.map((dep) => { return { value: dep.key, label: dep.location.name } })}
                                     ref={originPlaceInput}
                                     value={originPlace}
-                                    onChange={setOriginPlace}
+                                    onChange={handleOriginPlace}
                                     className={styles.selectItem}
                                     placeholder="Origin">
                                 </Select>
@@ -139,7 +161,7 @@ const SearchBox = () => {
                         </div>
                     </div>
 
-                    <div className={styles.groupItem} class={styles.timeGroup}>
+                    <div className={`${styles.groupItem} ${styles.timeGroup}`}>
                         <div className={styles.headerSearchItem}>
                             <FontAwesomeIcon icon={faCalendarDays} className={styles.headerIcon} />
                             <div className={styles.selectArea}>
@@ -149,7 +171,10 @@ const SearchBox = () => {
                                         onChange={chooseOriginDate}
                                         className={styles.headerSearchInput}
                                         dateFormat="dd/MM/yyyy"
-                                        placeholderText="Depart Date" />
+                                        placeholderText="Depart Date" 
+                                        minDate={today}
+                                        maxDate={twoMonthsLater}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -165,7 +190,10 @@ const SearchBox = () => {
                                                 onChange={chooseReturnDate}
                                                 className={styles.headerSearchInput}
                                                 dateFormat="dd/MM/yyyy"
-                                                placeholderText="Arrival Date" />
+                                                placeholderText="Arrival Date" 
+                                                minDate={today}
+                                                maxDate={twoMonthsLater}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -201,4 +229,4 @@ const SearchBox = () => {
     )
 }
 
-export default SearchBox
+export default memo(SearchBox)

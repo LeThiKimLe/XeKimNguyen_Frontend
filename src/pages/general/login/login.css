@@ -133,3 +133,18 @@
     font-size: 2rem;
     text-align: center;
   }
+
+  
+  @media only screen and (max-width: 754px){
+    .react-tabs__tab{
+      display: none;
+    }
+
+    .react-tabs__tab--selected{
+    display: block;
+    width: 100%;
+    border-radius: 2rem 2rem 2rem 2rem;
+    
+    }
+ 
+}

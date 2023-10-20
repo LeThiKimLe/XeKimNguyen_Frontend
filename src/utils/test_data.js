@@ -626,3 +626,224 @@ export const COMMENT_LIST = [
         sendDate: '21-10-2023'
     }
 ]
+
+
+export const TRIP_DATA = [
+    {
+        id: 1,
+        departTime: 18,
+        departDate: '20-10-2020',
+        ticketPrice: 200000,
+        availability: 20,
+        turn: 1,
+        note: 'Xe có lộ trình đi cao tốc',
+        startStation: {
+            id: 1,
+            name: 'Bến xe Miền Đông mới'
+        },
+        endStation: {
+            id: 2,
+            name: 'Bến xe Cam Ranh'
+        },
+        route: {
+            id: 4,
+            departute: {
+                id: 1,
+                name: "TPHCM"
+            },
+            destination: {
+                id: 4,
+                name: 'Cam Ranh'
+            },
+            hours: 9,
+            distance: 189
+        },
+        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+    },
+    {
+        id: 2,
+        departTime: 9,
+        departDate: '20-10-2020',
+        ticketPrice: 200000,
+        availability: 30,
+        turn: 1,
+        note: 'Xe có lộ trình đi cao tốc',
+        startStation: {
+            id: 1,
+            name: 'Bến xe Miền Đông Tây'
+        },
+        endStation: {
+            id: 2,
+            name: 'Bến xe Cam Ranh'
+        },
+        route: {
+            id: 5,
+            departute: {
+                id: 1,
+                name: "TPHCM"
+            },
+            destination: {
+                id: 5,
+                name: 'Nha Trang'
+            },
+            hours: 11,
+            distance: 250
+        },
+        bookedSeat : ['A1', 'A3', 'A5', 'B7', 'A6', 'B8', 'B9']
+    },
+    {
+        id: 3,
+        departTime: 15.5,
+        departDate: '20-10-2020',
+        ticketPrice: 200000,
+        availability: 20,
+        turn: 1,
+        note: 'Xe có lộ trình đi cao tốc',
+        startStation: {
+            id: 1,
+            name: 'Bến xe Miền Đông mới'
+        },
+        endStation: {
+            id: 2,
+            name: 'Bến xe Cam Ranh'
+        },
+        route: {
+            id: 4,
+            departute: {
+                id: 1,
+                name: "TPHCM"
+            },
+            destination: {
+                id: 4,
+                name: 'Cam Ranh'
+            },
+            hours: 9,
+            distance: 189
+        },
+        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+    },
+    {
+        id: 4,
+        departTime: 23,
+        departDate: '20-10-2020',
+        ticketPrice: 245000,
+        availability: 20,
+        turn: 1,
+        note: 'Xe có lộ trình đi cao tốc',
+        startStation: {
+            id: 1,
+            name: 'Bến xe Miền Đông mới'
+        },
+        endStation: {
+            id: 2,
+            name: 'Bến xe Miền Nam Nha Trang'
+        },
+        route: {
+            id: 5,
+            departute: {
+                id: 1,
+                name: "TPHCM"
+            },
+            destination: {
+                id: 5,
+                name: 'Nha Trang'
+            },
+            hours: 11,
+            distance: 189
+        },
+        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+    },
+    {
+        id: 5,
+        departTime: 18,
+        departDate: '20-10-2020',
+        ticketPrice: 200000,
+        availability: 20,
+        turn: 1,
+        note: 'Xe có lộ trình đi cao tốc',
+        startStation: {
+            id: 1,
+            name: 'Bến xe Miền Đông mới'
+        },
+        endStation: {
+            id: 2,
+            name: 'Bến xe Nha Trang'
+        },
+        route: {
+            id: 5,
+            departute: {
+                id: 1,
+                name: "TPHCM"
+            },
+            destination: {
+                id: 5,
+                name: 'Nha Trang'
+            },
+            hours: 11,
+            distance: 189
+        },
+        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+    },
+    {
+        id: 6,
+        departTime: 7,
+        departDate: '20-10-2020',
+        ticketPrice: 200000,
+        availability: 20,
+        turn: 1,
+        note: 'Xe có lộ trình đi cao tốc',
+        startStation: {
+            id: 1,
+            name: 'Bến xe Miền Đông mới'
+        },
+        endStation: {
+            id: 2,
+            name: 'Bến xe Cam Ranh'
+        },
+        route: {
+            id: 4,
+            departute: {
+                id: 1,
+                name: "TPHCM"
+            },
+            destination: {
+                id: 2,
+                name: 'Cam Ranh'
+            },
+            hours: 9,
+            distance: 189
+        },
+        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+    },
+    {
+        id: 7,
+        departTime: 12,
+        departDate: '20-10-2020',
+        ticketPrice: 200000,
+        availability: 20,
+        turn: 1,
+        note: 'Xe có lộ trình đi cao tốc',
+        startStation: {
+            id: 1,
+            name: 'Bến xe Miền Đông mới'
+        },
+        endStation: {
+            id: 2,
+            name: 'Bến xe Cam Ranh'
+        },
+        route: {
+            id: 4,
+            departute: {
+                id: 1,
+                name: "TPHCM"
+            },
+            destination: {
+                id: 2,
+                name: 'Cam Ranh'
+            },
+            hours: 9,
+            distance: 189
+        },
+        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+    },
+]
