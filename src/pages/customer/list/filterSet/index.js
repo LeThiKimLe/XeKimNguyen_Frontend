@@ -34,7 +34,8 @@ const FilterSet = ({type, title, options, onChange}) => {
                         `${styles.optionChoice} ${styles['optionChoice-active']}` 
                         : styles.optionChoice} 
                         onClick={onChange} 
-                        data-name={key}>
+                        data-name={key}
+                        key={`${key}_${title}`}>
                         {value.label}
                     </div>
                 ))}

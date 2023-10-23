@@ -6,15 +6,19 @@ import { convertToStamp, convertToTime, calculateTimeInDay } from '../../../../u
 import { selectSearchInfor } from '../../../../feature/search/seach.slice'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../../../components/common/button'
+import { tripActions } from '../../../../feature/trip/trip.slice'
 
 const SearchItem = ({ trip }) => {
+
+    const dispatch = useDispatch()
 
     const searchInfor = useSelector(selectSearchInfor)
 
     const navigate = useNavigate()
 
     const handleChooseTrip = () => {
-        navigate(`/trip/${trip}`)
+        dispatch(tripActions.getCurTrip(trip))
+        navigate(`/trip/${trip.id}`)
     }
 
     return (

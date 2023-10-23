@@ -8,9 +8,14 @@ import FormInput from '../../../components/common/formInput'
 import Button from '../../../components/common/button'
 import Footer from '../../../components/footer'
 import Message from '../../../components/message'
-
+import { useSelector } from 'react-redux'
+import { selectCurrentTrip } from '../../../feature/trip/trip.slice'
+import { convertToTime } from '../../../utils/unitUtils'
+import { selectUser } from '../../../feature/auth/auth.slice'
 
 const Trip = () => {
+    const user = useSelector(selectUser)
+    const currentTrip = useSelector(selectCurrentTrip)
     const booked = useRef(['A01', 'A02', 'B09', 'B10'])
     const [message, setMessage] = useState({message:'', messagetype:2})
     const listPick = useRef([
@@ -66,7 +71,7 @@ const Trip = () => {
 
     const listDrop = useRef([
         {
-            id: 7,
+            id: 1,
             name: "Văn phòng Xa lộ Hà Nội",
             address: "123 Đại Lộ Hùng Vương",
             time: "4:00",
@@ -74,15 +79,15 @@ const Trip = () => {
             url: "https://www.google.com/maps/search/BX%20NG%C3%83%204%20GA"
         },
         {
-            id: 8,
-            name: "Ngã tư Thủ Đúc",
+            id: 2,
+            name: "Ngã tư Thủ Đức",
             address: "Hùng Vương, Cam Nghĩa, Cam Ranh, Khánh Hòa",
             time: "5:00",
             is_departure: false,
             url: "https://www.google.com/maps/search/BX%20NG%C3%83%204%20GA"
         },
         {
-            id: 9,
+            id: 3,
             name: "Bến xe Miền Đông",
             address: "97 Nguyễn Văn Trỗi, Phường Cam Phúc Bắc, Cam Ranh, Khánh Hòa",
             time: "6:00",
@@ -90,7 +95,7 @@ const Trip = () => {
             url: "https://www.google.com/maps/search/BX%20NG%C3%83%204%20GA"
         },
         {
-            id: 10,
+            id: 4,
             name: "Bến xe Miền Tây",
             address: "QL1A, Cam Thịnh Đông, Xã Cam Thịnh Đông, Cam Ranh, Khánh Hòa",
             time: "7:00",
@@ -110,7 +115,11 @@ const Trip = () => {
         setDropLocation(locationId)
     }, [])
 
-    const [userInfor, setUserInfor] = useState({
+    const [userInfor, setUserInfor] = useState(user ? {
+        name: user.user.name,
+        email: user.user.email,
+        tel: user.user.tel
+    } : {
         name: "",
         email: "",
         tel: ""
@@ -129,7 +138,7 @@ const Trip = () => {
         },
         {
             id: 2,
-            name: "telnum",
+            name: "tel",
             type: "text",
             placeholder: "Số điện thoại",
             errorMessage: "Sai số điện thoại",
@@ -143,7 +152,8 @@ const Trip = () => {
             name: "email",
             type: "email",
             placeholder: "Email",
-            errorMessage: "",
+            errorMessage: "Email sai định dạng",
+
             label: "Email",
             required: true
         }
@@ -173,6 +183,10 @@ const Trip = () => {
         }
     }, [selectedSeats, message.messagetype]);
 
+    useEffect(()=> {
+        window.scrollTo(0, 0);
+    }, [])
+
     return (
         <>
             {message.message!=='' && <Message message={message.message} messagetype={message.messagetype} />}
@@ -184,7 +198,7 @@ const Trip = () => {
                         <div className={styles.trip_infor}>
                             <div className={styles.infor_segment}>
                                 <h2>Chọn ghế</h2>
-                                <SeatMap type='limousine' booked={booked.current} selectedSeats={selectedSeats} handleSeatClick={handleSeatClick}></SeatMap>
+                                <SeatMap seatMap={currentTrip.bus.busType.seatMap} booked={currentTrip.bookedSeat} selectedSeats={selectedSeats} handleSeatClick={handleSeatClick}></SeatMap>
                             </div>
                             <div className={styles.infor_segment}>
                                 <h2>Thông tin đón trả</h2>
@@ -198,7 +212,12 @@ const Trip = () => {
                                     <form className={`${styles.infor_box} ${styles.personal_infor}`}>
                                         <h2>Thông tin khách hàng</h2>
                                         {userInput.map((input) => (
-                                            <FormInput key={input.id} {...input} value={userInfor[input.name]} onChange={onChangeUserInfor}></FormInput>
+                                            <FormInput  key={input.id} {...input} 
+                                                        value={userInfor[input.name]} 
+                                                        onChange={onChangeUserInfor} 
+                                                        inputWidth='80%'
+                                                        >
+                                            </FormInput>
                                         ))}
                                     </form>
                                     <div className={`${styles.infor_box} ${styles.policy_infor}`}>
@@ -220,23 +239,23 @@ const Trip = () => {
                                 </div>
                             </div>
                             <div className={styles.payment_direct}>
-                                <span>Tổng cộng: 250.000đ</span>
-                                <Button text="Thanh toán"></Button>
+                                <span>{`Tổng cộng: ${(currentTrip.ticketPrice*selectedSeats.length).toLocaleString()} đ`}</span>
+                                <Button text="Thanh toán" className={styles.btnCheckout}></Button>
                             </div>
                         </div>
                         <div className={styles.trip_sum}>
                             <h3 className={styles.sum_title}>Thông tin lượt đi</h3>
                             <div className={styles.sum_infor}>
                                 <span className={styles.sum_infor_title}>Chuyến xe</span>
-                                <span className={styles.sum_infor_value}>BX Mien Dong ⇒ BX Nha Trang</span>
+                                <span className={styles.sum_infor_value}>{`${currentTrip.startStation.name} ⇒ ${currentTrip.endStation.name}`}</span>
                             </div>
                             <div className={styles.sum_infor}>
                                 <span className={styles.sum_infor_title}>Thời gian</span>
-                                <span className={styles.sum_infor_value}>08:00 11-10-2023</span>
+                                <span className={styles.sum_infor_value}>{`${convertToTime(currentTrip.departTime)} ${currentTrip.departDate}`}</span>
                             </div>
                             <div className={styles.sum_infor}>
                                 <span className={styles.sum_infor_title}>Số lượng ghế</span>
-                                <span className={styles.sum_infor_value}>{selectedSeats.length} ghế</span>
+                                <span className={styles.sum_infor_value}>{`${selectedSeats.length} ghế`}</span>
                             </div>
                             <div className={styles.sum_infor}>
                                 <span className={styles.sum_infor_title}>Vị trí ghế</span>
@@ -244,7 +263,7 @@ const Trip = () => {
                             </div>
                             <div className={styles.sum_infor}>
                                 <span className={styles.sum_infor_title}>Tổng tiền</span>
-                                <span className={styles.sum_infor_value}>{250000*selectedSeats.length}đ</span>
+                                <span className={styles.sum_infor_value}>{`${(currentTrip.ticketPrice*selectedSeats.length).toLocaleString()} đ`}</span>
                             </div>
                         </div>
                     </div>

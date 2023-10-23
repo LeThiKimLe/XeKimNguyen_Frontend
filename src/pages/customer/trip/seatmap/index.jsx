@@ -6,50 +6,48 @@ import seat_disabled from '../../../../assets/seat_disabled.svg'
 import seat_selecting from '../../../../assets/seat_selecting.svg'
 import Seat from './Seat';
 
-const SeatMap = ({ type, booked, selectedSeats, handleSeatClick }) => {
-  // const [selectedSeats, setSelectedSeats] = useState([]);
-  
+const SeatMap = ({ seatMap, booked, selectedSeats, handleSeatClick }) => {
+
   const handleSeatChoose = (seatName) => {
-      handleSeatClick(seatName)
+    handleSeatClick(seatName)
   };
-
-  const dataMap = useMemo(() => {
-    try {
-      return seatmapData[type];
-    } catch (error) {
-      console.error("Error reading seatmap data:", error);
-      return {};
-    }
-  }, [type]);
-
-  // const booked = useMemo(()=>['A01', 'A02', 'B09', 'B10'])
 
   return (
     <div className={styles.seat_area}>
       <div className={styles.seat_container}>
         <div className={styles.map_container}>
-          {Array.from({ length: dataMap.floor_no }, (_, index) => index).map((floorNumber) => (
+          {Array.from({ length: seatMap.floorNo }, (_, index) => index + 1).map((floorNumber) => (
             <div key={floorNumber} className={styles.seatfloor}>
-              {dataMap.floor_no !== 1 && (<div className={styles.floor_title}>{floorNumber === 0 ? 'Tầng dưới' : 'Tầng trên'}</div>)}
-              {Array.from({ length: dataMap.row_no }, (_, index) => index).map((rowNumber) => (
+              {seatMap.floorNo !== 1 && (
+                <div className={styles.floor_title}>
+                  {floorNumber === 1 ? 'Tầng dưới' : 'Tầng trên'}
+                </div>
+              )}
+              {Array.from({ length: seatMap.rowNo }, (_, index) => index).map((rowNumber) => (
                 <div key={rowNumber} className={styles.seatrow}>
-                  {dataMap.seat_map[floorNumber].seat_name[rowNumber].map((seatname, colNumber) => (
-                    <div key={colNumber}>
-                      {seatname !== "" ?
-                        <Seat
-                          seatName={seatname}
-                          key={`${floorNumber}-${rowNumber}-${colNumber}`}
-                          state={booked.includes(seatname) ? 'booked' : (selectedSeats.includes(seatname) ? 'selecting' : 'active')}
-                          chooseSeat={() => handleSeatChoose(seatname)}
-                        /> : (
-                          <Seat seatName="empty"
+                  {Array.from({ length: seatMap.colNo }, (_, index) => index).map((colNumber) => {
+                    const filteredSeats = seatMap.seats.filter((seat) => seat.floor === floorNumber && seat.row === rowNumber && seat.col === colNumber);
+                    return filteredSeats.length > 0 ? (
+                      filteredSeats.map((seat) => (
+                        <div key={seat.name}>
+                          <Seat
+                            seatName={seat.name}
                             key={`${floorNumber}-${rowNumber}-${colNumber}`}
-                            state="booked"
-                          ></Seat>
-                        )
-                      }
-                    </div>
-                  ))}
+                            state={booked.includes(seat.name) ? 'booked' : (selectedSeats.includes(seat.name) ? 'selecting' : 'active')}
+                            chooseSeat={() => handleSeatChoose(seat.name)}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <div key={`${floorNumber}-${rowNumber}-${colNumber}`}>
+                        <Seat
+                          seatName="empty"
+                          key={`${floorNumber}+${rowNumber}+${colNumber}`}
+                          state="booked"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>

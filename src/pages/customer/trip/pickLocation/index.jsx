@@ -15,7 +15,7 @@ const PickLocation = ({pick,listLocation, setLocation, selected}) => {
             <h3 className={styles.pick_title}>{pick?"Điểm đón":"Điểm trả"}</h3>
             <div className={styles.list_locations}>
                 {listLocation.map((location) => (
-                <div key={location.id} className={styles.pick_location}>
+                <div key={`${location.id} - ${location.time}`} className={styles.pick_location}>
                     <label className={selected==location.id ? `${styles.location_label} ${styles.selected}`: styles.location_label}>
                         <input
                             type="radio"

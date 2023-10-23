@@ -150,7 +150,9 @@ const List = () => {
                                     <div className={value.value === true ? `${styles.optionChoice} ${styles['optionChoice-active']}`
                                         : styles.optionChoice}
                                         onClick={handleSortClick}
-                                        data-name={key}>
+                                        data-name={key}
+                                        key={key}
+                                >
                                         {value.label}
                                     </div>
                                 ))}
