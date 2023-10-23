@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import axiosClient from "../../api/axios"
 
-const getRoute = createAsyncThunk('route/get', async (thunkAPI)=>{
+const getRoute = createAsyncThunk('route/get', async (_,thunkAPI)=>{
     try{
         const listRoute = await axiosClient.get('routes')
         return listRoute

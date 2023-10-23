@@ -108,7 +108,7 @@ const Header = ({ type, active, listRoute }) => {
                         </MediaQuery>
                     </div>
                     {type !== "list" && (
-                        <SearchBox listRoute = {listRoute}></SearchBox>
+                        <SearchBox listRoute = {listRoute} intro={true}></SearchBox>
                     )}
                 </div>
             </div>

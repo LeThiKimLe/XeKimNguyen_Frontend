@@ -1,5 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import format from "date-fns/format";
+import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
+import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2";
 
 const initialState = {
     infor: {
@@ -8,11 +11,13 @@ const initialState = {
         numberTicket: 1,
         turn: 1,
         oneway: true,
-        arrivalDate: format(new Date(), 'dd/MM/yyyy')
+        arrivalDate: format(new Date(), 'dd/MM/yyyy'),
+        departLocation: null,
+        desLocation: null
     },
     result: {
         listTrip : []
-    }
+    },
 }
 
 const searchSlice = createSlice({
@@ -20,11 +25,12 @@ const searchSlice = createSlice({
     initialState,
     reducers:{
         setSearch: (state, action) => {
-            const {propName, propValue} = action.payload
-            state.infor[propName] = propValue
+            const searchInfor = action.payload
+            state.infor = searchInfor
         },
         resetRoute: (state) => {
             state.infor.searchRoute = null
+            state.infor.desLocation = null
         }
     }
 })
@@ -34,4 +40,14 @@ export const selectRearchResult = (state) => state.search.result
 
 export const searchAction = searchSlice.actions;
 
-export default searchSlice.reducer
+
+const searchPersistConfig = {
+    key: 'search',
+    storage,
+    stateReconciler: autoMergeLevel2,
+    whitelist: ['infor']
+}
+
+const searchReducer = persistReducer(searchPersistConfig, searchSlice.reducer)
+
+export default searchReducer

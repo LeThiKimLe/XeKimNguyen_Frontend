@@ -210,72 +210,6 @@ export const ROUTE_DATA =
         }
     ]
 
-const listDeparture = []
-const listDestination = []
-const routeData = ROUTE_DATA
-
-export const createListRoutes = () => {
-    routeData.forEach((route) => {
-        addRoute(route, 'forward')
-        addRoute(route, 'backward')
-    })
-    return {
-        listDeparture: listDeparture,
-        listDestination: listDestination
-    }
-}
-
-const addRoute = (route, round) => {
-
-    const roundkey = round === 'forward' ? 1 : 0
-
-    const cusRoute = roundkey === 1 ? route : {
-        ...route,
-        departure: route.destination,
-        destination: route.departure
-    }
-
-    const addKeyPair = () => {
-        const key = listDeparture.length
-        listDeparture.push({
-            key: key,
-            location: cusRoute.departure
-        })
-        listDestination.push({
-            key: key,
-            location: [
-                {
-                    destination: cusRoute.destination,
-                    routeId: cusRoute.id,
-                    round: roundkey
-                }
-            ]
-        })
-    }
-
-    if (listDeparture.length !== 0) {
-        const findKey = listDeparture.filter((depart) => depart.location.id === cusRoute.departure.id)[0]
-        if (findKey) {
-            const key = findKey.key
-            const mapDesIndex = listDestination.indexOf(listDestination.filter((des) => des.key === key)[0])
-            {
-                if (!(listDestination[mapDesIndex].location.map((local) => local.destination.id).includes(cusRoute.destination.id))) {
-                    listDestination[mapDesIndex].location.push({
-                        destination: cusRoute.destination,
-                        routeId: cusRoute.id,
-                        round: roundkey
-                    })
-                }
-            }
-        }
-        else {
-            addKeyPair()
-        }
-    }
-    else {
-        addKeyPair()
-    }
-}
 
 export const BOOKING_INFOR = {
     code: 'VAZ5UY',
@@ -647,7 +581,7 @@ export const TRIP_DATA = [
         },
         route: {
             id: 4,
-            departute: {
+            departure: {
                 id: 1,
                 name: "TPHCM"
             },
@@ -658,7 +592,326 @@ export const TRIP_DATA = [
             hours: 9,
             distance: 189
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+        bookedSeat : ['A1', 'A3', 'A5', 'B7'],
+        bus: {
+            busType: {
+                id: 2,
+                name: 'bumk_bus',
+                capacity: 43,
+                fee: 20000,
+                description: 'Xe giường 43 chỗ',
+                seatMap: {
+                    id: 2,
+                    rowNo: 7,
+                    colNo: 5,
+                    floorNo: 2,
+                    seats: [
+                        {
+                            id: 29,
+                            name: 'A01',
+                            row: 0,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 30,
+                            name: 'A02',
+                            row: 0,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 31,
+                            name: 'A03',
+                            row: 0,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 32,
+                            name: 'A04',
+                            row: 1,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 33,
+                            name: 'A05',
+                            row: 1,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 34,
+                            name: 'A06',
+                            row: 1,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 35,
+                            name: 'A07',
+                            row: 2,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 36,
+                            name: 'A08',
+                            row: 2,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 37,
+                            name: 'A09',
+                            row: 2,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 38,
+                            name: 'A10',
+                            row: 3,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 39,
+                            name: 'A11',
+                            row: 3,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 40,
+                            name: 'A12',
+                            row: 3,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 41,
+                            name: 'A13',
+                            row: 4,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 42,
+                            name: 'A14',
+                            row: 4,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 43,
+                            name: 'A15',
+                            row: 4,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 44,
+                            name: 'A16',
+                            row: 5,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 45,
+                            name: 'A17',
+                            row: 5,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 46,
+                            name: 'A18',
+                            row: 6,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 47,
+                            name: 'A19',
+                            row: 6,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 48,
+                            name: 'A20',
+                            row: 6,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 49,
+                            name: 'A21',
+                            row: 6,
+                            col: 3,
+                            floor: 1
+                        },
+                        {
+                            id: 50,
+                            name: 'A22',
+                            row: 6,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 51,
+                            name: 'B01',
+                            row: 0,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 52,
+                            name: 'B02',
+                            row: 0,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 53,
+                            name: 'B03',
+                            row: 0,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 54,
+                            name: 'B04',
+                            row: 1,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 55,
+                            name: 'B05',
+                            row: 1,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 56,
+                            name: 'B06',
+                            row: 1,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 57,
+                            name: 'B07',
+                            row: 2,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 58,
+                            name: 'B08',
+                            row: 2,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 59,
+                            name: 'B09',
+                            row: 2,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 60,
+                            name: 'B10',
+                            row: 3,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 61,
+                            name: 'B11',
+                            row: 3,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 62,
+                            name: 'B12',
+                            row: 3,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 63,
+                            name: 'B13',
+                            row: 4,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 64,
+                            name: 'B14',
+                            row: 4,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 65,
+                            name: 'B15',
+                            row: 4,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 66,
+                            name: 'B17',
+                            row: 5,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 67,
+                            name: 'B18',
+                            row: 6,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 68,
+                            name: 'B19',
+                            row: 6,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 69,
+                            name: 'B20',
+                            row: 6,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 70,
+                            name: 'B21',
+                            row: 6,
+                            col: 3,
+                            floor: 2
+                        },
+                        {
+                            id: 71,
+                            name: 'B22',
+                            row: 6,
+                            col: 4,
+                            floor: 2
+                        }
+                    ]
+                }
+            }
+            
+        }
     },
     {
         id: 2,
@@ -678,7 +931,7 @@ export const TRIP_DATA = [
         },
         route: {
             id: 5,
-            departute: {
+            departure: {
                 id: 1,
                 name: "TPHCM"
             },
@@ -689,7 +942,256 @@ export const TRIP_DATA = [
             hours: 11,
             distance: 250
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7', 'A6', 'B8', 'B9']
+        bookedSeat : ['A01', 'A03', 'A06', 'A09', 'A12', 'A15', 'B03',
+                        'B06', 'B09', 'B12', 'B15', 'B16'],
+        bus: {
+            busType: {
+                id: 3,
+                name: 'limousine',
+                capacity: 33,
+                fee: 50000,
+                description: 'Xe limousine 33 chỗ',
+                seatMap: {
+                    id: 3,
+                    rowNo: 6,
+                    colNo: 3,
+                    floorNo: 2,
+                    seats: [
+                        {
+                            id: 72,
+                            name: 'A01',
+                            row: 0,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 73,
+                            name: 'A02',
+                            row: 0,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 74,
+                            name: 'A03',
+                            row: 1,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 75,
+                            name: 'A04',
+                            row: 1,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 76,
+                            name: 'A05',
+                            row: 1,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 77,
+                            name: 'A06',
+                            row: 2,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 78,
+                            name: 'A07',
+                            row: 2,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 79,
+                            name: 'A08',
+                            row: 2,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 80,
+                            name: 'A09',
+                            row: 3,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 81,
+                            name: 'A10',
+                            row: 3,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 82,
+                            name: 'A11',
+                            row: 3,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 83,
+                            name: 'A12',
+                            row: 4,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 84,
+                            name: 'A13',
+                            row: 4,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 85,
+                            name: 'A14',
+                            row: 4,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 86,
+                            name: 'A15',
+                            row: 5,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 87,
+                            name: 'A16',
+                            row: 5,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 88,
+                            name: 'A17',
+                            row: 5,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 89,
+                            name: 'B02',
+                            row: 0,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 90,
+                            name: 'B03',
+                            row: 1,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 91,
+                            name: 'B04',
+                            row: 1,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 92,
+                            name: 'B05',
+                            row: 1,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 93,
+                            name: 'B06',
+                            row: 2,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 94,
+                            name: 'B07',
+                            row: 2,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 95,
+                            name: 'B08',
+                            row: 2,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 96,
+                            name: 'B09',
+                            row: 3,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 97,
+                            name: 'B10',
+                            row: 3,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 98,
+                            name: 'B11',
+                            row: 3,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 99,
+                            name: 'B12',
+                            row: 4,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 100,
+                            name: 'B13',
+                            row: 4,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 101,
+                            name: 'B14',
+                            row: 4,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 102,
+                            name: 'B15',
+                            row: 5,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 103,
+                            name: 'B16',
+                            row: 5,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 104,
+                            name: 'B17',
+                            row: 5,
+                            col: 2,
+                            floor: 2
+                        }
+                    ]
+                }
+            }
+        }
     },
     {
         id: 3,
@@ -709,7 +1211,7 @@ export const TRIP_DATA = [
         },
         route: {
             id: 4,
-            departute: {
+            departure: {
                 id: 1,
                 name: "TPHCM"
             },
@@ -720,7 +1222,326 @@ export const TRIP_DATA = [
             hours: 9,
             distance: 189
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+        bookedSeat : ['A1', 'A3', 'A5', 'B7'],
+        bus: {
+            busType: {
+                id: 2,
+                name: 'bumk_bus',
+                capacity: 43,
+                fee: 20000,
+                description: 'Xe giường 43 chỗ',
+                seatMap: {
+                    id: 2,
+                    rowNo: 7,
+                    colNo: 5,
+                    floorNo: 2,
+                    seats: [
+                        {
+                            id: 29,
+                            name: 'A01',
+                            row: 0,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 30,
+                            name: 'A02',
+                            row: 0,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 31,
+                            name: 'A03',
+                            row: 0,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 32,
+                            name: 'A04',
+                            row: 1,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 33,
+                            name: 'A05',
+                            row: 1,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 34,
+                            name: 'A06',
+                            row: 1,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 35,
+                            name: 'A07',
+                            row: 2,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 36,
+                            name: 'A08',
+                            row: 2,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 37,
+                            name: 'A09',
+                            row: 2,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 38,
+                            name: 'A10',
+                            row: 3,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 39,
+                            name: 'A11',
+                            row: 3,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 40,
+                            name: 'A12',
+                            row: 3,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 41,
+                            name: 'A13',
+                            row: 4,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 42,
+                            name: 'A14',
+                            row: 4,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 43,
+                            name: 'A15',
+                            row: 4,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 44,
+                            name: 'A16',
+                            row: 5,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 45,
+                            name: 'A17',
+                            row: 5,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 46,
+                            name: 'A18',
+                            row: 6,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 47,
+                            name: 'A19',
+                            row: 6,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 48,
+                            name: 'A20',
+                            row: 6,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 49,
+                            name: 'A21',
+                            row: 6,
+                            col: 3,
+                            floor: 1
+                        },
+                        {
+                            id: 50,
+                            name: 'A22',
+                            row: 6,
+                            col: 4,
+                            floor: 1
+                        },
+                        {
+                            id: 51,
+                            name: 'B01',
+                            row: 0,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 52,
+                            name: 'B02',
+                            row: 0,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 53,
+                            name: 'B03',
+                            row: 0,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 54,
+                            name: 'B04',
+                            row: 1,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 55,
+                            name: 'B05',
+                            row: 1,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 56,
+                            name: 'B06',
+                            row: 1,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 57,
+                            name: 'B07',
+                            row: 2,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 58,
+                            name: 'B08',
+                            row: 2,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 59,
+                            name: 'B09',
+                            row: 2,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 60,
+                            name: 'B10',
+                            row: 3,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 61,
+                            name: 'B11',
+                            row: 3,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 62,
+                            name: 'B12',
+                            row: 3,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 63,
+                            name: 'B13',
+                            row: 4,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 64,
+                            name: 'B14',
+                            row: 4,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 65,
+                            name: 'B15',
+                            row: 4,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 66,
+                            name: 'B17',
+                            row: 5,
+                            col: 4,
+                            floor: 2
+                        },
+                        {
+                            id: 67,
+                            name: 'B18',
+                            row: 6,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 68,
+                            name: 'B19',
+                            row: 6,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 69,
+                            name: 'B20',
+                            row: 6,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 70,
+                            name: 'B21',
+                            row: 6,
+                            col: 3,
+                            floor: 2
+                        },
+                        {
+                            id: 71,
+                            name: 'B22',
+                            row: 6,
+                            col: 4,
+                            floor: 2
+                        }
+                    ]
+                }
+            }
+            
+        }
     },
     {
         id: 4,
@@ -740,7 +1561,7 @@ export const TRIP_DATA = [
         },
         route: {
             id: 5,
-            departute: {
+            departure: {
                 id: 1,
                 name: "TPHCM"
             },
@@ -751,7 +1572,256 @@ export const TRIP_DATA = [
             hours: 11,
             distance: 189
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+        bookedSeat : ['A02', 'A05', 'A08', 'A11', 'A14', 'A17',
+                        'B02', 'B05', 'B08', 'B11', 'B14', 'B17'],
+        bus: {
+            busType: {
+                id: 3,
+                name: 'limousine',
+                capacity: 33,
+                fee: 50000,
+                description: 'Xe limousine 33 chỗ',
+                seatMap: {
+                    id: 3,
+                    rowNo: 6,
+                    colNo: 3,
+                    floorNo: 2,
+                    seats: [
+                        {
+                            id: 72,
+                            name: 'A01',
+                            row: 0,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 73,
+                            name: 'A02',
+                            row: 0,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 74,
+                            name: 'A03',
+                            row: 1,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 75,
+                            name: 'A04',
+                            row: 1,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 76,
+                            name: 'A05',
+                            row: 1,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 77,
+                            name: 'A06',
+                            row: 2,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 78,
+                            name: 'A07',
+                            row: 2,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 79,
+                            name: 'A08',
+                            row: 2,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 80,
+                            name: 'A09',
+                            row: 3,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 81,
+                            name: 'A10',
+                            row: 3,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 82,
+                            name: 'A11',
+                            row: 3,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 83,
+                            name: 'A12',
+                            row: 4,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 84,
+                            name: 'A13',
+                            row: 4,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 85,
+                            name: 'A14',
+                            row: 4,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 86,
+                            name: 'A15',
+                            row: 5,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 87,
+                            name: 'A16',
+                            row: 5,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 88,
+                            name: 'A17',
+                            row: 5,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 89,
+                            name: 'B02',
+                            row: 0,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 90,
+                            name: 'B03',
+                            row: 1,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 91,
+                            name: 'B04',
+                            row: 1,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 92,
+                            name: 'B05',
+                            row: 1,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 93,
+                            name: 'B06',
+                            row: 2,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 94,
+                            name: 'B07',
+                            row: 2,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 95,
+                            name: 'B08',
+                            row: 2,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 96,
+                            name: 'B09',
+                            row: 3,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 97,
+                            name: 'B10',
+                            row: 3,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 98,
+                            name: 'B11',
+                            row: 3,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 99,
+                            name: 'B12',
+                            row: 4,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 100,
+                            name: 'B13',
+                            row: 4,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 101,
+                            name: 'B14',
+                            row: 4,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 102,
+                            name: 'B15',
+                            row: 5,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 103,
+                            name: 'B16',
+                            row: 5,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 104,
+                            name: 'B17',
+                            row: 5,
+                            col: 2,
+                            floor: 2
+                        }
+                    ]
+                }
+            }
+        }
     },
     {
         id: 5,
@@ -771,7 +1841,7 @@ export const TRIP_DATA = [
         },
         route: {
             id: 5,
-            departute: {
+            departure: {
                 id: 1,
                 name: "TPHCM"
             },
@@ -782,7 +1852,258 @@ export const TRIP_DATA = [
             hours: 11,
             distance: 189
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+        bookedSeat : ['A04', 'A07', 'A10', 'A13', 'A16', 'A08', 'A11', 'A14', 'A17',
+                    'A01', 'A02', 'A05', 'A03', 'A06', 'A09', 'A12', 'A15',
+                     'B04', 'B07', 'B10', 'B13', 'B16',
+                     'B03', 'B04', 'B02', 'B05'],
+        bus: {
+            busType: {
+                id: 3,
+                name: 'limousine',
+                capacity: 33,
+                fee: 50000,
+                description: 'Xe limousine 33 chỗ',
+                seatMap: {
+                    id: 3,
+                    rowNo: 6,
+                    colNo: 3,
+                    floorNo: 2,
+                    seats: [
+                        {
+                            id: 72,
+                            name: 'A01',
+                            row: 0,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 73,
+                            name: 'A02',
+                            row: 0,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 74,
+                            name: 'A03',
+                            row: 1,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 75,
+                            name: 'A04',
+                            row: 1,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 76,
+                            name: 'A05',
+                            row: 1,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 77,
+                            name: 'A06',
+                            row: 2,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 78,
+                            name: 'A07',
+                            row: 2,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 79,
+                            name: 'A08',
+                            row: 2,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 80,
+                            name: 'A09',
+                            row: 3,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 81,
+                            name: 'A10',
+                            row: 3,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 82,
+                            name: 'A11',
+                            row: 3,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 83,
+                            name: 'A12',
+                            row: 4,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 84,
+                            name: 'A13',
+                            row: 4,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 85,
+                            name: 'A14',
+                            row: 4,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 86,
+                            name: 'A15',
+                            row: 5,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 87,
+                            name: 'A16',
+                            row: 5,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 88,
+                            name: 'A17',
+                            row: 5,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 89,
+                            name: 'B02',
+                            row: 0,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 90,
+                            name: 'B03',
+                            row: 1,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 91,
+                            name: 'B04',
+                            row: 1,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 92,
+                            name: 'B05',
+                            row: 1,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 93,
+                            name: 'B06',
+                            row: 2,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 94,
+                            name: 'B07',
+                            row: 2,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 95,
+                            name: 'B08',
+                            row: 2,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 96,
+                            name: 'B09',
+                            row: 3,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 97,
+                            name: 'B10',
+                            row: 3,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 98,
+                            name: 'B11',
+                            row: 3,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 99,
+                            name: 'B12',
+                            row: 4,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 100,
+                            name: 'B13',
+                            row: 4,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 101,
+                            name: 'B14',
+                            row: 4,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 102,
+                            name: 'B15',
+                            row: 5,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 103,
+                            name: 'B16',
+                            row: 5,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 104,
+                            name: 'B17',
+                            row: 5,
+                            col: 2,
+                            floor: 2
+                        }
+                    ]
+                }
+            }
+        }
     },
     {
         id: 6,
@@ -802,7 +2123,7 @@ export const TRIP_DATA = [
         },
         route: {
             id: 4,
-            departute: {
+            departure: {
                 id: 1,
                 name: "TPHCM"
             },
@@ -813,7 +2134,256 @@ export const TRIP_DATA = [
             hours: 9,
             distance: 189
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+        bookedSeat : ['A12', 'A13', 'A14', 'A15', 'A16', 'A17',
+                        'B12', 'B13', 'B14', 'B15', 'B16', 'B17'],
+        bus: {
+            busType: {
+                id: 3,
+                name: 'limousine',
+                capacity: 33,
+                fee: 50000,
+                description: 'Xe limousine 33 chỗ',
+                seatMap: {
+                    id: 3,
+                    rowNo: 6,
+                    colNo: 3,
+                    floorNo: 2,
+                    seats: [
+                        {
+                            id: 72,
+                            name: 'A01',
+                            row: 0,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 73,
+                            name: 'A02',
+                            row: 0,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 74,
+                            name: 'A03',
+                            row: 1,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 75,
+                            name: 'A04',
+                            row: 1,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 76,
+                            name: 'A05',
+                            row: 1,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 77,
+                            name: 'A06',
+                            row: 2,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 78,
+                            name: 'A07',
+                            row: 2,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 79,
+                            name: 'A08',
+                            row: 2,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 80,
+                            name: 'A09',
+                            row: 3,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 81,
+                            name: 'A10',
+                            row: 3,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 82,
+                            name: 'A11',
+                            row: 3,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 83,
+                            name: 'A12',
+                            row: 4,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 84,
+                            name: 'A13',
+                            row: 4,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 85,
+                            name: 'A14',
+                            row: 4,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 86,
+                            name: 'A15',
+                            row: 5,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 87,
+                            name: 'A16',
+                            row: 5,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 88,
+                            name: 'A17',
+                            row: 5,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 89,
+                            name: 'B02',
+                            row: 0,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 90,
+                            name: 'B03',
+                            row: 1,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 91,
+                            name: 'B04',
+                            row: 1,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 92,
+                            name: 'B05',
+                            row: 1,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 93,
+                            name: 'B06',
+                            row: 2,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 94,
+                            name: 'B07',
+                            row: 2,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 95,
+                            name: 'B08',
+                            row: 2,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 96,
+                            name: 'B09',
+                            row: 3,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 97,
+                            name: 'B10',
+                            row: 3,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 98,
+                            name: 'B11',
+                            row: 3,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 99,
+                            name: 'B12',
+                            row: 4,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 100,
+                            name: 'B13',
+                            row: 4,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 101,
+                            name: 'B14',
+                            row: 4,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 102,
+                            name: 'B15',
+                            row: 5,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 103,
+                            name: 'B16',
+                            row: 5,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 104,
+                            name: 'B17',
+                            row: 5,
+                            col: 2,
+                            floor: 2
+                        }
+                    ]
+                }
+            }
+        }
     },
     {
         id: 7,
@@ -822,7 +2392,7 @@ export const TRIP_DATA = [
         ticketPrice: 200000,
         availability: 20,
         turn: 1,
-        note: 'Xe có lộ trình đi cao tốc',
+        note: 'Xe không nhận vận chuyển chó mèo',
         startStation: {
             id: 1,
             name: 'Bến xe Miền Đông mới'
@@ -833,7 +2403,7 @@ export const TRIP_DATA = [
         },
         route: {
             id: 4,
-            departute: {
+            departure: {
                 id: 1,
                 name: "TPHCM"
             },
@@ -844,6 +2414,254 @@ export const TRIP_DATA = [
             hours: 9,
             distance: 189
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7']
+        bookedSeat : ['A1', 'A3', 'A5', 'B7'],
+        bus: {
+            busType: {
+                id: 3,
+                name: 'limousine',
+                capacity: 33,
+                fee: 50000,
+                description: 'Xe limousine 33 chỗ',
+                seatMap: {
+                    id: 3,
+                    rowNo: 6,
+                    colNo: 3,
+                    floorNo: 2,
+                    seats: [
+                        {
+                            id: 72,
+                            name: 'A01',
+                            row: 0,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 73,
+                            name: 'A02',
+                            row: 0,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 74,
+                            name: 'A03',
+                            row: 1,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 75,
+                            name: 'A04',
+                            row: 1,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 76,
+                            name: 'A05',
+                            row: 1,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 77,
+                            name: 'A06',
+                            row: 2,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 78,
+                            name: 'A07',
+                            row: 2,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 79,
+                            name: 'A08',
+                            row: 2,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 80,
+                            name: 'A09',
+                            row: 3,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 81,
+                            name: 'A10',
+                            row: 3,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 82,
+                            name: 'A11',
+                            row: 3,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 83,
+                            name: 'A12',
+                            row: 4,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 84,
+                            name: 'A13',
+                            row: 4,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 85,
+                            name: 'A14',
+                            row: 4,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 86,
+                            name: 'A15',
+                            row: 5,
+                            col: 0,
+                            floor: 1
+                        },
+                        {
+                            id: 87,
+                            name: 'A16',
+                            row: 5,
+                            col: 1,
+                            floor: 1
+                        },
+                        {
+                            id: 88,
+                            name: 'A17',
+                            row: 5,
+                            col: 2,
+                            floor: 1
+                        },
+                        {
+                            id: 89,
+                            name: 'B02',
+                            row: 0,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 90,
+                            name: 'B03',
+                            row: 1,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 91,
+                            name: 'B04',
+                            row: 1,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 92,
+                            name: 'B05',
+                            row: 1,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 93,
+                            name: 'B06',
+                            row: 2,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 94,
+                            name: 'B07',
+                            row: 2,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 95,
+                            name: 'B08',
+                            row: 2,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 96,
+                            name: 'B09',
+                            row: 3,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 97,
+                            name: 'B10',
+                            row: 3,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 98,
+                            name: 'B11',
+                            row: 3,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 99,
+                            name: 'B12',
+                            row: 4,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 100,
+                            name: 'B13',
+                            row: 4,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 101,
+                            name: 'B14',
+                            row: 4,
+                            col: 2,
+                            floor: 2
+                        },
+                        {
+                            id: 102,
+                            name: 'B15',
+                            row: 5,
+                            col: 0,
+                            floor: 2
+                        },
+                        {
+                            id: 103,
+                            name: 'B16',
+                            row: 5,
+                            col: 1,
+                            floor: 2
+                        },
+                        {
+                            id: 104,
+                            name: 'B17',
+                            row: 5,
+                            col: 2,
+                            floor: 2
+                        }
+                    ]
+                }
+            }
+        }
     },
 ]

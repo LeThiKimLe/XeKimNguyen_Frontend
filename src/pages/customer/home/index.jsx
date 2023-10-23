@@ -4,7 +4,6 @@ import Navbar from "../../../components/navbar"
 import Header from "../../../components/header"
 import Footer from '../../../components/footer'
 import Featured from './featured'
-import PropertyList from './propertyList'
 import { useState, useEffect } from 'react';
 import Loading from '../../../components/loading'
 import Comment from './comment'
@@ -32,6 +31,8 @@ const Home = () => {
         loadData();
     }, [])
 
+    console.log(listRoute)
+    
     return (
         <div>
             <Navbar></Navbar>

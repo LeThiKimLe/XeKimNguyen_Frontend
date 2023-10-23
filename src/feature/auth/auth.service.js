@@ -18,7 +18,7 @@ const login = createAsyncThunk('auth/login', async ({username, password}, thunkA
 } 
 )
 
-const logout = createAsyncThunk('auth/logout', async (thunkAPI) => {
+const logout = createAsyncThunk('auth/logout', async (_,thunkAPI) => {
     try{
         localStorage.removeItem("current_user")
         const response = await axiosClient.post('auth/logout')      
@@ -47,7 +47,7 @@ const register = createAsyncThunk('auth/signup', async({tel, name, email, passwo
     }
 )
 
-const getOTP = createAsyncThunk('auth/get-otp', async(telno, thunkAPI) => {
+const getOTP = createAsyncThunk('auth/get-otp', async({telno}, thunkAPI) => {
     try{
         const response = await axiosClient.get('auth/get-otp', {telno})
         return response
@@ -77,14 +77,21 @@ const validateOTP = createAsyncThunk('auth/verify-otp', async({telno, otp}, thun
 
 const updateProfile = createAsyncThunk('profile/update', async ({updatedInfor}, thunkAPI) => {
     try{
-        const response = await axiosClient.put('user/edit',
-                                            { tel: updatedInfor.tel,
-                                              name: updatedInfor.name,
-                                              email: updatedInfor.email,
-                                              address: updatedInfor.address,
-                                              img: updatedInfor.img,
-                                              gender: updatedInfor.gender.value
-                                            })
+        const formData = new FormData();
+        formData.append('tel', updatedInfor.tel);
+        formData.append('name', updatedInfor.name);
+        formData.append('email', updatedInfor.email);
+        formData.append('address', updatedInfor.address);
+        formData.append('file', updatedInfor.img);
+        formData.append('gender', updatedInfor.gender.value);
+      
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Ghi đè tiêu đề
+          },
+        };
+
+        const response = await axiosClient.put('user/edit', formData, config)
         const cur_user = JSON.parse(localStorage.getItem("current_user"))
         cur_user.user = response
         localStorage.setItem("current_user", JSON.stringify(cur_user))

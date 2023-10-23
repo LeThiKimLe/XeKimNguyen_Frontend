@@ -3,15 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRightArrowLeft, faCircleDot } from '@fortawesome/free-solid-svg-icons'
 import {OptionButton} from '../../../../components/common/button'
 import { useEffect, useState } from 'react' 
+import { convertToStamp } from '../../../../utils/unitUtils'
 const Route = ({route, reverse}) => {
-
-    const convertToTime = (decimalHours) => {
-        const hours = Math.floor(decimalHours);
-        const minutes = Math.round((decimalHours - hours) * 60);
-        if (minutes !== 0)
-            return `${hours} tiếng ${minutes} phút`;
-        return `${hours} tiếng`
-    }
 
     const reverseSchedule = (schedule) => {
         const splited = schedule.split(' -> ');
@@ -37,7 +30,7 @@ const Route = ({route, reverse}) => {
             <div className={styles.routeTime}>
                 <FontAwesomeIcon icon={faCircleDot} />
                 <div className={styles.dot}></div>
-                <div className={styles.time}>{convertToTime(cusRoute.hours)}</div>
+                <div className={styles.time}>{convertToStamp(cusRoute.hours)}</div>
                 <div className={styles.dot}></div>
                 <FontAwesomeIcon icon={faCircleDot}/>
             </div>

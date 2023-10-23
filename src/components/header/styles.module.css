@@ -128,6 +128,8 @@
 }
 
 
+
+
 @media only screen and (min-width: 1000px) {
     /* styles for devices with a minimum screen width of 480px */
  
@@ -137,10 +139,18 @@
     padding: 20px 0px 40px 0;
     border-radius: 5px;
     position: absolute;
-    /* bottom: -93px; */
     width: 100%;
     max-width: 1024px;
     z-index: 3
+}
+
+.mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ccc;
 }
 
 .headerSearchList

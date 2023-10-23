@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react'
 import male from '../../../assets/male.svg'
 import female from '../../../assets/female.svg'
 import FormInput from '../../../components/common/formInput'
-import Button from '../../../components/common/button'
+import Button, { OptionButton } from '../../../components/common/button'
 import { useNavigate } from 'react-router-dom'
 import { selectActive } from '../../../feature/profile/profile.slice'
 import { profileAction } from '../../../feature/profile/profile.slice'
@@ -31,6 +31,7 @@ const Profile = () => {
     const message = useSelector(selectMessage)
     const loading = useSelector(selectLoading)
     const error = useSelector(selectError)
+    const [updated, setUpdated] = useState(false)
 
     const handleAction = (action) => {
         dispatch(profileAction.setActive({ active: action.index }))
@@ -40,6 +41,8 @@ const Profile = () => {
     const [file, setFile] = useState()
     const handleUpImage = (e) => {
         setFile(URL.createObjectURL(e.target.files[0]))
+        setValueInfor({ ...valueInfor, img: e.target.files[0] })
+        setUpdated(true)
     }
 
     const [isUpdating, setIsUpdating] = useState(false)
@@ -69,7 +72,7 @@ const Profile = () => {
             img: (userRole > 1 ?
                 (userRole < 4 ? user.user.staff.img
                     : user.user.driver.img)
-                : ('https://cdn-icons-png.flaticon.com/512/6386/6386976.png')),
+                : (user.user.customer.img)),
         }) :
             (
                 {
@@ -84,23 +87,66 @@ const Profile = () => {
             )
     )
 
+    const handleResetInfor = (e) => {
+        e.preventDefault()
+        setValueInfor({
+            tel: user.user.tel,
+            name: user.user.name,
+            email: user.user.email,
+            gender: (user.user.gender === "true" ?
+                GENDER_OPTION[0] :
+                GENDER_OPTION[1]),
+            idCard: (userRole > 1 ?
+                (userRole < 4 ? user.user.staff.idCard
+                    : user.user.driver.idCard)
+                : ('12345678909')),
+            address: (userRole > 1 ?
+                (userRole < 4 ? user.user.staff.address
+                    : user.user.driver.address)
+                : ('123 Phan Boi Chau')),
+            beginWorkDate: (userRole > 1 ?
+                (userRole < 4 ? user.user.staff.beginWorkDate
+                    : user.user.driver.beginWorkDate)
+                : ('09-09-2023')),
+            licenseNumber: (userRole < 4 ? '' : user.user.driver.licenseNumber),
+            issueDate: (userRole < 4 ? '' : user.user.driver.issueDate),
+            img: (userRole > 1 ?
+                (userRole < 4 ? user.user.staff.img
+                    : user.user.driver.img)
+                : (user.user.customer.img)),
+        })
+        setIsUpdating(false)
+        setFile(null)
+        setUpdated(false)
+    }
+
     const userInfor = UPDATE_INFOR
 
     const onChangeInfor = (e) => {
+        if (updated === false)
+            setUpdated(true)
         setValueInfor({ ...valueInfor, [e.target.name]: e.target.value })
     }
 
     const handleUpdate = (e) => {
         e.preventDefault();
         if (isUpdating) {
-            dispatch(authThunk.updateProfile({ updatedInfor: valueInfor }))
-                .unwrap()
-                .then(() => {
-                    setIsUpdating(false)
-                })
-                .catch((error) => {
-                    console.log('fail')
-                })
+            if (updated == true)
+            {
+                dispatch(authThunk.updateProfile({ updatedInfor: valueInfor }))
+                    .unwrap()
+                    .then(() => {
+                        setIsUpdating(false)
+                    })
+                    .catch((error) => {
+                        console.log('fail')
+                    })
+            }
+            else
+            {
+                setIsUpdating(false)
+                setUpdated(false)
+            }
         }
         else {
             setIsUpdating(true)
@@ -158,8 +204,12 @@ const Profile = () => {
                                                 <Row>
                                                     <Col md={4}>
                                                         <div className={styles.userIcon}>
-                                                            <img src={file ? file : (valueInfor.gender.value === 1 ? female : male)} alt="User ICon" />
-                                                            <input type="file" onChange={handleUpImage}></input>
+                                                            <img src={file ? file 
+                                                                            : (valueInfor.img ? valueInfor.img 
+                                                                                              : valueInfor.gender.value === 1 ? female 
+                                                                                                                              : male)} alt="User ICon" />
+                                                            { isUpdating &&
+                                                                <input type="file" onChange={handleUpImage} name='myImage' style={{width: '100%'}}></input>}
                                                         </div>
                                                     </Col>
                                                     <Col md={8}>
@@ -173,13 +223,19 @@ const Profile = () => {
                                                                     >
                                                                     </FormInput>
                                                                 )
-                                                                )}
+                                                                )
+                                                            }
+                                                            <div className={styles.btnGroup}>
                                                             <Button text={isUpdating ? "Lưu thông tin" : "Cập nhật"}
                                                                 className={styles.updateBtn}
                                                                 loading={loading}
                                                             >
                                                             </Button>
+                                                            {isUpdating && 
+                                                           <OptionButton text='Hủy' onClick={handleResetInfor}  className={styles.updateBtn}></OptionButton>}
+                                                            </div>
                                                         </form>
+                                                        
                                                     </Col>
                                                 </Row>
                                             </Container>

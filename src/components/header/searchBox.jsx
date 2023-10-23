@@ -3,122 +3,149 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { searchAction } from '../../feature/search/seach.slice';
 import { selectSearchInfor } from '../../feature/search/seach.slice';
-import { createListRoutes } from '../../utils/test_data'
-import { useState, useRef, useCallBack, useEffect, useMemo, memo } from 'react'
+import { createListRoutes } from '../../utils/routeUtils';
+import { useState, useRef, useEffect, useMemo, memo } from 'react'
 import Message from '../message';
-import { ROUTE_DATA } from '../../utils/test_data';
-import { faBus, faHouse, faTicket, faFileInvoice, faPhone, faUsers, faCalendarDays, faLocationDot, faTicketSimple } from "@fortawesome/free-solid-svg-icons"
+import { faBus, faCalendarDays, faLocationDot, faTicketSimple } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import DatePicker from 'react-datepicker';
 import Button from "../common/button";
 import Select from 'react-select'
 import { useNavigate } from 'react-router-dom';
 import { format, parse } from 'date-fns';
-import MediaQuery from 'react-responsive';
-
-
-const SearchBox = ({listRoute}) => {
+import { selectLoadingState } from '../../feature/route/route.slice';
+// TODO: Sửa lại mấy cái biến lưu thông tin = ref, cho khi click nút mới lưu vào redux
+const SearchBox = ({ listRoute, intro, parentClass }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch()
     const searchInfor = useSelector(selectSearchInfor)
-    const [originPlace, setOriginPlace] = useState('')
-    const [destinatePlace, setDestinatePlace] = useState('')
-    const { listDeparture, listDestination } = useMemo(() => createListRoutes(), [])
+    const { listDeparture, listDestination } = useMemo(() => createListRoutes(listRoute), [])
     const originPlaceInput = useRef(null);
+    const [currentInfor, setCurrentInfor] = useState(searchInfor)
     const [message, setMessage] = useState({ content: '', repeat: 0 })
     const navigate = useNavigate()
     const today = new Date();
     const twoMonthsLater = new Date();
     twoMonthsLater.setMonth(today.getMonth() + 2);
+    const depOptions = listDeparture.map((dep) => { return { value: dep.key, label: dep.location.name } })
+    const desOptions = currentInfor.departLocation ? (listDestination.filter((des) => des.key === currentInfor.departLocation.value)[0].location.map(
+        (des) => {
+            return {
+                value: { id: des.routeId, turn: des.round },
+                label: des.destination.name
+            }
+        })) : []
 
-    const setSearchInfor = (propName, propValue) => {
-        dispatch(searchAction.setSearch({ propName: propName, propValue: propValue }))
+    const handleCurrentInfor = (propName, propValue) => {
+        if (propName !== 'searchRoute')
+            setCurrentInfor({
+                ...currentInfor,
+                [propName]: propValue
+            })
+        else{
+            setCurrentInfor({
+                ...currentInfor,
+                searchRoute: propValue
+            })
+        }
+    }
+
+    const resetCurrentInfor = () => {
+        setCurrentInfor({
+            ...currentInfor,
+            searchRoute: null,
+            desLocation: null
+        })
     }
 
     const handleOriginPlace = (place) => {
-        setDestinatePlace('')
-        setOriginPlace(place)
-        dispatch(searchAction.resetRoute())
-        console.log(searchInfor)
+        setCurrentInfor({
+            ...currentInfor,
+            searchRoute: null,
+            desLocation: null,
+            departLocation: place
+        })
+        // handleCurrentInfor('departLocation', place)
+    }
+
+    const handleDesPlace = (place) => {
+        handleCurrentInfor('desLocation', place)
     }
 
     const checkOrigin = () => {
-        if (originPlace === '') {
+        if (!(currentInfor.departLocation)) {
             originPlaceInput.current.focus();
             setMessage({ content: 'Hãy chọn điểm đi', repeat: Date.now() })
         }
         else {
-            setDestinatePlace('')
-            setMessage({content:'', repeat:0})
+            setMessage({ content: '', repeat: 0 })
         }
     }
 
     const chooseOriginDate = (date) => {
-        setSearchInfor('departDate', format(date, 'dd/MM/yyyy'))
+        handleCurrentInfor('departDate', format(date, 'dd/MM/yyyy'))
     };
 
     const chooseReturnDate = (date) => {
-        setSearchInfor('arrivalDate', format(date, 'dd/MM/yyyy'));
+        handleCurrentInfor('arrivalDate', format(date, 'dd/MM/yyyy'));
     }
 
     const chooseTicketNumber = (amount) => {
-        const new_quatity = searchInfor.numberTicket + amount
+        const new_quatity = currentInfor.numberTicket + amount
         if (new_quatity >= 1 && new_quatity <= 5)
-            setSearchInfor('numberTicket', new_quatity)
+            handleCurrentInfor('numberTicket', new_quatity)
     }
 
     const handleSearch = () => {
-        console.log('Check')
-        console.log(searchInfor.searchRoute)
-        if (searchInfor.searchRoute)
-        {
-            console.log('Chuyển trang')
+        if (currentInfor.searchRoute) {
             setMessage({ content: '', repeat: 0 })
+            dispatch(searchAction.setSearch(currentInfor))
             navigate('/trips');
         }
-        else{
-            setMessage({ content: 'Hãy chọn điểm đi và điểm đến', repeat: Date.now() })
+        else {
+            setMessage({ content: 'Hãy chọn đủ điểm đi và điểm đến', repeat: Date.now() })
         }
     }
 
     useEffect(() => {
-        if (destinatePlace !== '') {
-            console.log('Cập nhập route')
-            const selectedTrip = listRoute.filter((route) => route.id === destinatePlace.value.id)[0]
-            setSearchInfor('searchRoute', selectedTrip)
-            setSearchInfor('turn', destinatePlace.value.turn)
+        if (currentInfor.desLocation && !currentInfor.searchRoute) {
+            const selectedTrip = listRoute.filter((route) => route.id === currentInfor.desLocation.value.id)[0]
+            setCurrentInfor({
+                ...currentInfor,
+                searchRoute: selectedTrip,
+                turn: currentInfor.desLocation.value.turn
+            })
         }
-    }, [destinatePlace])
-    console.log('re-render')
-    console.log(searchInfor)
+    }, [currentInfor.desLocation])
 
     return (
         <>
             {message.content !== '' && <Message message={message.content} repeat={message.repeat} />}
-            <h1 className={styles.headerTitle}>{t('header.welcome')}</h1>
-            <p className={styles.headerDesc}>{t('header.promo')}</p>
-            <div className={styles.headerSearch}>
+            {intro ? (<div>
+                <h1 className={styles.headerTitle}>{t('header.welcome')}</h1>
+                <p className={styles.headerDesc}>{t('header.promo')}</p>
+            </div>) : null
+            }
+            <div className={parentClass ? parentClass :styles.headerSearch}>
                 <div className={styles.tripTypeBox}>
                     <label className={styles.tripTypeBoxItem}>
                         <input
                             type="radio"
                             value="one_way"
-                            checked={searchInfor.oneway === true}
+                            checked={currentInfor.oneway === true}
                             className={styles.radioBox}
-                            onChange={() => setSearchInfor('oneway', true)}
+                            onChange={() => handleCurrentInfor('oneway', true)}
                         />
                         <span>{t('header.searchbox.one_way')}</span>
                     </label>
-
                     <label className={styles.tripTypeBoxItem}>
                         <input
                             type="radio"
                             value="round_trip"
-                            checked={searchInfor.oneway === false}
+                            checked={currentInfor.oneway === false}
                             className={styles.radioBox}
-                            onChange={() => setSearchInfor('oneway', false)}
+                            onChange={() => handleCurrentInfor('oneway', false)}
                         />
-
                         <span>{t('header.searchbox.round_trip')}</span>
                     </label>
                 </div>
@@ -128,12 +155,13 @@ const SearchBox = ({listRoute}) => {
                             <FontAwesomeIcon icon={faBus} className={styles.headerIcon} />
                             <div className={styles.selectArea}>
                                 <div className={styles.selectTitle}>{t('header.searchbox.origin')}</div>
-                                <Select options={listDeparture.map((dep) => { return { value: dep.key, label: dep.location.name } })}
+                                <Select options={depOptions}
                                     ref={originPlaceInput}
-                                    value={originPlace}
+                                    value={currentInfor.departLocation}
                                     onChange={handleOriginPlace}
                                     className={styles.selectItem}
-                                    placeholder="Origin">
+                                    placeholder="Origin"
+                                >
                                 </Select>
                             </div>
                         </div>
@@ -143,19 +171,13 @@ const SearchBox = ({listRoute}) => {
                             <div className={styles.selectArea}>
                                 <div className={styles.selectTitle}>{t('header.searchbox.destination')}</div>
 
-                                <Select options={originPlace !== '' ? (listDestination.filter((des) => des.key === originPlace.value)[0].location.map(
-                                    (des) => {
-                                        return {
-                                            value: { id: des.routeId, turn: des.round },
-                                            label: des.destination.name
-                                        }
-                                    }))
-                                    : []}
-                                    value={destinatePlace}
+                                <Select options={desOptions}
+                                    value={currentInfor.desLocation}
                                     onFocus={checkOrigin}
-                                    onChange={setDestinatePlace}
+                                    onChange={handleDesPlace}
                                     className={styles.selectItem}
-                                    placeholder="Destination">
+                                    placeholder="Destination"
+                                >
                                 </Select>
                             </div>
                         </div>
@@ -167,11 +189,11 @@ const SearchBox = ({listRoute}) => {
                             <div className={styles.selectArea}>
                                 <div className={styles.selectTitle}>{t('header.searchbox.depart_date')}</div>
                                 <div className={styles.datePicker}>
-                                    <DatePicker selected={parse(searchInfor.departDate, 'dd/MM/yyyy', new Date())}
+                                    <DatePicker selected={parse(currentInfor.departDate, 'dd/MM/yyyy', new Date())}
                                         onChange={chooseOriginDate}
                                         className={styles.headerSearchInput}
                                         dateFormat="dd/MM/yyyy"
-                                        placeholderText="Depart Date" 
+                                        placeholderText="Depart Date"
                                         minDate={today}
                                         maxDate={twoMonthsLater}
                                     />
@@ -179,18 +201,18 @@ const SearchBox = ({listRoute}) => {
                             </div>
                         </div>
 
-                        {searchInfor.oneway === false ?
+                        {currentInfor.oneway === false ?
                             (
                                 <div className={styles.headerSearchItem}>
                                     <FontAwesomeIcon icon={faCalendarDays} className={styles.headerIcon} />
                                     <div className={styles.selectArea}>
                                         <div className={styles.selectTitle}>{t('header.searchbox.return_date')}</div>
                                         <div className={styles.datePicker}>
-                                            <DatePicker selected={parse(searchInfor.arrivalDate, 'dd/MM/yyyy', new Date())}
+                                            <DatePicker selected={parse(currentInfor.arrivalDate, 'dd/MM/yyyy', new Date())}
                                                 onChange={chooseReturnDate}
                                                 className={styles.headerSearchInput}
                                                 dateFormat="dd/MM/yyyy"
-                                                placeholderText="Arrival Date" 
+                                                placeholderText="Arrival Date"
                                                 minDate={today}
                                                 maxDate={twoMonthsLater}
                                             />
@@ -199,26 +221,26 @@ const SearchBox = ({listRoute}) => {
                                 </div>
                             ) : null
                         }
-                    
-                    <div className={`${styles.headerSearchItem} ${styles.ticketAmount}`}>
-                        <FontAwesomeIcon icon={faTicketSimple} className={styles.headerIcon} />
-                        <div className={styles.selectArea}>
-                            <div className={styles.selectTitle}>{t('header.searchbox.ticket_number')}</div>
-                            <div className={styles.ticketChange}>
-                                <button className={styles.optionCounterButton}
-                                    onClick={() => chooseTicketNumber(-1)}
-                                    disabled={searchInfor.numberTicket === 1}>
-                                    <span>-</span>
-                                </button>
-                                <span className={styles.headerSearchText}>{searchInfor.numberTicket}</span>
-                                <button className={styles.optionCounterButton}
-                                    onClick={() => chooseTicketNumber(1)}
-                                    disabled={searchInfor.numberTicket === 5}>
-                                    <span>+</span>
-                                </button>
+
+                        <div className={`${styles.headerSearchItem} ${styles.ticketAmount}`}>
+                            <FontAwesomeIcon icon={faTicketSimple} className={styles.headerIcon} />
+                            <div className={styles.selectArea}>
+                                <div className={styles.selectTitle}>{t('header.searchbox.ticket_number')}</div>
+                                <div className={styles.ticketChange}>
+                                    <button className={styles.optionCounterButton}
+                                        onClick={() => chooseTicketNumber(-1)}
+                                        disabled={currentInfor.numberTicket === 1}>
+                                        <span>-</span>
+                                    </button>
+                                    <span className={styles.headerSearchText}>{currentInfor.numberTicket}</span>
+                                    <button className={styles.optionCounterButton}
+                                        onClick={() => chooseTicketNumber(1)}
+                                        disabled={currentInfor.numberTicket === 5}>
+                                        <span>+</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     </div>
                 </div>
                 <div className={styles.headerSearchButton}>
