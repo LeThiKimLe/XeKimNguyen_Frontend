@@ -19,6 +19,10 @@ import { useDispatch } from 'react-redux'
 import Message from '../../../components/message'
 import authThunk from '../../../feature/auth/auth.service'
 import { authActions } from '../../../feature/auth/auth.slice'
+import { DateRangePicker } from 'react-date-range';
+import { DateRange } from 'react-date-range';
+import { format } from 'date-fns'
+import ProfileInfor from './ProfileInfor'
 
 const Profile = () => {
 
@@ -38,121 +42,7 @@ const Profile = () => {
         navigate(`/profile/${action.name}`)
     }
 
-    const [file, setFile] = useState()
-    const handleUpImage = (e) => {
-        setFile(URL.createObjectURL(e.target.files[0]))
-        setValueInfor({ ...valueInfor, img: e.target.files[0] })
-        setUpdated(true)
-    }
-
-    const [isUpdating, setIsUpdating] = useState(false)
-
-    const [valueInfor, setValueInfor] = useState(
-        user ? ({
-            tel: user.user.tel,
-            name: user.user.name,
-            email: user.user.email,
-            gender: (user.user.gender === "true" ?
-                GENDER_OPTION[0] :
-                GENDER_OPTION[1]),
-            idCard: (userRole > 1 ?
-                (userRole < 4 ? user.user.staff.idCard
-                    : user.user.driver.idCard)
-                : ('12345678909')),
-            address: (userRole > 1 ?
-                (userRole < 4 ? user.user.staff.address
-                    : user.user.driver.address)
-                : ('123 Phan Boi Chau')),
-            beginWorkDate: (userRole > 1 ?
-                (userRole < 4 ? user.user.staff.beginWorkDate
-                    : user.user.driver.beginWorkDate)
-                : ('09-09-2023')),
-            licenseNumber: (userRole < 4 ? '' : user.user.driver.licenseNumber),
-            issueDate: (userRole < 4 ? '' : user.user.driver.issueDate),
-            img: (userRole > 1 ?
-                (userRole < 4 ? user.user.staff.img
-                    : user.user.driver.img)
-                : (user.user.customer.img)),
-        }) :
-            (
-                {
-                    tel: '', name: '',
-                    email: '', gender: GENDER_OPTION[0],
-                    idCard: '', address: '',
-                    beginWorkDate: '',
-                    licenseNumber: '',
-                    issueDate: '',
-                    img: ''
-                }
-            )
-    )
-
-    const handleResetInfor = (e) => {
-        e.preventDefault()
-        setValueInfor({
-            tel: user.user.tel,
-            name: user.user.name,
-            email: user.user.email,
-            gender: (user.user.gender === "true" ?
-                GENDER_OPTION[0] :
-                GENDER_OPTION[1]),
-            idCard: (userRole > 1 ?
-                (userRole < 4 ? user.user.staff.idCard
-                    : user.user.driver.idCard)
-                : ('12345678909')),
-            address: (userRole > 1 ?
-                (userRole < 4 ? user.user.staff.address
-                    : user.user.driver.address)
-                : ('123 Phan Boi Chau')),
-            beginWorkDate: (userRole > 1 ?
-                (userRole < 4 ? user.user.staff.beginWorkDate
-                    : user.user.driver.beginWorkDate)
-                : ('09-09-2023')),
-            licenseNumber: (userRole < 4 ? '' : user.user.driver.licenseNumber),
-            issueDate: (userRole < 4 ? '' : user.user.driver.issueDate),
-            img: (userRole > 1 ?
-                (userRole < 4 ? user.user.staff.img
-                    : user.user.driver.img)
-                : (user.user.customer.img)),
-        })
-        setIsUpdating(false)
-        setFile(null)
-        setUpdated(false)
-    }
-
-    const userInfor = UPDATE_INFOR
-
-    const onChangeInfor = (e) => {
-        if (updated === false)
-            setUpdated(true)
-        setValueInfor({ ...valueInfor, [e.target.name]: e.target.value })
-    }
-
-    const handleUpdate = (e) => {
-        e.preventDefault();
-        if (isUpdating) {
-            if (updated == true)
-            {
-                dispatch(authThunk.updateProfile({ updatedInfor: valueInfor }))
-                    .unwrap()
-                    .then(() => {
-                        setIsUpdating(false)
-                    })
-                    .catch((error) => {
-                        console.log('fail')
-                    })
-            }
-            else
-            {
-                setIsUpdating(false)
-                setUpdated(false)
-            }
-        }
-        else {
-            setIsUpdating(true)
-        }
-    }
-
+    
     useEffect(() => {
         return () => {
             dispatch(authActions.reset());
@@ -170,6 +60,17 @@ const Profile = () => {
             };
         }
     }, [message])
+
+    const [dateRange, setDateRange] = useState([
+        {
+            startDate: new Date('2023/01/01'),
+            endDate: new Date(),
+            key: 'selection'
+        }
+    ]);
+
+    const [openDate, setOpenDate] = useState(false)
+
 
     return (
         <div>
@@ -200,46 +101,47 @@ const Profile = () => {
                                 <div className={styles.actionContent}>
                                     {
                                         actionList[active - 1].name === 'account-infor' && (
-                                            <Container fluid>
-                                                <Row>
-                                                    <Col md={4}>
-                                                        <div className={styles.userIcon}>
-                                                            <img src={file ? file 
-                                                                            : (valueInfor.img ? valueInfor.img 
-                                                                                              : valueInfor.gender.value === 1 ? female 
-                                                                                                                              : male)} alt="User ICon" />
-                                                            { isUpdating &&
-                                                                <input type="file" onChange={handleUpImage} name='myImage' style={{width: '100%'}}></input>}
-                                                        </div>
-                                                    </Col>
-                                                    <Col md={8}>
-                                                        <form action="" className={styles.inforForm} onSubmit={handleUpdate}>
-                                                            {userInfor.filter((infor) => infor.role.includes(userRole))
-                                                                .map((infor) => (
-                                                                    <FormInput key={infor.id} {...infor}
-                                                                        value={valueInfor[infor.name]}
-                                                                        onChange={onChangeInfor}
-                                                                        readOnly={isUpdating === false ? true : infor.editable.includes(userRole)}
-                                                                    >
-                                                                    </FormInput>
-                                                                )
-                                                                )
-                                                            }
-                                                            <div className={styles.btnGroup}>
-                                                            <Button text={isUpdating ? "Lưu thông tin" : "Cập nhật"}
-                                                                className={styles.updateBtn}
-                                                                loading={loading}
-                                                            >
-                                                            </Button>
-                                                            {isUpdating && 
-                                                           <OptionButton text='Hủy' onClick={handleResetInfor}  className={styles.updateBtn}></OptionButton>}
-                                                            </div>
-                                                        </form>
-                                                        
-                                                    </Col>
-                                                </Row>
-                                            </Container>
+                                            <ProfileInfor></ProfileInfor>
                                         )
+                                    }
+                                    {actionList[active - 1].name === 'ticket-history' && (
+                                        <Container fluid>
+                                            <Row>
+                                                <Col>
+                                                    <p>Mã vé</p>
+                                                    <input type="text" placeholder='Mã vé' />
+                                                </Col>
+                                                <Col>
+
+                                                    <p>Thời gian</p>
+                                                    <input  type="text" 
+                                                            value={`${format(dateRange[0].startDate, 'dd/MM/yyyy')} - ${format(dateRange[0].endDate, 'dd/MM/yyyy')}`} 
+                                                            onClick={()=> setOpenDate(!openDate)}
+                                                            readOnly
+                                                    />
+                                                    {
+                                                        openDate && 
+                                                        <DateRange
+                                                            editableDateInputs={true}
+                                                            onChange={item => setDateRange([item.selection])}
+                                                            moveRangeOnFirstSelection={false}
+                                                            ranges={dateRange}
+                                                        />
+                                                    }
+
+                                                </Col>
+                                                <Col>
+                                                    <p>Trạng thái</p>
+                                                </Col>
+                                                <Col>
+                                                    <OptionButton text='Tìm'></OptionButton>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+
+                                            </Row>
+                                        </Container>
+                                    )
                                     }
                                 </div>
                             </Col>

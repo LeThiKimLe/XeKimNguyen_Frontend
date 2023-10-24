@@ -12,11 +12,17 @@ import { useSelector } from 'react-redux'
 import { selectCurrentTrip } from '../../../feature/trip/trip.slice'
 import { convertToTime } from '../../../utils/unitUtils'
 import { selectUser } from '../../../feature/auth/auth.slice'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { bookingActions } from '../../../feature/booking/booking.slice'
 
 const Trip = () => {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const user = useSelector(selectUser)
     const currentTrip = useSelector(selectCurrentTrip)
     const booked = useRef(['A01', 'A02', 'B09', 'B10'])
+    const inforForm = useRef(null)
     const [message, setMessage] = useState({message:'', messagetype:2})
     const listPick = useRef([
         {
@@ -183,6 +189,39 @@ const Trip = () => {
         }
     }, [selectedSeats, message.messagetype]);
 
+    const generateRandomCode = () => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let code = '';
+      
+        for (let i = 0; i < 6; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          code += characters.charAt(randomIndex);
+        }
+      
+        return code;
+      }
+
+    const handlePayment = () => {
+        if (selectedSeats.length === 0)
+            setMessage({message:'Vui lòng chọn chỗ', messagetype:message.messagetype+1})
+        else if (!(inforForm.current.checkValidity()))
+            setMessage({message:'Vui lòng điền đủ thông tin người mua', messagetype:message.messagetype+1})
+        else if (isConfirmed===false)
+            setMessage({message:'Vui lòng tích xác nhận điều khoản', messagetype:message.messagetype+1})
+        else{
+            const bookingCode = generateRandomCode()
+            const bookingInfor = {
+                bookingTrip: currentTrip,
+                bookingUser: userInfor,
+                bookedSeat: selectedSeats,
+                pickPoint: pickLocation,
+                dropPoint: dropLocation
+            }
+            dispatch(bookingActions.saveInfor(bookingInfor))
+            navigate(`/payment/${bookingCode}`)
+        }
+    }
+
     useEffect(()=> {
         window.scrollTo(0, 0);
     }, [])
@@ -209,7 +248,7 @@ const Trip = () => {
                             </div>
                             <div className={styles.infor_segment}>
                                 <div className={styles.user_infor_container}>
-                                    <form className={`${styles.infor_box} ${styles.personal_infor}`}>
+                                    <form className={`${styles.infor_box} ${styles.personal_infor}`} ref={inforForm}>
                                         <h2>Thông tin khách hàng</h2>
                                         {userInput.map((input) => (
                                             <FormInput  key={input.id} {...input} 
@@ -240,7 +279,10 @@ const Trip = () => {
                             </div>
                             <div className={styles.payment_direct}>
                                 <span>{`Tổng cộng: ${(currentTrip.ticketPrice*selectedSeats.length).toLocaleString()} đ`}</span>
-                                <Button text="Thanh toán" className={styles.btnCheckout}></Button>
+                                <Button text="Thanh toán" 
+                                        className={styles.btnCheckout}
+                                        onClick={handlePayment}>
+                                </Button>
                             </div>
                         </div>
                         <div className={styles.trip_sum}>

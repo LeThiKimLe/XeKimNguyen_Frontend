@@ -10,6 +10,7 @@ import Schedule from './pages/customer/schedule';
 import Ticket from './pages/customer/ticket';
 import Bill from './pages/customer/bill';
 import About from './pages/customer/about';
+import Payment from './pages/customer/payment';
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
                     <Route path="/ticket" element={<Ticket />}></Route>
                     <Route path="/bill" element={<Bill />}></Route>
                     <Route path="/about" element={<About />}></Route>
+                    <Route path="/payment/:bookingCode" element={<Payment/>}></Route>
                 </Routes>
             </BrowserRouter>
         </div>

@@ -82,12 +82,13 @@ const updateProfile = createAsyncThunk('profile/update', async ({updatedInfor}, 
         formData.append('name', updatedInfor.name);
         formData.append('email', updatedInfor.email);
         formData.append('address', updatedInfor.address);
-        formData.append('file', updatedInfor.img);
+        if (updatedInfor.file)
+            formData.append('file', updatedInfor.file);
         formData.append('gender', updatedInfor.gender.value);
       
         const config = {
           headers: {
-            'Content-Type': 'multipart/form-data', // Ghi đè tiêu đề
+            'Content-Type': 'multipart/form-data',
           },
         };
 

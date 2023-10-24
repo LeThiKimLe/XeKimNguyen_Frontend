@@ -175,3 +175,26 @@
     background-color: rgba(195, 232, 245, 0.8);
     border-color: #12baf2
 }
+
+.resultContainer{
+    position: relative;
+    
+}
+
+.notfound{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+   align-items: center;
+   margin: 40px 0;
+}
+
+.notfound img{
+    max-width: 400px;
+}
+
+.notfound p{
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0
+}

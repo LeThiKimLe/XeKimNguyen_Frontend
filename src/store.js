@@ -11,13 +11,14 @@ import ticketReducer from "./feature/ticket/ticket.slice";
 import routeReducer from './feature/route/route.slice'
 import seatReducer from "./feature/seat/seat.slice";
 import tripReducer from './feature/trip/trip.slice'
+import bookingReducer from './feature/booking/booking.slice'
 
 
 const rootPersistConfig = {
   key: 'root',
   storage,
   stateReconciler: autoMergeLevel2,
-  whitelist: ['route', 'trip']
+  whitelist: ['route', 'trip', 'booking']
 }
 
 // Có thể làm thêm các config riêng cho một reducer riêng
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
     ticket: ticketReducer,
     route: routeReducer,
     seat: seatReducer,
-    trip: tripReducer
+    trip: tripReducer,
+    booking: bookingReducer
 })
 
 const persitedReducer = persistReducer(rootPersistConfig, rootReducer)

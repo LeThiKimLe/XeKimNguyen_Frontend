@@ -68,13 +68,13 @@
 
 .sum_title{
     text-align: center;
-
+    font-size: 18px;
+    font-weight: 700;
 }
 .sum_infor{
     display: flex;
     gap: 30px;
-    margin: 10px 0;
-
+    margin-bottom: 20px;
 }
 .sum_infor_title{
     font-weight: 600;

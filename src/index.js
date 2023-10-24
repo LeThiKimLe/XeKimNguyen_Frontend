@@ -11,6 +11,8 @@ import i18n from './i18n';
 import { Provider } from 'react-redux';
 import { persistor, store } from './store'
 import { PersistGate } from 'redux-persist/integration/react';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

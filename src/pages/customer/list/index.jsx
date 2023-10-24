@@ -18,9 +18,12 @@ import FilterBar from './FilterBar'
 import seatThunk from '../../../feature/seat/seat.service'
 import { selectSeatMap } from '../../../feature/seat/seat.slice'
 import { useDispatch } from 'react-redux'
+import Loading from '../../../components/loading'
+import notfound from '../../../assets/notfound.png'
 
 const List = () => {
 
+    const [loading, setLoading] = useState(true)
     const dispatch = useDispatch()
     const listRoute = useSelector(selectListRoute)
     // const listTrip = useSelector(selectRearchResult)
@@ -72,38 +75,42 @@ const List = () => {
     const [turn, setTurn] = useState(searchInfor.turn)
     const [filterResult, setFilterResult] = useState(listTrip)
     const [unsortTrip, setUnsortTrip] = useState(listTrip)
-    
+
     const setTripResult = (listResult) => {
         setFilterResult(listResult)
         setUnsortTrip(listResult)
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         const condition = Object.entries(sortOptions).filter(([key, value]) => value.value === true)
             .map(([key, value]) => {
                 return key
             })
-        if (condition.length !== 0)
-        {
+        if (condition.length !== 0) {
 
-            if (condition[0] === 'soon')
-            {
+            if (condition[0] === 'soon') {
                 const tripAscending = [...filterResult].sort((a, b) => a.departTime - b.departTime);
                 setFilterResult(tripAscending)
             }
-            else if (condition[0] === 'late')
-            {
+            else if (condition[0] === 'late') {
                 const tripDescending = [...filterResult].sort((a, b) => b.departTime - a.departTime);
                 setFilterResult(tripDescending)
             }
         }
-        else
-        {
+        else {
             setTripResult(unsortTrip)
         }
 
     }, [sortOptions])
-    
+
+    useEffect(() => {
+        window.scrollTo(0, 330);
+        const timeoutId = setTimeout(() => {
+            setLoading(false)
+        }, 2000); 
+      
+        return () => clearTimeout(timeoutId);
+      }, []);
     return (
         <div>
             <Navbar></Navbar>
@@ -143,7 +150,9 @@ const List = () => {
                                     <input type="text" className={styles.searchInput} readOnly value={numberTicket + ' vé'} />
                                 </div>
                             </div>
-                            <div className={styles.searchTotal}> {`Kết quả tìm kiếm : ${filterResult.length} chuyến`}</div>
+                            <div className={styles.searchTotal}> 
+                                {`Kết quả tìm kiếm : ${loading? '-' :filterResult.length} chuyến`}
+                            </div>
                             <div className={styles.sortArea}>
                                 <div>Sắp xếp theo: </div>
                                 {Object.entries(sortOptions).map(([key, value]) => (
@@ -152,15 +161,29 @@ const List = () => {
                                         onClick={handleSortClick}
                                         data-name={key}
                                         key={key}
-                                >
+                                    >
                                         {value.label}
                                     </div>
                                 ))}
                             </div>
                             <div className={styles.resultContainer}>
-                                {filterResult.map((trip) => (
-                                    <SearchItem trip={trip} key={trip.id}></SearchItem>
-                                ))}
+                                {loading ? (<Loading scale={0.7}></Loading>) : (
+                                    <div>
+                                        {filterResult.length === 0 ? (
+                                            <div className={styles.notfound}>
+                                                <p>Không tìm thấy chuyến xe</p>
+                                                <img src={notfound} alt=""/>
+                                            </div>
+                                        ) : 
+                                        ( 
+                                            <>
+                                            {filterResult.map((trip) => (
+                                                <SearchItem trip={trip} key={trip.id}></SearchItem>
+                                            ))}
+                                            </>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -37,7 +37,7 @@ const Home = () => {
         <div>
             <Navbar></Navbar>
             <div style={{position:'relative'}}>
-            {loading ? (<Loading></Loading>) : 
+            {loading ? (<Loading scale={0.8}></Loading>) : 
             (
                 <>
                 { listRoute.length >0 && <Header active="home" listRoute={listRoute}></Header>}
