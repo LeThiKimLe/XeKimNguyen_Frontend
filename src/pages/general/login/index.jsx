@@ -6,8 +6,8 @@ import Header from '../../../components/header'
 import Footer from '../../../components/footer'
 import loginImg from '../../../assets/login-img.png'
 import { useState, useEffect, useRef } from 'react'
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import Message from "../../../components/message";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import Message from "../../../components/message"
 import { useNavigate } from 'react-router-dom'
 import Button from '../../../components/common/button'
 import { useDispatch, useSelector } from 'react-redux'
@@ -57,7 +57,7 @@ const Login = () => {
             placeholder: "Số điện thoại",
             errorMessage: "Sai số điện thoại",
             label: "Số điện thoại",
-            pattern: "^0[0-9]{9,10}$",
+            // pattern: "^0[0-9]{9,10}$",
             required: true
         },
         {
@@ -67,7 +67,7 @@ const Login = () => {
             placeholder: "Mật khẩu",
             errorMessage: "Mật khẩu có ít nhất 6 ký tự",
             label: "Mật khẩu",
-            pattern: "^.{6,}$",
+            // pattern: "^.{6,}$",
             required: true
         },
     ]

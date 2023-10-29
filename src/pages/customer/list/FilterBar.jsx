@@ -1,15 +1,23 @@
 import styles from './styles.module.css'
 import { useState, useEffect } from 'react'
 import FilterSet from './filterSet'
+import { memo } from 'react'
+import { convertTimeToInt } from '../../../utils/unitUtils'
 
 
-const FilterBar = ({ listTrip, setResult }) => {
+const FilterBar = ({ listTrip, sort, setResult, reset }) => {
 
     const [timeFilter, setTimeFilter] = useState(listTrip)
     const [vehicleFilter, setVehicleFilter] = useState(listTrip)
     const [colFilter, setColFilter] = useState(listTrip)
     const [rowFilter, setRowFilter] = useState(listTrip)
     const [floorFilter, setFloorFilter] = useState(listTrip)
+
+    const sortResult = (listResult) => {
+        return (sort === 'soon' ? [...listResult].sort((a, b) => convertTimeToInt(a.departTime) - convertTimeToInt(b.departTime))
+            : [...listResult].sort((a, b) => convertTimeToInt(b.departTime) - convertTimeToInt(a.departTime)))
+
+    }
 
     const [timeOptions, setTimeOptions] = useState({
         midnight: {
@@ -161,10 +169,12 @@ const FilterBar = ({ listTrip, setResult }) => {
             setTimeFilter(listTrip)
         else {
             const filteredTrips = listTrip.filter(trip =>
-                conditions.some(([start, end]) => trip.departTime >= start && trip.departTime <= end)
+                conditions.some(([start, end]) => convertTimeToInt(trip.departTime) >= start
+                    && convertTimeToInt(trip.departTime) <= end)
             )
             setTimeFilter(filteredTrips)
         }
+
     }, [timeOptions])
 
     useEffect(() => {
@@ -175,8 +185,10 @@ const FilterBar = ({ listTrip, setResult }) => {
         if (conditions.length === 0)
             setVehicleFilter(listTrip)
         else {
+            console.log('setvehicle')
+            console.log(conditions)
             const filteredTrips = listTrip.filter(trip =>
-                conditions.some((key) => trip.bus.busType.name.includes(key))
+                conditions.some((key) => trip.tripInfor.route.busType.name.includes(key))
             )
             setVehicleFilter(filteredTrips)
         }
@@ -191,16 +203,16 @@ const FilterBar = ({ listTrip, setResult }) => {
             setColFilter(listTrip)
         else {
             const filteredTrips = listTrip.filter(trip =>
-                conditions.some((key) => key === 'left' && trip.bus.busType.seatMap.seats
+                conditions.some((key) => key === 'left' && trip.tripInfor.route.busType.seatMap.seats
                     .some((seat) => seat.col === 0
                         && !trip.bookedSeat.includes(seat.name))
-                    || key === 'right' && trip.bus.busType.seatMap.seats
+                    || key === 'right' && trip.tripInfor.route.busType.seatMap.seats
                         .some((seat) => seat.col ===
-                            trip.bus.busType.seatMap.colNo - 1
+                            trip.tripInfor.route.busType.seatMap.colNo - 1
                             && !trip.bookedSeat.includes(seat.name))
-                    || key === 'middle' && trip.bus.busType.seatMap.seats
+                    || key === 'middle' && trip.tripInfor.route.busType.seatMap.seats
                         .some((seat) => seat.col !== 0
-                            && seat.col !== trip.bus.busType.seatMap.colNo - 1
+                            && seat.col !== trip.tripInfor.route.busType.seatMap.colNo - 1
                             && !trip.bookedSeat.includes(seat.name))
                 )
             )
@@ -218,17 +230,17 @@ const FilterBar = ({ listTrip, setResult }) => {
             setRowFilter(listTrip)
         else {
             const filteredTrips = listTrip.filter(trip =>
-                conditions.some((key) => key === 'top' && trip.bus.busType.seatMap.seats
+                conditions.some((key) => key === 'top' && trip.tripInfor.route.busType.seatMap.seats
                     .some((seat) => (seat.row === 0 || seat.row === 1)
                         && !trip.bookedSeat.includes(seat.name))
-                    || key === 'bottom' && trip.bus.busType.seatMap.seats
-                        .some((seat) => (seat.row === trip.bus.busType.seatMap.rowNo - 1 ||
-                                        seat.row === trip.bus.busType.seatMap.rowNo - 2 ) 
+                    || key === 'bottom' && trip.tripInfor.route.busType.seatMap.seats
+                        .some((seat) => (seat.row === trip.tripInfor.route.busType.seatMap.rowNo - 1 ||
+                            seat.row === trip.tripInfor.route.busType.seatMap.rowNo - 2)
                             && !trip.bookedSeat.includes(seat.name))
-                    || key === 'middle' && trip.bus.busType.seatMap.seats
+                    || key === 'middle' && trip.tripInfor.route.busType.seatMap.seats
                         .some((seat) => (seat.row === 0 || seat.row === 1)
-                            && (seat.row !== trip.bus.busType.seatMap.rowNo - 1 ||
-                                seat.row !== trip.bus.busType.seatMap.rowNo - 2 )
+                            && (seat.row !== trip.tripInfor.route.busType.seatMap.rowNo - 1 ||
+                                seat.row !== trip.tripInfor.route.busType.seatMap.rowNo - 2)
                             && !trip.bookedSeat.includes(seat.name))
                 )
             )
@@ -246,11 +258,11 @@ const FilterBar = ({ listTrip, setResult }) => {
             setFloorFilter(listTrip)
         else {
             const filteredTrips = listTrip.filter(trip =>
-                conditions.some((key) => key==='up' && trip.bus.busType.seatMap.seats
-                                .some((seat)=> seat.floor === 2 && !trip.bookedSeat.includes(seat.name)) ||
-                                key==='down' && trip.bus.busType.seatMap.seats
-                                .some((seat)=> seat.floor === 1 && !trip.bookedSeat.includes(seat.name))
-                                )
+                conditions.some((key) => key === 'up' && trip.tripInfor.route.busType.seatMap.seats
+                    .some((seat) => seat.floor === 2 && !trip.bookedSeat.includes(seat.name)) ||
+                    key === 'down' && trip.tripInfor.route.busType.seatMap.seats
+                        .some((seat) => seat.floor === 1 && !trip.bookedSeat.includes(seat.name))
+                )
             )
             setFloorFilter(filteredTrips)
         }
@@ -258,14 +270,90 @@ const FilterBar = ({ listTrip, setResult }) => {
     }, [floorOptions])
 
     useEffect(() => {
+
         const commonElement = timeFilter.filter(element =>
             vehicleFilter.some((element1) => element1.id === element.id)
             && colFilter.some((element2) => element2.id === element.id)
             && rowFilter.some((element3) => element3.id === element.id)
             && floorFilter.some((element4) => element4.id === element.id)
         );
-        setResult(commonElement)
+
+        if (sort === '')
+            setResult(commonElement)
+        else
+            setResult(sortResult(commonElement), commonElement)
     }, [timeFilter, vehicleFilter, colFilter, rowFilter, floorFilter])
+
+
+    useEffect(() => {
+        setTimeFilter(listTrip)
+        setVehicleFilter(listTrip)
+        setColFilter(listTrip)
+        setRowFilter(listTrip)
+        setFloorFilter(listTrip)
+    }, [listTrip])
+
+    useEffect(() => {
+
+        if (reset === true) {
+            Object.entries(timeOptions).filter(([key, value]) => value.value === true)
+                .forEach(([key, value]) => {
+                    setTimeOptions((prevOptions) => ({
+                        ...prevOptions,
+                        [key]: {
+                            ...prevOptions[key],
+                            value: false
+                        }
+                    }))
+                })
+            
+            Object.entries(vehicleOptions).filter(([key, value]) => value.value === true)
+            .forEach(([key, value]) => {
+                setVehicleOptions((prevOptions) => ({
+                    ...prevOptions,
+                    [key]: {
+                        ...prevOptions[key],
+                        value: false
+                    }
+                }))
+            })
+
+            Object.entries(rowOptions).filter(([key, value]) => value.value === true)
+            .forEach(([key, value]) => {
+                setRowOptions((prevOptions) => ({
+                    ...prevOptions,
+                    [key]: {
+                        ...prevOptions[key],
+                        value: false
+                    }
+                }))
+            })
+
+            Object.entries(colOptions).filter(([key, value]) => value.value === true)
+            .forEach(([key, value]) => {
+                setColOptions((prevOptions) => ({
+                    ...prevOptions,
+                    [key]: {
+                        ...prevOptions[key],
+                        value: false
+                    }
+                }))
+            })
+
+            Object.entries(floorOptions).filter(([key, value]) => value.value === true)
+            .forEach(([key, value]) => {
+                setFloorOptions((prevOptions) => ({
+                    ...prevOptions,
+                    [key]: {
+                        ...prevOptions[key],
+                        value: false
+                    }
+                }))
+            })
+        }
+
+    }, [reset])
+
 
     return (
         <div className={styles.listSearch}>
@@ -279,4 +367,4 @@ const FilterBar = ({ listTrip, setResult }) => {
     )
 }
 
-export default FilterBar
+export default memo(FilterBar)

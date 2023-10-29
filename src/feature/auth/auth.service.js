@@ -1,4 +1,3 @@
-import axios from "axios"
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import axiosClient from "../../api/axios"
 
@@ -20,8 +19,7 @@ const login = createAsyncThunk('auth/login', async ({username, password}, thunkA
 
 const logout = createAsyncThunk('auth/logout', async (_,thunkAPI) => {
     try{
-        localStorage.removeItem("current_user")
-        const response = await axiosClient.post('auth/logout')      
+        const response = await axiosClient.post('auth/logout')     
         return response
     }
     catch(error){
@@ -84,8 +82,10 @@ const updateProfile = createAsyncThunk('profile/update', async ({updatedInfor}, 
         formData.append('address', updatedInfor.address);
         if (updatedInfor.file)
             formData.append('file', updatedInfor.file);
+        else
+            formData.append('file', new File([], 'empty-file.txt'));
+        
         formData.append('gender', updatedInfor.gender.value);
-      
         const config = {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -108,13 +108,28 @@ const updateProfile = createAsyncThunk('profile/update', async ({updatedInfor}, 
 } 
 )
 
+const changePassword = createAsyncThunk('auth/password-change', async({oldPassword, newPassword}, thunkAPI) => {
+    try{
+        const response = await axiosClient.put('auth/password-change', {oldPassword, newPassword})
+        return response
+    }
+    catch(error){
+        const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+})
+
 const authThunk = {
     register,
     login,
     logout,
     getOTP,
     validateOTP,
-    updateProfile
+    updateProfile,
+    changePassword
 }
 
 export default authThunk

@@ -1,10 +1,10 @@
-import styles from './logout.module.css'
+import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { OptionButton } from '../common/button';
 import { useRef, useEffect } from 'react';
 
-const LogoutConfirmation = ({ onConfirm, onCancel }) => {
+const LogoutConfirmation = ({ onConfirm, onCancel, type }) => {
   const acceptBtn = useRef(null)
 
   useEffect(() => {
@@ -17,10 +17,13 @@ const LogoutConfirmation = ({ onConfirm, onCancel }) => {
       <div className={styles.logout_dialog}>
         <div className={styles.logout_title}>
           <FontAwesomeIcon icon={faCircleExclamation} color='#febb02' size='2x' />
-          <span>Bạn thực sự muốn đăng xuất?</span>
+          { type === 'inform' ?
+            (<span>Bạn vừa đổi mật khẩu, hãy đăng nhập lại với mật khẩu mới</span>)
+            : (<span>Bạn thực sự muốn đăng xuất?</span>)
+          }
         </div>
         <div className={styles.logout_actions}>
-          <OptionButton onClick={onCancel} text="Hủy"></OptionButton>
+          { type === 'confirm' && <OptionButton onClick={onCancel} text="Hủy"></OptionButton>}
           <OptionButton onClick={onConfirm} text="Xác nhận" ref={acceptBtn}></OptionButton>
         </div>
       </div>

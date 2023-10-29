@@ -1,5 +1,4 @@
 import styles from './style.module.css'
-import { memo } from 'react'
 
 const FilterSet = ({type, title, options, onChange}) => {
     if (type === 'checkbox')
@@ -9,7 +8,7 @@ const FilterSet = ({type, title, options, onChange}) => {
             <label htmlFor="" className={styles.lsItemTitle}>{title}</label>
             <div className={styles.timeOptionContainer}>
                 {Object.entries(options).map(([key, value]) => (
-                    <div className={styles.timeOptionItem}>
+                    <div className={styles.timeOptionItem} key={key}>
                         <label htmlFor={key} className={styles.timeLabel}>
                             <input type="checkbox"
                                 name={key}
@@ -45,5 +44,5 @@ const FilterSet = ({type, title, options, onChange}) => {
     }
 }
 
-export default memo(FilterSet)
+export default FilterSet
 

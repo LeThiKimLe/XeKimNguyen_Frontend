@@ -14,8 +14,8 @@ import Select from 'react-select'
 import { useNavigate } from 'react-router-dom';
 import { format, parse } from 'date-fns';
 import { selectLoadingState } from '../../feature/route/route.slice';
-// TODO: Sửa lại mấy cái biến lưu thông tin = ref, cho khi click nút mới lưu vào redux
-const SearchBox = ({ listRoute, intro, parentClass }) => {
+
+const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch()
     const searchInfor = useSelector(selectSearchInfor)
@@ -65,7 +65,6 @@ const SearchBox = ({ listRoute, intro, parentClass }) => {
             desLocation: null,
             departLocation: place
         })
-        // handleCurrentInfor('departLocation', place)
     }
 
     const handleDesPlace = (place) => {
@@ -100,6 +99,8 @@ const SearchBox = ({ listRoute, intro, parentClass }) => {
         if (currentInfor.searchRoute) {
             setMessage({ content: '', repeat: 0 })
             dispatch(searchAction.setSearch(currentInfor))
+            if (setSearchAction)
+                setSearchAction(true)
             navigate('/trips');
         }
         else {
@@ -108,7 +109,8 @@ const SearchBox = ({ listRoute, intro, parentClass }) => {
     }
 
     useEffect(() => {
-        if (currentInfor.desLocation && !currentInfor.searchRoute) {
+        if (currentInfor.desLocation) {
+            console.log('reset infor')
             const selectedTrip = listRoute.filter((route) => route.id === currentInfor.desLocation.value.id)[0]
             setCurrentInfor({
                 ...currentInfor,

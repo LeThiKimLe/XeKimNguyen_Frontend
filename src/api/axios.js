@@ -6,7 +6,7 @@ const API_URL = process.env.REACT_APP_API_URL
 const axiosClient = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    'Accept':'application/json',
     'Authorization': ''
   },
   paramsSerializer: params => queryString.stringify(params),
@@ -87,6 +87,7 @@ axiosClient.interceptors.response.use(
       try{
           const accessToken = await refreshAccessToken();
           originalRequest.headers.Authorization = `Bearer ${accessToken}`
+          console.log(originalRequest.url)
           return axiosClient(originalRequest);
         }
     catch (error) {

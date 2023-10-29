@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
+    currentTicket: null,
     active: 1,
     loading: false,
     message:'',
@@ -15,13 +16,15 @@ const ticketSlice = createSlice({
             state.active = active
         },
         setMessage: (state, action) => {
-            console.log(action)
             state.message = action.payload.message
             state.error = action.payload.error
         },
         reset: (state) => {
             state.message = ''
             state.error = false
+        },
+        setCurrentTicket : (state, action) => {
+            state.currentTicket = action.payload
         }
     }
 })
@@ -29,6 +32,7 @@ const ticketSlice = createSlice({
 export const selectActive = (state) => state.ticket.active
 export const selectMessage = (state) => state.ticket.message
 export const selectError = (state) => state.ticket.error
+export const selectCurrentTicket = (state) => state.ticket.currentTicket
 
 export const ticketAction = ticketSlice.actions;
 

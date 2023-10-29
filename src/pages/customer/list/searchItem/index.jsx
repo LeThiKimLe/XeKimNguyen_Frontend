@@ -2,7 +2,7 @@ import styles from './styles.module.css'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCircleDot, faLocationDot, faBusSimple } from "@fortawesome/free-solid-svg-icons"
 import { useNavigate } from 'react-router-dom'
-import { convertToStamp, convertToTime, calculateTimeInDay } from '../../../../utils/unitUtils'
+import { convertToStamp, addHoursToTime, convertToDisplayDate } from '../../../../utils/unitUtils'
 import { selectSearchInfor } from '../../../../feature/search/seach.slice'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../../../components/common/button'
@@ -21,36 +21,44 @@ const SearchItem = ({ trip }) => {
         navigate(`/trip/${trip.id}`)
     }
 
+    const startStation = trip.tripInfor.turn === true ? trip.tripInfor.startStation : trip.tripInfor.endStation
+    const endStation = trip.tripInfor.turn === true ? trip.tripInfor.endStation : trip.tripInfor.startStation
+    const departure = trip.tripInfor.turn ===  true? trip.tripInfor.route.departure : trip.tripInfor.route.destination
+    const destination = trip.tripInfor.turn === true ? trip.tripInfor.route.destination : trip.tripInfor.route.departure
+
     return (
         <div className={styles.cover}>
             <div className={styles.searchResult}>
                 <div className={styles.routeTime}>
-                    <div>{convertToTime(trip.departTime)}</div>
+                    <div>{trip.departTime.slice(0, -3)}</div>
                     <div className={styles.distanceRoute}>
                         <FontAwesomeIcon icon={faCircleDot} className={styles.startRoute} />
                         <div className={styles.dotDistance}></div>
-                        <div className={styles.hourRoute}>{convertToStamp(trip.route.hours)}</div>
+                        <div className={styles.hourRoute}>{convertToStamp(trip.tripInfor.route.hours)}</div>
                         <div className={styles.dotDistance}></div>
                         <FontAwesomeIcon icon={faLocationDot} className={styles.endRoute} />
                     </div>
-                    <div>{calculateTimeInDay(trip.departTime, trip.route.hours)}</div>
+                    <div>{addHoursToTime(trip.departTime, trip.tripInfor.route.hours)}</div>
                 </div>
                 <div className={styles.routeLocation}>
-                    <div className={styles.routePoint}>{trip.startStation.name}</div>
-                    <div className={`${styles.routePoint} ${styles.endPoint}`}>{trip.endStation.name}</div>
+                    <div className={styles.routePoint}>{startStation.name}</div>
+                    <div className={`${styles.routePoint} ${styles.endPoint}`}>{endStation.name}</div>
                 </div>
                 <div className={styles.busType}>
                     <FontAwesomeIcon icon={faBusSimple} className={styles.typeIcon} />
-                    {trip.bus.busType.description}
+                    {trip.tripInfor.route.busType.description}
                 </div>
                 <div className={styles.seatBlank}>{`* Còn ${trip.availability} ghế`}</div>
                 <div className={styles.split}></div>
                 <div style={{ display: 'flex', justifyContent: 'space-between'}}>
                     <div className={styles.note}>
-                        {searchInfor.searchRoute.id !== trip.route.id &&
-                            <i> {`*Vé chặng thuộc chuyến ${trip.route.departure.name} - ${trip.route.destination.name} (${convertToTime(trip.departTime)} - Ngày ${trip.departDate})`}</i>
+                        {searchInfor.searchRoute.id !== trip.tripInfor.route.id &&
+                            <i> {`*Vé chặng thuộc chuyến ${departure.name} - ${destination.name} (${trip.departTime.slice(0, -3)} - Ngày ${convertToDisplayDate(trip.departDate)})`}</i>
                         }
-                        <p style={{color: '#af830a', margin: '5px 0'}}>{`*Lưu ý: ${trip.note}`}</p>
+                        {
+                            trip.note &&
+                            <p style={{color: '#af830a', margin: '5px 0'}}>{`*Lưu ý: ${trip.note}`}</p>
+                        }
                     </div>
                     <div>
                         <div className={styles.ticketPrice} >{`${trip.ticketPrice.toLocaleString()} đ`}</div>

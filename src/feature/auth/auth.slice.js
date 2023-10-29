@@ -23,11 +23,6 @@ const authSlice = createSlice({
         confirmlogout: (state) => {
             state.loggingOut = true
         },
-        logout: (state) => {
-            state.isLoggedIn = false
-            state.user = null
-            state.loggingOut = false
-        },
         cancelogout: (state) => {
             state.loggingOut = false
         }
@@ -61,7 +56,10 @@ const authSlice = createSlice({
                 state.message = action.payload
             })
             .addCase(authThunk.logout.fulfilled, (state) => {
+                localStorage.removeItem("current_user")
                 state.isLoggedIn = false
+                state.user = null
+                state.loggingOut = false
             })
             .addCase(authThunk.getOTP.pending, (state) => {
                 state.loading = true
@@ -103,6 +101,20 @@ const authSlice = createSlice({
                 state.loading = false
                 state.message = action.payload
             })
+            .addCase(authThunk.changePassword.pending, (state) => {
+                state.loading = true
+            })
+            .addCase(authThunk.changePassword.fulfilled, (state, action) => {
+                state.loading = false
+                state.message = action.payload.message || "Thay đổi password thành công"
+                state.error = false
+            })
+            .addCase(authThunk.changePassword.rejected, (state, action) => {
+                state.error = true
+                state.loading = false
+                state.message = action.payload
+            })
+            
     }
 })
 

@@ -30,8 +30,6 @@ const Home = () => {
         };
         loadData();
     }, [])
-
-    console.log(listRoute)
     
     return (
         <div>

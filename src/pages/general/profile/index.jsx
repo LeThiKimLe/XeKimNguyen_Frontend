@@ -16,13 +16,10 @@ import { useNavigate } from 'react-router-dom'
 import { selectActive } from '../../../feature/profile/profile.slice'
 import { profileAction } from '../../../feature/profile/profile.slice'
 import { useDispatch } from 'react-redux'
-import Message from '../../../components/message'
-import authThunk from '../../../feature/auth/auth.service'
 import { authActions } from '../../../feature/auth/auth.slice'
-import { DateRangePicker } from 'react-date-range';
-import { DateRange } from 'react-date-range';
-import { format } from 'date-fns'
+import TicketHistory from './TicketHistory'
 import ProfileInfor from './ProfileInfor'
+import ResetPassword from './ResetPass'
 
 const Profile = () => {
 
@@ -32,49 +29,21 @@ const Profile = () => {
     const userRole = useSelector(selectUserRoleId)
     const user = useSelector(selectUser)
     const active = useSelector(selectActive)
-    const message = useSelector(selectMessage)
-    const loading = useSelector(selectLoading)
-    const error = useSelector(selectError)
-    const [updated, setUpdated] = useState(false)
 
     const handleAction = (action) => {
         dispatch(profileAction.setActive({ active: action.index }))
         navigate(`/profile/${action.name}`)
     }
 
-    
     useEffect(() => {
         return () => {
             dispatch(authActions.reset());
         };
     }, []);
 
-    useEffect(() => {
-        if (message !== '') {
-            const timer = setTimeout(() => {
-                dispatch(authActions.reset());
-            }, 5000);
-
-            return () => {
-                clearTimeout(timer);
-            };
-        }
-    }, [message])
-
-    const [dateRange, setDateRange] = useState([
-        {
-            startDate: new Date('2023/01/01'),
-            endDate: new Date(),
-            key: 'selection'
-        }
-    ]);
-
-    const [openDate, setOpenDate] = useState(false)
-
 
     return (
         <div>
-            {message !== '' && <Message message={message} messagetype={error ? 2 : 1} />}
             <Navbar></Navbar>
             <Header type="list" />
             <div className={styles.profile_container}>
@@ -105,42 +74,11 @@ const Profile = () => {
                                         )
                                     }
                                     {actionList[active - 1].name === 'ticket-history' && (
-                                        <Container fluid>
-                                            <Row>
-                                                <Col>
-                                                    <p>Mã vé</p>
-                                                    <input type="text" placeholder='Mã vé' />
-                                                </Col>
-                                                <Col>
-
-                                                    <p>Thời gian</p>
-                                                    <input  type="text" 
-                                                            value={`${format(dateRange[0].startDate, 'dd/MM/yyyy')} - ${format(dateRange[0].endDate, 'dd/MM/yyyy')}`} 
-                                                            onClick={()=> setOpenDate(!openDate)}
-                                                            readOnly
-                                                    />
-                                                    {
-                                                        openDate && 
-                                                        <DateRange
-                                                            editableDateInputs={true}
-                                                            onChange={item => setDateRange([item.selection])}
-                                                            moveRangeOnFirstSelection={false}
-                                                            ranges={dateRange}
-                                                        />
-                                                    }
-
-                                                </Col>
-                                                <Col>
-                                                    <p>Trạng thái</p>
-                                                </Col>
-                                                <Col>
-                                                    <OptionButton text='Tìm'></OptionButton>
-                                                </Col>
-                                            </Row>
-                                            <Row>
-
-                                            </Row>
-                                        </Container>
+                                        <TicketHistory></TicketHistory>
+                                    )
+                                    }
+                                    {actionList[active - 1].name === 'change-password' && (
+                                        <ResetPassword></ResetPassword>
                                     )
                                     }
                                 </div>

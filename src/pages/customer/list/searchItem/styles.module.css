@@ -1,8 +1,19 @@
+@keyframes appearAnimation {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
 .cover{
     border: 1px solid #797777;
     margin-top: 20px;
     border-radius: 5px 0 5px 0;
     background-color: var(--primary-color);
+    animation: appearAnimation 1s ease-in-out;
+    opacity: 1;
 }
 .searchResult
 {

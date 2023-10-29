@@ -592,7 +592,7 @@ export const TRIP_DATA = [
             hours: 9,
             distance: 189
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7'],
+        bookedSeat: ['A1', 'A3', 'A5', 'B7'],
         bus: {
             busType: {
                 id: 2,
@@ -910,7 +910,7 @@ export const TRIP_DATA = [
                     ]
                 }
             }
-            
+
         }
     },
     {
@@ -942,8 +942,8 @@ export const TRIP_DATA = [
             hours: 11,
             distance: 250
         },
-        bookedSeat : ['A01', 'A03', 'A06', 'A09', 'A12', 'A15', 'B03',
-                        'B06', 'B09', 'B12', 'B15', 'B16'],
+        bookedSeat: ['A01', 'A03', 'A06', 'A09', 'A12', 'A15', 'B03',
+            'B06', 'B09', 'B12', 'B15', 'B16'],
         bus: {
             busType: {
                 id: 3,
@@ -1222,7 +1222,7 @@ export const TRIP_DATA = [
             hours: 9,
             distance: 189
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7'],
+        bookedSeat: ['A1', 'A3', 'A5', 'B7'],
         bus: {
             busType: {
                 id: 2,
@@ -1540,7 +1540,7 @@ export const TRIP_DATA = [
                     ]
                 }
             }
-            
+
         }
     },
     {
@@ -1572,8 +1572,8 @@ export const TRIP_DATA = [
             hours: 11,
             distance: 189
         },
-        bookedSeat : ['A02', 'A05', 'A08', 'A11', 'A14', 'A17',
-                        'B02', 'B05', 'B08', 'B11', 'B14', 'B17'],
+        bookedSeat: ['A02', 'A05', 'A08', 'A11', 'A14', 'A17',
+            'B02', 'B05', 'B08', 'B11', 'B14', 'B17'],
         bus: {
             busType: {
                 id: 3,
@@ -1852,10 +1852,10 @@ export const TRIP_DATA = [
             hours: 11,
             distance: 189
         },
-        bookedSeat : ['A04', 'A07', 'A10', 'A13', 'A16', 'A08', 'A11', 'A14', 'A17',
-                    'A01', 'A02', 'A05', 'A03', 'A06', 'A09', 'A12', 'A15',
-                     'B04', 'B07', 'B10', 'B13', 'B16',
-                     'B03', 'B04', 'B02', 'B05'],
+        bookedSeat: ['A04', 'A07', 'A10', 'A13', 'A16', 'A08', 'A11', 'A14', 'A17',
+            'A01', 'A02', 'A05', 'A03', 'A06', 'A09', 'A12', 'A15',
+            'B04', 'B07', 'B10', 'B13', 'B16',
+            'B03', 'B04', 'B02', 'B05'],
         bus: {
             busType: {
                 id: 3,
@@ -2134,8 +2134,8 @@ export const TRIP_DATA = [
             hours: 9,
             distance: 189
         },
-        bookedSeat : ['A12', 'A13', 'A14', 'A15', 'A16', 'A17',
-                        'B12', 'B13', 'B14', 'B15', 'B16', 'B17'],
+        bookedSeat: ['A12', 'A13', 'A14', 'A15', 'A16', 'A17',
+            'B12', 'B13', 'B14', 'B15', 'B16', 'B17'],
         bus: {
             busType: {
                 id: 3,
@@ -2414,7 +2414,7 @@ export const TRIP_DATA = [
             hours: 9,
             distance: 189
         },
-        bookedSeat : ['A1', 'A3', 'A5', 'B7'],
+        bookedSeat: ['A1', 'A3', 'A5', 'B7'],
         bus: {
             busType: {
                 id: 3,
@@ -2664,4 +2664,412 @@ export const TRIP_DATA = [
             }
         }
     },
+]
+
+
+export const ticketHistory = [
+    {
+        code: 'VAZ5UY',
+        status: 'success',
+        message: 'Vé được đặt thành công',
+        ticketNumber: 2,
+        trip: {
+            id: 1,
+            departDate: '20-04-2023',
+            departTime: '18',
+            ticketPrice: 250000,
+            route: {
+                id: 12,
+                distance: 666,
+                departure: {
+                    id: 9,
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    id: 10,
+                    name: "Đà Lạt"
+                },
+                price: 450000,
+                schedule: "Đại Lộc -> Vĩnh Điện -> Tam Kỳ -> Quãng Nam -> Quãng Ngãi -> Quy Nhơn -> Tuy Hòa -> Ninh Hòa -> Đà Lạt",
+                parents: null,
+                hours: 17
+            },
+            bus: {
+                id: 123,
+                licensePlate: '51C-78971'
+            }
+        },
+        user: {
+            id: 1232,
+            name: 'Kim Lệ',
+            tel: '0909090909',
+            email: '123@gmail.com',
+        },
+        pickPoint: {
+            id: 17,
+            name: 'Bến xe Miền Đông'
+        },
+        transaction: {
+            id: '12345678',
+            transaction_type: 'Thanh toán',
+            amount: 500000,
+            paymentMethod: 'MoMo',
+            paymentTime: '19:16:29 10-10-2023',
+            status: 'Thành công'
+        },
+        tickets: [
+            {
+                code: '930958230583',
+                seat: 'A3',
+                billCode: '249873598347',
+            },
+            {
+                code: '930958230584',
+                seat: 'A5',
+                billCode: '249873598348',
+            },
+            {
+                code: '930958230585',
+                seat: 'A7',
+                billCode: '249873598349',
+            }
+        ]
+    },
+    {
+        code: 'VAZ5UE',
+        status: 'pending',
+        message: 'Vé đang chờ thanh toán',
+        ticketNumber: 2,
+        trip: {
+            id: 1,
+            departDate: '20-12-2023',
+            departTime: '18',
+            ticketPrice: 250000,
+            route: {
+                id: 12,
+                distance: 666,
+                departure: {
+                    id: 9,
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    id: 10,
+                    name: "Đà Lạt"
+                },
+                price: 450000,
+                schedule: "Đại Lộc -> Vĩnh Điện -> Tam Kỳ -> Quãng Nam -> Quãng Ngãi -> Quy Nhơn -> Tuy Hòa -> Ninh Hòa -> Đà Lạt",
+                parents: null,
+                hours: 17
+            },
+            bus: {
+                id: 123,
+                licensePlate: '51C-78971'
+            }
+        },
+        user: {
+            id: 1232,
+            name: 'Kim Lệ',
+            tel: '0909090909',
+            email: '123@gmail.com',
+        },
+        pickPoint: {
+            id: 17,
+            name: 'Bến xe Miền Đông'
+        },
+        transaction: {
+            id: '12345678',
+            transaction_type: 'Thanh toán',
+            amount: 500000,
+            paymentMethod: 'MoMo',
+            paymentTime: '19:16:29 10-10-2023',
+            status: 'Thành công'
+        },
+        tickets: [
+            {
+                code: '930958230583',
+                seat: 'A3',
+                billCode: '249873598347',
+            },
+            {
+                code: '930958230584',
+                seat: 'A5',
+                billCode: '249873598348',
+            },
+            {
+                code: '930958230585',
+                seat: 'A7',
+                billCode: '249873598349',
+            }
+        ]
+    },
+    {
+        code: 'VAE5UY',
+        status: 'cancel',
+        message: 'Vé đã bị hủy',
+        ticketNumber: 2,
+        trip: {
+            id: 1,
+            departDate: '20-12-2023',
+            departTime: '18',
+            ticketPrice: 250000,
+            route: {
+                id: 12,
+                distance: 666,
+                departure: {
+                    id: 9,
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    id: 10,
+                    name: "Đà Lạt"
+                },
+                price: 450000,
+                schedule: "Đại Lộc -> Vĩnh Điện -> Tam Kỳ -> Quãng Nam -> Quãng Ngãi -> Quy Nhơn -> Tuy Hòa -> Ninh Hòa -> Đà Lạt",
+                parents: null,
+                hours: 17
+            },
+            bus: {
+                id: 123,
+                licensePlate: '51C-78971'
+            }
+
+        },
+        user: {
+            id: 1232,
+            name: 'Kim Lệ',
+            tel: '0909090909',
+            email: '123@gmail.com',
+        },
+        pickPoint: {
+            id: 17,
+            name: 'Bến xe Miền Đông'
+        },
+        transaction: {
+            id: '12345678',
+            transaction_type: 'Thanh toán',
+            amount: 500000,
+            paymentMethod: 'MoMo',
+            paymentTime: '19:16:29 10-10-2023',
+            status: 'Thành công'
+        },
+        tickets: [
+            {
+                code: '930958230583',
+                seat: 'A3',
+                billCode: '249873598347',
+            },
+            {
+                code: '930958230584',
+                seat: 'A5',
+                billCode: '249873598348',
+            },
+            {
+                code: '930958230585',
+                seat: 'A7',
+                billCode: '249873598349',
+            }
+        ]
+    },
+    {
+        code: 'VOZ5UY',
+        status: 'success',
+        message: 'Vé được đặt thành công',
+        ticketNumber: 2,
+        trip: {
+            id: 1,
+            departDate: '20-12-2023',
+            departTime: '18',
+            ticketPrice: 250000,
+            route: {
+                id: 12,
+                distance: 666,
+                departure: {
+                    id: 9,
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    id: 10,
+                    name: "Đà Lạt"
+                },
+                price: 450000,
+                schedule: "Đại Lộc -> Vĩnh Điện -> Tam Kỳ -> Quãng Nam -> Quãng Ngãi -> Quy Nhơn -> Tuy Hòa -> Ninh Hòa -> Đà Lạt",
+                parents: null,
+                hours: 17
+            },
+            bus: {
+                id: 123,
+                licensePlate: '51C-78971'
+            }
+
+        },
+        user: {
+            id: 1232,
+            name: 'Kim Lệ',
+            tel: '0909090909',
+            email: '123@gmail.com',
+        },
+        pickPoint: {
+            id: 17,
+            name: 'Bến xe Miền Đông'
+        },
+        transaction: {
+            id: '12345678',
+            transaction_type: 'Thanh toán',
+            amount: 500000,
+            paymentMethod: 'MoMo',
+            paymentTime: '19:16:29 10-10-2023',
+            status: 'Thành công'
+        },
+        tickets: [
+            {
+                code: '930958230583',
+                seat: 'A3',
+                billCode: '249873598347',
+            },
+            {
+                code: '930958230584',
+                seat: 'A5',
+                billCode: '249873598348',
+            },
+            {
+                code: '930958230585',
+                seat: 'A7',
+                billCode: '249873598349',
+            }
+        ]  
+    },
+    {
+        code: 'VAZ5IY',
+        status: 'success',
+        message: 'Vé được đặt thành công',
+        ticketNumber: 2,
+        trip: {
+            id: 1,
+            departDate: '20-12-2023',
+            departTime: '18',
+            ticketPrice: 250000,
+            route: {
+                id: 12,
+                distance: 666,
+                departure: {
+                    id: 9,
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    id: 10,
+                    name: "Đà Lạt"
+                },
+                price: 450000,
+                schedule: "Đại Lộc -> Vĩnh Điện -> Tam Kỳ -> Quãng Nam -> Quãng Ngãi -> Quy Nhơn -> Tuy Hòa -> Ninh Hòa -> Đà Lạt",
+                parents: null,
+                hours: 17
+            },
+            bus: {
+                id: 123,
+                licensePlate: '51C-78971'
+            }
+        },
+        user: {
+            id: 1232,
+            name: 'Kim Lệ',
+            tel: '0909090909',
+            email: '123@gmail.com',
+        },
+        pickPoint: {
+            id: 17,
+            name: 'Bến xe Miền Đông'
+        },
+        transaction: {
+            id: '12345678',
+            transaction_type: 'Thanh toán',
+            amount: 500000,
+            paymentMethod: 'MoMo',
+            paymentTime: '19:16:29 10-10-2023',
+            status: 'Thành công'
+        },
+        tickets: [
+            {
+                code: '930958230583',
+                seat: 'A3',
+                billCode: '249873598347',
+            },
+            {
+                code: '930958230584',
+                seat: 'A5',
+                billCode: '249873598348',
+            },
+            {
+                code: '930958230585',
+                seat: 'A7',
+                billCode: '249873598349',
+            }
+        ]
+    },
+    {
+        code: 'EAZ5IY',
+        status: 'success',
+        message: 'Vé được đặt thành công',
+        ticketNumber: 2,
+        trip: {
+            id: 1,
+            departDate: '20-12-2023',
+            departTime: '18',
+            ticketPrice: 250000,
+            route: {
+                id: 12,
+                distance: 666,
+                departure: {
+                    id: 9,
+                    name: "Đà Nẵng"
+                },
+                destination: {
+                    id: 10,
+                    name: "Đà Lạt"
+                },
+                price: 450000,
+                schedule: "Đại Lộc -> Vĩnh Điện -> Tam Kỳ -> Quãng Nam -> Quãng Ngãi -> Quy Nhơn -> Tuy Hòa -> Ninh Hòa -> Đà Lạt",
+                parents: null,
+                hours: 17
+            },
+            bus: {
+                id: 123,
+                licensePlate: '51C-78971'
+            }
+        },
+        user: {
+            id: 1232,
+            name: 'Kim Lệ',
+            tel: '0909090909',
+            email: '123@gmail.com',
+        },
+        pickPoint: {
+            id: 17,
+            name: 'Bến xe Miền Đông'
+        },
+        transaction: {
+            id: '12345678',
+            transaction_type: 'Thanh toán',
+            amount: 500000,
+            paymentMethod: 'MoMo',
+            paymentTime: '19:16:29 10-10-2023',
+            status: 'Thành công'
+        },
+        tickets: [
+            {
+                code: '930958230583',
+                seat: 'A3',
+                billCode: '249873598347',
+            },
+            {
+                code: '930958230584',
+                seat: 'A5',
+                billCode: '249873598348',
+            },
+            {
+                code: '930958230585',
+                seat: 'A7',
+                billCode: '249873598349',
+            }
+        ]
+    }
 ]

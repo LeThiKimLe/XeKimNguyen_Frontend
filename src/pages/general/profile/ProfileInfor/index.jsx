@@ -22,7 +22,7 @@ const ProfileInfor = () => {
     const error = useSelector(selectError)
     const [updated, setUpdated] = useState(false)
 
-    const [file, setFile] = useState(null)
+    const [file, setFile] = useState(undefined)
     const handleUpImage = (e) => {
         setFile(URL.createObjectURL(e.target.files[0]))
         setValueInfor({ ...valueInfor, file: e.target.files[0] })
@@ -57,7 +57,7 @@ const ProfileInfor = () => {
                 (userRole < 4 ? user.user.staff.img
                     : user.user.driver.img)
                 : (user.user.customer.img)),
-            file: null
+            file: undefined
         }) :
             (
                 {
@@ -68,7 +68,7 @@ const ProfileInfor = () => {
                     licenseNumber: '',
                     issueDate: '',
                     img: '',
-                    file: null
+                    file: undefined
                 }
             )
     )
@@ -102,9 +102,11 @@ const ProfileInfor = () => {
                 : (user.user.customer.img)),
         })
         setIsUpdating(false)
-        setFile(null)
+        setFile(undefined)
         setUpdated(false)
     }
+
+    console.log(valueInfor)
 
     const userInfor = UPDATE_INFOR
 
@@ -118,14 +120,15 @@ const ProfileInfor = () => {
         e.preventDefault();
         if (isUpdating) {
             if (updated == true) {
-                console.log('updating')
                 dispatch(authThunk.updateProfile({ updatedInfor: valueInfor }))
                     .unwrap()
                     .then(() => {
                         setIsUpdating(false)
+                        setUpdated(false)
+                        setFile(undefined)
                     })
                     .catch((error) => {
-                        console.log('fail')
+                        console.log(error)
                     })
             }
             else {
@@ -138,6 +141,46 @@ const ProfileInfor = () => {
         }
     }
 
+    useEffect(() => {
+        if (message !== '') {
+            const timer = setTimeout(() => {
+                dispatch(authActions.reset());
+            }, 5000);
+
+            return () => {
+                clearTimeout(timer);
+            };
+        }
+    }, [message])
+
+    useEffect(()=> {
+        setValueInfor({
+            tel: user.user.tel,
+            name: user.user.name,
+            email: user.user.email,
+            gender: (user.user.gender === "true" ?
+                GENDER_OPTION[0] :
+                GENDER_OPTION[1]),
+            idCard: (userRole > 1 ?
+                (userRole < 4 ? user.user.staff.idCard
+                    : user.user.driver.idCard)
+                : ('12345678909')),
+            address: (userRole > 1 ?
+                (userRole < 4 ? user.user.staff.address
+                    : user.user.driver.address)
+                : ('123 Phan Boi Chau')),
+            beginWorkDate: (userRole > 1 ?
+                (userRole < 4 ? user.user.staff.beginWorkDate
+                    : user.user.driver.beginWorkDate)
+                : ('09-09-2023')),
+            licenseNumber: (userRole < 4 ? '' : user.user.driver.licenseNumber),
+            issueDate: (userRole < 4 ? '' : user.user.driver.issueDate),
+            img: (userRole > 1 ?
+                (userRole < 4 ? user.user.staff.img
+                    : user.user.driver.img)
+                : (user.user.customer.img)),
+        })
+    }, [user])
 
     return (
         <div>
@@ -147,7 +190,7 @@ const ProfileInfor = () => {
                     <Col md={4}>
                         <div className={styles.userIcon}>
                             <img src={file ? file
-                                : (valueInfor.img ? valueInfor.img
+                                : (valueInfor.img && valueInfor.img!=="" ? valueInfor.img
                                     : valueInfor.gender.value === 1 ? female
                                         : male)} alt="User ICon" />
                             {isUpdating &&

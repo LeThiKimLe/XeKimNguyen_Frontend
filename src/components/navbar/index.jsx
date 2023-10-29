@@ -68,9 +68,11 @@ const Navbar = () => {
 
     const handleConfirmLogout = () => {
         dispatch(authThunk.logout())
-        dispatch(authActions.logout())
-        navigate('/')
-        window.location.reload()
+        .unwrap()
+        .then(()=>{
+            navigate('/')  
+            window.location.reload()
+        })
     };
 
     const handleCancelLogout = () => {
@@ -119,6 +121,7 @@ const Navbar = () => {
                 <LogoutConfirmation
                     onConfirm={handleConfirmLogout}
                     onCancel={handleCancelLogout}
+                    type = 'confirm'
                 />
             )}
         </>
