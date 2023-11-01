@@ -2691,7 +2691,7 @@ export const ticketHistory = [
                 },
                 price: 450000,
                 schedule: "Đại Lộc -> Vĩnh Điện -> Tam Kỳ -> Quãng Nam -> Quãng Ngãi -> Quy Nhơn -> Tuy Hòa -> Ninh Hòa -> Đà Lạt",
-                parents: null,
+                parents: null, 
                 hours: 17
             },
             bus: {

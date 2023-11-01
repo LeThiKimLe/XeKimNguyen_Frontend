@@ -19,8 +19,6 @@ const FormInput = (props) => {
         onChange(selected)
     }
 
-   
-
     return (
         <div className={`${styles.formInput} ${className? className: ''}`}>
             <label className={styles.inputLabel}> 

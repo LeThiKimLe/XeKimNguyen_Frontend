@@ -110,7 +110,6 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
 
     useEffect(() => {
         if (currentInfor.desLocation) {
-            console.log('reset infor')
             const selectedTrip = listRoute.filter((route) => route.id === currentInfor.desLocation.value.id)[0]
             setCurrentInfor({
                 ...currentInfor,

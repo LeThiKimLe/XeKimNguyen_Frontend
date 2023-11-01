@@ -174,28 +174,32 @@ const Login = () => {
 
     const handleGetOTP = (e) => {
         e.preventDefault();
-        dispatch(authThunk.getOTP(valuesSignup.telnum))
-            .unwrap()
-            .then(() => {
-                setValuesSignup({ ...valuesSignup, process: 1 })
-                dispatch(authActions.reset())
-            })
-            .catch((error) => {
-                console.log(error)
-            })
+        // dispatch(authThunk.getOTP(valuesSignup.telnum))
+        //     .unwrap()
+        //     .then(() => {
+        //         setValuesSignup({ ...valuesSignup, process: 1 })
+        //         dispatch(authActions.reset())
+        //     })
+        //     .catch((error) => {
+        //         console.log(error)
+        //     })
+        setValuesSignup({ ...valuesSignup, process: 1 })
+
     }
 
     const handleValidateOTP = (e) => {
         e.preventDefault();
-        dispatch(authThunk.validateOTP(valuesSignup.telnum, valuesSignup.otp))
-            .unwrap()
-            .then(() => {
-                setValuesSignup({ ...valuesSignup, process: 2 })
-                dispatch(authActions.reset())
-            })
-            .catch((error) => {
-                console.log(error)
-            })
+        // dispatch(authThunk.validateOTP(valuesSignup.telnum, valuesSignup.otp))
+        //     .unwrap()
+        //     .then(() => {
+        //         setValuesSignup({ ...valuesSignup, process: 2 })
+        //         dispatch(authActions.reset())
+        //     })
+        //     .catch((error) => {
+        //         console.log(error)
+        //     })
+        setValuesSignup({ ...valuesSignup, process: 2 })
+
     }
 
     const handleSignUp = (e) => {
@@ -206,11 +210,10 @@ const Login = () => {
             email: valuesSignup.email,
             password: valuesSignup.password
         }))
-            .unwrap()
+        .unwrap()
             .then(() => {
                 cancelSignup()
                 setSelectedTab(0)
-                dispatch(authActions.reset())
             })
             .catch((error) => {
                 console.log(error)
@@ -230,12 +233,24 @@ const Login = () => {
         );
     }
 
+    useEffect(() => {
+        if (message !== '') {
+            const timer = setTimeout(() => {
+                dispatch(authActions.reset());
+            }, 5000);
+
+            return () => {
+                clearTimeout(timer);
+            };
+        }
+    }, [message])
+
     const isBigScreen = useMediaQuery({ query: '(min-width: 1046px)' })
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1046px)' })
 
     return (
         <>
-            {message !== '' && <Message message={message} messagetype={error ? 2 : 1} />}
+            {message !== '' && <Message message={message} messagetype={error ? 2 : 1} repeat={Date.now()}/>}
             <div>
                 <Navbar></Navbar>
                 <Header type="list" />

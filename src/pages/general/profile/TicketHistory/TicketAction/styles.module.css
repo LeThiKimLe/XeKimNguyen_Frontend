@@ -61,6 +61,10 @@
     animation: styles_zoomIn__fP1Dw 0.5s forwards;
   } */
 
+  .action_content{
+    width: 100%;
+  }
+
   .logout_title{
     display: flex;
     justify-content: center;

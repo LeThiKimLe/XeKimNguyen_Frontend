@@ -10,7 +10,7 @@ import Footer from '../../../components/footer'
 import Message from '../../../components/message'
 import { useSelector } from 'react-redux'
 import { selectCurrentTrip } from '../../../feature/trip/trip.slice'
-import { convertToTime } from '../../../utils/unitUtils'
+import { convertToTime, convertToDisplayDate } from '../../../utils/unitUtils'
 import { selectUser } from '../../../feature/auth/auth.slice'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
@@ -21,12 +21,11 @@ const Trip = () => {
     const navigate = useNavigate()
     const user = useSelector(selectUser)
     const currentTrip = useSelector(selectCurrentTrip)
-    const booked = useRef(['A01', 'A02', 'B09', 'B10'])
     const inforForm = useRef(null)
     const [message, setMessage] = useState({message:'', messagetype:2})
     const listPick = useRef([
         {
-            id: 1,
+            id: 1, 
             name: "Văn phòng Cam Ranh",
             address: "123 Đại Lộ Hùng Vương",
             time: "18:00",
@@ -110,8 +109,17 @@ const Trip = () => {
         }
     ])
 
-    const [pickLocation, setPickLocation] = useState(1)
-    const [dropLocation, setDropLocation] = useState(1)
+    const [pickLocation, setPickLocation] = useState(currentTrip.tripInfor.stopStations.filter((stop)=>(
+        currentTrip.tripInfor.turn === true ? 
+        stop.station.id === currentTrip.tripInfor.startStation.id
+        : stop.station.id === currentTrip.tripInfor.endStation.id
+    )
+    )[0].id)
+    const [dropLocation, setDropLocation] = useState(currentTrip.tripInfor.stopStations.filter((stop)=>
+        currentTrip.tripInfor.turn === true ?
+        stop.station.id === currentTrip.tripInfor.endStation.id
+        :  stop.station.id === currentTrip.tripInfor.startStation.id
+    )[0].id)
 
     const handlePickLocation = useCallback((locationId) => {
         setPickLocation(locationId)
@@ -226,6 +234,7 @@ const Trip = () => {
         window.scrollTo(0, 0);
     }, [])
 
+    console.log(currentTrip)
     return (
         <>
             {message.message!=='' && <Message message={message.message} messagetype={message.messagetype} />}
@@ -237,13 +246,13 @@ const Trip = () => {
                         <div className={styles.trip_infor}>
                             <div className={styles.infor_segment}>
                                 <h2>Chọn ghế</h2>
-                                <SeatMap seatMap={currentTrip.bus.busType.seatMap} booked={currentTrip.bookedSeat} selectedSeats={selectedSeats} handleSeatClick={handleSeatClick}></SeatMap>
+                                <SeatMap seatMap={currentTrip.tripInfor.route.busType.seatMap} booked={currentTrip.bookedSeat} selectedSeats={selectedSeats} handleSeatClick={handleSeatClick}></SeatMap>
                             </div>
                             <div className={styles.infor_segment}>
                                 <h2>Thông tin đón trả</h2>
                                 <div className={styles.pick_area}>
-                                    <PickLocation pick={true} listLocation={listPick.current} setLocation={handlePickLocation} selected={pickLocation}></PickLocation>
-                                    <PickLocation pick={false} listLocation={listDrop.current} setLocation={handleDropLocation} selected={dropLocation}></PickLocation>
+                                    <PickLocation pick={true} listLocation={currentTrip.tripInfor.stopStations.filter((station)=>station.stationType === 'pick')} setLocation={handlePickLocation} selected={pickLocation}></PickLocation>
+                                    <PickLocation pick={false} listLocation={currentTrip.tripInfor.stopStations.filter((station)=>station.stationType === 'drop')} setLocation={handleDropLocation} selected={dropLocation}></PickLocation>
                                 </div>
                             </div>
                             <div className={styles.infor_segment}>
@@ -289,11 +298,15 @@ const Trip = () => {
                             <h3 className={styles.sum_title}>Thông tin lượt đi</h3>
                             <div className={styles.sum_infor}>
                                 <span className={styles.sum_infor_title}>Chuyến xe</span>
-                                <span className={styles.sum_infor_value}>{`${currentTrip.startStation.name} ⇒ ${currentTrip.endStation.name}`}</span>
+                                {currentTrip.tripInfor.turn === true ? (
+                                <span className={styles.sum_infor_value}>{`${currentTrip.tripInfor.startStation.name} ⇒ ${currentTrip.tripInfor.endStation.name}`}</span>
+                                ) : (
+                                <span className={styles.sum_infor_value}>{`${currentTrip.tripInfor.endStation.name} ⇒ ${currentTrip.tripInfor.startStation.name}`}</span>
+                                )}
                             </div>
                             <div className={styles.sum_infor}>
                                 <span className={styles.sum_infor_title}>Thời gian</span>
-                                <span className={styles.sum_infor_value}>{`${convertToTime(currentTrip.departTime)} ${currentTrip.departDate}`}</span>
+                                <span className={styles.sum_infor_value}>{`${currentTrip.departTime.slice(0, -3)} ${convertToDisplayDate(currentTrip.departDate)}`}</span>
                             </div>
                             <div className={styles.sum_infor}>
                                 <span className={styles.sum_infor_title}>Số lượng ghế</span>

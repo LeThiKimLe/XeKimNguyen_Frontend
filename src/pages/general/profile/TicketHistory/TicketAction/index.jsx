@@ -16,7 +16,7 @@ const TicketAction = ({ type, close }) => {
             <div className={styles.mask}></div>
             <div className={styles.action_dialog} onClick={preventClose}>
                 <div className={styles.action_content}>
-                    {type === 'cancel' && <CancelTicket></CancelTicket>}  
+                    {type === 'cancel' && <CancelTicket close={closeForm}></CancelTicket>}  
                 </div>
             </div>
         </div>
