@@ -33,12 +33,18 @@ const searchSlice = createSlice({
         resetRoute: (state) => {
             state.infor.searchRoute = null
             state.infor.desLocation = null
+        },
+        resetResult: (state) => {
+            state.result = {
+                message: '',
+                listTrip : []
+            }
         }
     },
     extraReducers: (builder) => {
         builder
             .addCase(searchThunk.getTrips.fulfilled, (state, action) => {
-                
+
                 const listSchedule = []
                 const listTrip = action.payload
 

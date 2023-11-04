@@ -11,6 +11,8 @@ import { selectBookingInfor } from '../../../feature/booking/booking.slice'
 import { useState } from 'react'
 import { convertToTime } from '../../../utils/unitUtils'
 import QRCode from 'react-qr-code'
+import CountDown from './CountDown'
+import Button from '../../../components/common/button'
 
 const Payment = () => {
 
@@ -58,31 +60,34 @@ const Payment = () => {
                                             </label>
                                         </div>
                                     </Col>
-                                
-                                <Col lg={7} md={7} className={styles.qrCol}>
-                                    <h4 className={styles.colTitle}>Tổng thanh toán</h4>
-                                    <h2>290.000đ</h2>
-                                    <i style={{ color: 'red', fontSize: '14px' }}>Thời gian giữ chỗ còn lại: 10:12</i>
-                                    <div className={styles.qr}>
-                                        <QRCode
-                                            value={payment}
-                                            size={200}
-                                            level={'H'}
-                                        />
-                                    </div>
-                                    <div className={styles.direction}>
-                                        <h4>Hướng dẫn thanh toán</h4>
-                                        <ol>
-                                            <li>Mở ứng dụng tương ứng trên điện thoại</li>
-                                            <li>Dùng biểu tượng
-                                                <img src={icon_scan} alt="" />
-                                                để quét mã QR
-                                            </li>
-                                            <li>Quét mã tại trang và thực hiện các bước
-                                                xác nhận thanh toán ở ứng dụng</li>
-                                        </ol>
-                                    </div>
-                                </Col>
+
+                                    <Col lg={7} md={7} className={styles.qrCol}>
+                                        <h4 className={styles.colTitle}>Tổng thanh toán</h4>
+                                        <h2>{`${(bookingInfor.bookingTrip.ticketPrice * bookingInfor.bookedSeat.length).toLocaleString()} đ`}</h2>
+                                        <i style={{ color: 'red', fontSize: '14px' }}>{`Thời gian giữ chỗ còn lại `}
+                                         <CountDown></CountDown>
+                                        </i>
+                                        <div className={styles.qr}>
+                                            <QRCode
+                                                value={payment}
+                                                size={200}
+                                                level={'H'}
+                                            />
+                                        </div>
+                                        <div className={styles.direction}>
+                                            <h4>Hướng dẫn thanh toán</h4>
+                                            <ol>
+                                                <li>Mở ứng dụng tương ứng trên điện thoại</li>
+                                                <li>Dùng biểu tượng
+                                                    <img src={icon_scan} alt="" />
+                                                    để quét mã QR
+                                                </li>
+                                                <li>Quét mã tại trang và thực hiện các bước
+                                                    xác nhận thanh toán ở ứng dụng</li>
+                                            </ol>
+                                        </div>
+                                        <Button text='Thanh toán'></Button>
+                                    </Col>
                                 </Row>
                             </Col>
                             <Col lg={4}>
@@ -105,11 +110,15 @@ const Payment = () => {
                                     <h3 className={styles.sum_title}>Thông tin lượt đi</h3>
                                     <div className={styles.sum_infor}>
                                         <span className={styles.sum_infor_title}>Chuyến xe</span>
-                                        <span className={styles.sum_infor_value}>{`${bookingInfor.bookingTrip.startStation.name} ⇒ ${bookingInfor.bookingTrip.endStation.name}`}</span>
+                                        <span className={styles.sum_infor_value}>
+                                            {bookingInfor.bookingTrip.tripInfor.turn === true ? 
+                                            `${bookingInfor.bookingTrip.tripInfor.startStation.name} ⇒ ${bookingInfor.bookingTrip.tripInfor.endStation.name}`
+                                            : `${bookingInfor.bookingTrip.tripInfor.endStation.name} ⇒ ${bookingInfor.bookingTrip.tripInfor.startStation.name}`}
+                                        </span>
                                     </div>
                                     <div className={styles.sum_infor}>
                                         <span className={styles.sum_infor_title}>Thời gian</span>
-                                        <span className={styles.sum_infor_value}>{`${convertToTime(bookingInfor.bookingTrip.departTime)} ${bookingInfor.bookingTrip.departDate}`}</span>
+                                        <span className={styles.sum_infor_value}>{`${(bookingInfor.bookingTrip.departTime).slice(0,-3)} ${bookingInfor.bookingTrip.departDate}`}</span>
                                     </div>
                                     <div className={styles.sum_infor}>
                                         <span className={styles.sum_infor_title}>Số lượng ghế</span>

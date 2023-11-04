@@ -22,10 +22,11 @@ const Ticket = () => {
     const [showTicket, setShowTicket] = useState(false)
 
     const handleSearchTicket = async (e) => {
+        console.log('hú')
         e.preventDefault()
         const token = captchaRef.current.getValue()
         captchaRef.current.reset()
-
+        console.log(token)
         // await axios.post('http://localhost:2000/post', { searchInfor, token })
         // .then(res =>  console.log(res))
         // .catch((error) => {

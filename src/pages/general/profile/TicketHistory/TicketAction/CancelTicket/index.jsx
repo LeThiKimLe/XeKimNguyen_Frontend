@@ -4,30 +4,35 @@ import { faCircleExclamation, faCircleCheck  } from '@fortawesome/free-solid-svg
 import Button, { OptionButton } from '../../../../../../components/common/button'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { selectCurrentTicket } from '../../../../../../feature/ticket/ticket.slice'
+import { selectCurrentTicket, selectProcess } from '../../../../../../feature/ticket/ticket.slice'
+import { useDispatch } from 'react-redux'
+import { ticketAction } from '../../../../../../feature/ticket/ticket.slice'
 
 const CancelTicket = ({close}) => {
     const [confirm, setConfirm] = useState(false)
-    const [process, setProcess] = useState(1)
+    const process = useSelector(selectProcess)
     const [error, setError] = useState(false)
     const currrentTickets = useSelector(selectCurrentTicket)
     const [listCancel, setListCancel] = useState([])
+    const dispatch = useDispatch()
     const handleConfirmPolicy = () => {
         if (confirm)
-            setProcess(2)
+            dispatch(ticketAction.comeForward())
         else
             setError(true)
     }
 
     const handleSelectTicket = () => {
         if (listCancel.length !== 0)
-            setProcess(3)
+            dispatch(ticketAction.comeForward())
         else
             setError(true)
     }
 
     const handleConfirmCancel = () => {
-        setProcess(4)
+        dispatch(ticketAction.comeForward())
+        // call asynThunk here
+        dispatch(ticketAction.finishAction())
     }
 
     const handleChooseTicket = (e) => {
@@ -141,7 +146,7 @@ const CancelTicket = ({close}) => {
                                 <input type="checkbox"
                                     name='all'
                                     checked={listCancel.length === currrentTickets.tickets.length}
-                                    onClick={handleCheckAll}
+                                    onChange={handleCheckAll}
                                     style={{ margin: '0 10px', width: '20px', height: '20px' }} />
                                 <i>Chọn tất cả</i>
                             </label>
@@ -154,7 +159,7 @@ const CancelTicket = ({close}) => {
                                                 <input type="checkbox"
                                                     name={ticket.seat}
                                                     checked={listCancel.includes(ticket.seat)}
-                                                    onClick={handleChooseTicket}
+                                                    onChange={handleChooseTicket}
                                                     style={{ marginRight: '10px', width: '20px', height: '20px' }}
                                                 />
                                                 <br />
@@ -180,7 +185,6 @@ const CancelTicket = ({close}) => {
                         </div>
                     </div>
                 )}
-
             {
                 process === 3 && (
                     <div className={styles.container}>

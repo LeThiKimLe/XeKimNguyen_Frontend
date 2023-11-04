@@ -188,9 +188,23 @@
 }
 
 
-.payment_direct span{
+.payment_direct span:first-child{
     font-size: 20px;
     font-weight: 700;
     margin-left: 30px;
 }
 
+@keyframes linearAppear {
+    from {
+        height: 0;
+    }
+
+    to {
+        height: max-content;
+    }
+}
+
+.tabStyle{
+    transition: all 0.3s ease-in-out;
+    animation: linearAppear 0.3 forwards;
+}

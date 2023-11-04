@@ -261,56 +261,58 @@ const Login = () => {
                                 <img src={loginImg} alt="" />
                             </div>
                         }
-                        <div className={isBigScreen ? styles.formContainerBig : styles.formContainerSmall}>
-                            <Tabs className="Tabs" selectedIndex={selectedTab} onSelect={index => setSelectedTab(index)}>
-                                <TabList>
-                                    <Tab onClick={cancelSignup}>Đăng nhập</Tab>
-                                    <Tab>{` Đăng ký `}</Tab>
-                                </TabList>
-                                <TabPanel>
-                                    <form action="" ref={formLogin} onSubmit={handleLogin} className={styles.formInfor}>
-                                        {inputLogin.map((input) => (
-                                            <FormInput key={input.id} {...input} value={valuesLogin[input.name]} onChange={onChangeLogin}></FormInput>
-                                        ))}
-                                        <Button text="Đăng nhập" className={styles.btnLogin} ></Button>
-                                        <div className={styles.subLink}> <i> Chưa có tài khoản ? </i> <a href="#" onClick={()=> setSelectedTab(1)}> Đăng ký </a> </div>
-                                    </form>
-
-                                    {loading &&
-                                        <div className={styles.loading_icon}>
-                                            <ClipLoader color="#febb02" size={30} />
-                                        </div>
-                                    }
-                                </TabPanel>
-                                <TabPanel>
-                                    {valuesSignup.process === 0 && (
-                                        <form action="" ref={formGetOTP} onSubmit={handleGetOTP}>
-                                            <FormInput key={inputSignup[0].id} {...inputSignup[0]} value={valuesSignup.telnum} onChange={onChangeSignup}></FormInput>
-                                            <Button text="Nhận mã OTP" className={styles.btnLogin}></Button>
-                                            <div className={styles.subLink}> <i> Đã có tài khoản ? </i> <a href="#" onClick={()=> setSelectedTab(0)}> Đăng nhập </a> </div>
-                                        </form>
-                                    )}
-                                    {valuesSignup.process === 1 && (
-                                        <form action="" ref={formValidOTP} onSubmit={handleValidateOTP}>
-                                            <FormInput key={inputSignup[5].id} {...inputSignup[5]} value={valuesSignup.otp} onChange={onChangeSignup}></FormInput>
-                                            <Button text="Xác thực mã OTP" className={styles.btnLogin}></Button>
-                                        </form>
-                                    )}
-                                    {valuesSignup.process === 2 && (
-                                        <form action="" ref={formSignup} onSubmit={handleSignUp}>
-                                            {inputSignup.slice(1, 5).map((input) => (
-                                                <FormInput key={input.id} {...input} value={valuesSignup[input.name]} onChange={onChangeSignup} ></FormInput>
+                        <div className='loginTabContainer'>
+                            <div className={isBigScreen ? styles.formContainerBig : styles.formContainerSmall}>
+                                <Tabs className="Tabs" selectedIndex={selectedTab} onSelect={index => setSelectedTab(index)}>
+                                    <TabList>
+                                        <Tab onClick={cancelSignup}>Đăng nhập</Tab>
+                                        <Tab>{` Đăng ký `}</Tab>
+                                    </TabList>
+                                    <TabPanel>
+                                        <form action="" ref={formLogin} onSubmit={handleLogin} className={styles.formInfor}>
+                                            {inputLogin.map((input) => (
+                                                <FormInput key={input.id} {...input} value={valuesLogin[input.name]} onChange={onChangeLogin}></FormInput>
                                             ))}
-                                            <Button text="Hoàn tất đăng ký" className={styles.btnLogin}></Button>
+                                            <Button text="Đăng nhập" className={styles.btnLogin} ></Button>
+                                            <div className={styles.subLink}> <i> Chưa có tài khoản ? </i> <a href="#" onClick={()=> setSelectedTab(1)}> Đăng ký </a> </div>
                                         </form>
-                                    )}
-                                    {loading === true ? (
-                                        <div className={styles.loading_icon}>
-                                            <ClipLoader color="#febb02" size={30} />
-                                        </div>) : null
-                                    }
-                                </TabPanel>
-                            </Tabs>
+
+                                        {loading &&
+                                            <div className={styles.loading_icon}>
+                                                <ClipLoader color="#febb02" size={30} />
+                                            </div>
+                                        }
+                                    </TabPanel>
+                                    <TabPanel>
+                                        {valuesSignup.process === 0 && (
+                                            <form action="" ref={formGetOTP} onSubmit={handleGetOTP}>
+                                                <FormInput key={inputSignup[0].id} {...inputSignup[0]} value={valuesSignup.telnum} onChange={onChangeSignup}></FormInput>
+                                                <Button text="Nhận mã OTP" className={styles.btnLogin}></Button>
+                                                <div className={styles.subLink}> <i> Đã có tài khoản ? </i> <a href="#" onClick={()=> setSelectedTab(0)}> Đăng nhập </a> </div>
+                                            </form>
+                                        )}
+                                        {valuesSignup.process === 1 && (
+                                            <form action="" ref={formValidOTP} onSubmit={handleValidateOTP}>
+                                                <FormInput key={inputSignup[5].id} {...inputSignup[5]} value={valuesSignup.otp} onChange={onChangeSignup}></FormInput>
+                                                <Button text="Xác thực mã OTP" className={styles.btnLogin}></Button>
+                                            </form>
+                                        )}
+                                        {valuesSignup.process === 2 && (
+                                            <form action="" ref={formSignup} onSubmit={handleSignUp}>
+                                                {inputSignup.slice(1, 5).map((input) => (
+                                                    <FormInput key={input.id} {...input} value={valuesSignup[input.name]} onChange={onChangeSignup} ></FormInput>
+                                                ))}
+                                                <Button text="Hoàn tất đăng ký" className={styles.btnLogin}></Button>
+                                            </form>
+                                        )}
+                                        {loading === true ? (
+                                            <div className={styles.loading_icon}>
+                                                <ClipLoader color="#febb02" size={30} />
+                                            </div>) : null
+                                        }
+                                    </TabPanel>
+                                </Tabs>
+                            </div>
                         </div>
                     </div>
                 </div>

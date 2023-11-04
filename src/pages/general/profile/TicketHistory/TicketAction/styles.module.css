@@ -39,11 +39,24 @@
     max-width: 800px;
     max-height: 700px;
     z-index: 2;
-    transform: scale(0);
     animation: zoomIn 0.5s forwards;
     overflow: auto;
+    position: relative;
+    transition: all 0.3s ease-in-out;
   }
 
+  @keyframes zoomOut {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(0.5);
+    }
+  }
+
+  .trans {
+    animation: zoomOut 0.5s forwards;
+  }
   /* .action_dialog {
     padding: 20px;
     border-radius: 10px;
@@ -82,4 +95,24 @@
     margin-left: 10px;
     padding: 10px;
     border-radius: 10px;
+  }
+
+  .directBtn{
+    width: 95%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+  }
+
+  .directBtn div{
+    padding: 5px;
+  }
+
+  .directBtn div:hover {
+    color: var(--primary-color);
+    cursor: pointer;
+    border-radius: 30%;
+    background-color: rgb(199, 199, 199, 0.4);
   }

@@ -7,12 +7,16 @@ import { selectSearchInfor } from '../../../../feature/search/seach.slice'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../../../components/common/button'
 import { tripActions } from '../../../../feature/trip/trip.slice'
+import Trip from '../../trip'
+import { useState } from 'react'
 
-const SearchItem = ({ trip }) => {
+const SearchItem = ({ trip, sameTrip }) => {
 
     const dispatch = useDispatch()
 
     const searchInfor = useSelector(selectSearchInfor)
+
+    const [selectTrip, setSelectTrip] = useState(false)
 
     const navigate = useNavigate()
 
@@ -21,6 +25,11 @@ const SearchItem = ({ trip }) => {
         navigate(`/trip/${trip.id}`)
     }
 
+    const showDetailSelector =  () => {
+        dispatch(tripActions.getCurTrip(trip))
+        setSelectTrip(!selectTrip)
+    }
+    
     const startStation = trip.tripInfor.turn === true ? trip.tripInfor.startStation : trip.tripInfor.endStation
     const endStation = trip.tripInfor.turn === true ? trip.tripInfor.endStation : trip.tripInfor.startStation
     const departure = trip.tripInfor.turn ===  true? trip.tripInfor.route.departure : trip.tripInfor.route.destination
@@ -50,6 +59,17 @@ const SearchItem = ({ trip }) => {
                 </div>
                 <div className={styles.seatBlank}>{`* Còn ${trip.availability} ghế`}</div>
                 <div className={styles.split}></div>
+                {sameTrip ? (
+                    <div>
+                        <i><a href='#' onClick={showDetailSelector}>
+                            {selectTrip === true ? 'Đóng' : 'Chọn chuyến' }
+                        </a>
+                        </i>
+                        {selectTrip === true && (
+                            <Trip tabStyle={true}></Trip>
+                        )}
+                    </div>
+                ) : (
                 <div style={{ display: 'flex', justifyContent: 'space-between'}}>
                     <div className={styles.note}>
                         {searchInfor.searchRoute.id !== trip.tripInfor.route.id &&
@@ -65,6 +85,7 @@ const SearchItem = ({ trip }) => {
                         <Button className={styles.bookBtn} onClick={handleChooseTrip} text='Chọn chuyến'></Button>
                     </div>
                 </div>
+                )}
             </div>
         </div>
     )
