@@ -71,5 +71,5 @@ jobs:
 
       - name: Deploy to AWS S3
         run: |
-          cd ${{ secrets.DEPLOY_DIR }}
+          cd ${{ secrets.DEPLOY_DIR1 }}
           aws s3 sync . s3://${{ secrets.S3_BUCKET }}/client
