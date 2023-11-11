@@ -76,4 +76,4 @@ jobs:
       
       - name: Deploy to AWS S3
         run: |
-          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} 'cd ${{ secrets.DEPLOY_DIR }}  && aws s3 sync . s3://${{ secrets.S3_BUCKET }}/client'
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} 'cd ${{ secrets.DEPLOY_DIR }}  && aws s3 sync . s3://${{ secrets.S3_BUCKET }}'
