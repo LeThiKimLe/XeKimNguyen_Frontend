@@ -73,13 +73,6 @@ jobs:
       - name: Deploy to Server
         run: |
           rsync -avzPq build/ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_DIR }}/
-          
-      - name: Configure AWS credentials from Production account
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          audience: sts.amazonaws.com
-          role-to-assume: ${{ secrets.ARN }}
-          aws-region: us-east-1
       
       - name: Deploy to AWS S3
         run: |
