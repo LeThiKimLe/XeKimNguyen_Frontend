@@ -4,7 +4,7 @@ import axiosClient from "../../api/axios";
 const bookingForGuest = createAsyncThunk('bookings-guest', async (bookingInfor, thunkAPI) => {
     try {
         const response = await axiosClient.post('bookings/booking-guest',
-            { 
+            {
                 ticketNumber: bookingInfor.bookedSeat.length,
                 name: bookingInfor.bookingUser.name,
                 email: bookingInfor.bookingUser.email,
@@ -31,7 +31,7 @@ const bookingForGuest = createAsyncThunk('bookings-guest', async (bookingInfor, 
 const bookingForUser = createAsyncThunk('bookings-user', async (bookingInfor, thunkAPI) => {
     try {
         const response = await axiosClient.post('bookings/booking-users',
-            { 
+            {
                 ticketNumber: bookingInfor.bookedSeat.length,
                 name: bookingInfor.bookingUser.name,
                 email: bookingInfor.bookingUser.email,
@@ -55,13 +55,52 @@ const bookingForUser = createAsyncThunk('bookings-user', async (bookingInfor, th
 }
 )
 
-const getBookingInfor = createAsyncThunk('bookings/tickets', async ({searchInfor, captcha}, thunkAPI) => {
+const getBookingInfor = createAsyncThunk('bookings/tickets', async ({ searchInfor, captcha }, thunkAPI) => {
     try {
-        const response = await axiosClient.post('bookings/tickets',{
-            params: { 
+        const response = await axiosClient.post('bookings/tickets',
+            {
                 tel: searchInfor.tel,
                 bookingCode: searchInfor.booking_code,
-                token: captcha                
+                capchaToken: captcha
+            }
+        )
+        return response
+    }
+    catch (error) {
+        const message =
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+}
+)
+
+const bookingPayment = createAsyncThunk('tickets/payment', async ({bookingCode, payment}, thunkAPI) => {
+    try {
+        const response = await axiosClient.put('tickets/payment',
+            {
+                bookingCode: bookingCode,
+                paymentMethod: payment
+            }
+        )
+        return response
+    }
+    catch (error) {
+        const message =
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+}
+)
+
+const cancelPayment = createAsyncThunk('bookings/cancel', async (bookingCode, thunkAPI) => {
+    try {
+        const response = await axiosClient.put('bookings/cancel',null,{
+            params: {
+                "bookingCode": bookingCode
             }
         }
         )
@@ -77,13 +116,49 @@ const getBookingInfor = createAsyncThunk('bookings/tickets', async ({searchInfor
 }
 )
 
+const getUserHistory = createAsyncThunk('bookings/booking-history', async (thunkAPI) => {
+    try {
+        const response = await axiosClient.post('bookings/booking-history')
+        return response
+    }
+    catch (error) {
+        const message =
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+}
+)
+
+const keepPayment = createAsyncThunk('bookings/keep-booking', async (bookingCode, thunkAPI) => {
+    try {
+        const response = await axiosClient.put('bookings/keep-booking',null,{
+            params: {
+                "bookingCode": bookingCode
+            }
+        }
+        )
+        return response
+    }
+    catch (error) {
+        const message =
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+}
+)
 
 const bookingThunk = {
     bookingForGuest,
     bookingForUser,
-    getBookingInfor
+    getBookingInfor,
+    bookingPayment,
+    cancelPayment,
+    getUserHistory,
+    keepPayment,
 }
 
 export default bookingThunk
-
-

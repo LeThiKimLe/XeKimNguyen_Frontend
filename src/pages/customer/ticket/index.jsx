@@ -8,36 +8,44 @@ import Button from '../../../components/common/button'
 import {useState, useRef} from 'react'
 import SectionTitle from '../../../components/common/sectionTitle'
 import ReCAPTCHA from 'react-google-recaptcha'
-import axios from 'axios'
 import TicketInfor from './ticketInfor'
-import { BOOKING_INFOR } from '../../../utils/test_data'
+import { selectLoading, selectError, selectMessage, selectBookingHistory } from '../../../feature/booking/booking.slice'
+import { useDispatch } from 'react-redux'
+import bookingThunk from '../../../feature/booking/booking.service'
+import { useSelector } from 'react-redux'
+import Message from '../../../components/message'
+import { bookingActions } from '../../../feature/booking/booking.slice'
 
 const Ticket = () => {
+    const loading = useSelector(selectLoading)
+    const message = useSelector(selectMessage)
+    const dispatch = useDispatch()
     const ticketInfor = TICKET_INFOR
     const [searchInfor, setSearchInfor] = useState({tel:'', booking_code:''})
     const captchaRef = useRef()
     const handleSearchInfor = (e) => {
         setSearchInfor({ ...searchInfor, [e.target.name]: e.target.value })
     }
+    const bookingInfor = useSelector(selectBookingHistory)
     const [showTicket, setShowTicket] = useState(false)
-
     const handleSearchTicket = async (e) => {
-        console.log('hú')
         e.preventDefault()
         const token = captchaRef.current.getValue()
         captchaRef.current.reset()
-        console.log(token)
-        // await axios.post('http://localhost:2000/post', { searchInfor, token })
-        // .then(res =>  console.log(res))
-        // .catch((error) => {
-        // console.log(error);
-        // }
-        // )
-        setShowTicket(true)
+        dispatch(bookingActions.reset())
+        dispatch(bookingThunk.getBookingInfor({searchInfor, captcha:token}))
+        .unwrap()
+        .then(()=>{
+            setShowTicket(true)
+        })
+        .catch((error) => {
+            setShowTicket(false)
+        })
     }
-
+    
     return (
         <>
+            {message !== '' && <Message message={message} messagetype={2} />}
             <div>
                 <Navbar></Navbar>
                 <Header type="list" active="ticket" />
@@ -59,10 +67,10 @@ const Ticket = () => {
                                         ref={captchaRef}
                             ></ReCAPTCHA>
                             </div>
-                            <Button text="Tra cứu vé" className={styles.searchBtn}></Button>
+                            <Button text="Tra cứu vé" className={styles.searchBtn} loading={loading}></Button>
                         </form>
-                        { showTicket===true ? (
-                            <TicketInfor booking = {BOOKING_INFOR}></TicketInfor>
+                        { showTicket===true && bookingInfor ? (
+                            <TicketInfor booking={bookingInfor}></TicketInfor>
                         ) : null }
                     </div>
                 </div>

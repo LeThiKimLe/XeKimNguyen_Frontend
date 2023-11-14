@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux'
 import { selectCurrentTicket, selectProcess } from '../../../../../../feature/ticket/ticket.slice'
 import SeatMap from '../../../../../customer/trip/seatmap'
 import DatePicker from 'react-datepicker';
-import { selectSearchInfor } from '../../../../../../feature/search/seach.slice'
 import { parse, format } from 'date-fns'
 import { useDispatch } from 'react-redux'
 import { ticketAction } from '../../../../../../feature/ticket/ticket.slice'
@@ -17,7 +16,8 @@ import searchThunk from '../../../../../../feature/search/search.service'
 import { selectRearchResult } from '../../../../../../feature/search/seach.slice'
 import notfound from '../../../../../../assets/notfound.png'
 import SearchItem from '../../../../../customer/list/searchItem'
-
+import { convertToDisplayDate } from '../../../../../../utils/unitUtils'
+import { selectNewTrip, selectNewSeat } from '../../../../../../feature/ticket/ticket.slice'
 
 const ChangeTicket = ({ close }) => {
     const process = useSelector(selectProcess)
@@ -27,27 +27,37 @@ const ChangeTicket = ({ close }) => {
     const [listChange, setListChange] = useState([])
     const [action, setAction] = useState('changeSeat')
     const [selectedSeats, setSelectedSeats] = useState([])
-    const searchInfor = useSelector(selectSearchInfor)
-    const [newDepDate, setNewDepDate] = useState(parse(currrentTickets.trip.departDate, 'dd-MM-yyyy', new Date()))
+    const [newDepDate, setNewDepDate] = useState(parse(currrentTickets.tickets[0].schedule.departDate, 'yyyy-MM-dd', new Date()))
     const searchResult = useSelector(selectRearchResult)
     const [loading, setLoading] = useState(false)
-
+    const newTrip = useSelector(selectNewTrip)
+    const newSeats = useSelector(selectNewSeat)
+    const [currentTrip, setCurrentTrip] = useState(null)
     const dispatch = useDispatch()
-
     const handleChooseTicket = (e) => {
         if (listChange.includes(e.target.name)) {
-            const newList = listChange.filter((item) => item !== e.target.name)
+            const newList = listChange.filter((item) => item.seat !== e.target.name)
             setListChange(newList)
         }
         else {
-            setListChange([...listChange, e.target.name])
+            setListChange([...listChange, {
+                id: e.target.value,
+                seat: e.target.name
+            }])
         }
     }
 
-    const handleSelectTicket = () => {
+    const handleSelectTicket = async () => {
         if (listChange.length !== 0) {
             setSelectedSeats([])
-            dispatch(ticketAction.comeForward())
+            try {
+                await getNewTrip()
+                dispatch(ticketAction.comeForward())
+                dispatch(ticketAction.setListChange(listChange))
+            }
+            catch (error) {
+                console.log(error)
+            }
         }
         else
             setError(true)
@@ -55,7 +65,6 @@ const ChangeTicket = ({ close }) => {
 
     const handleSeatProcess = () => {
         if (selectedSeats.length === listChange.length) {
-            dispatch(ticketAction.finishAction())
             dispatch(ticketAction.comeForward())
         }
         else
@@ -66,8 +75,12 @@ const ChangeTicket = ({ close }) => {
         if (listChange.length === currrentTickets.tickets.length)
             setListChange([])
         else
-            setListChange(currrentTickets.tickets.map((ticket) => ticket.seat))
-
+            setListChange(currrentTickets.tickets.map((ticket) => {
+                return {
+                    id: ticket.id,
+                    seat: ticket.seat
+                }
+            }))
     }
 
     const handleChangeAction = (e) => {
@@ -91,17 +104,27 @@ const ChangeTicket = ({ close }) => {
             setError(true)
     }
 
+    const handleConfirmChange = () => {
+        //Gọi API đổi vé tại đây
+        dispatch(ticketAction.finishAction())
+        dispatch(ticketAction.comeForward())
+    }
+
     const getNewTrip = async () => {
         setLoading(true)
-        dispatch(searchThunk.getTrips(searchInfor))
-        .unwrap()
-        .then(()=>{
-            setLoading(false)
-        })
-        .catch((error)=>{
-            setLoading(false)
-            dispatch(searchAction.resetResult())
-        })
+        dispatch(searchThunk.getSameTrips({
+            tripId: currrentTickets.trip.id,
+            availability: listChange.length,
+            departDate: format(newDepDate, 'dd/MM/yyyy'),
+        }))
+            .unwrap()
+            .then((response) => {
+                setLoading(false)
+            })
+            .catch((error) => {
+                setLoading(false)
+                dispatch(searchAction.resetResult())
+            })
     }
 
     useEffect(() => {
@@ -123,20 +146,14 @@ const ChangeTicket = ({ close }) => {
         }
     }, [selectedSeats])
 
-    useEffect(()=>{ 
-        const newSearchInfor = {
-            searchRoute: currrentTickets.trip.route,
-            departDate: format(newDepDate, 'dd/MM/yyyy'),
-            numberTicket: listChange.length,
-            turn: currrentTickets.trip.turn,
-        }
-        dispatch(searchAction.setSearch(newSearchInfor))
-
-    }, [newDepDate])
-
-    useEffect(()=> {
+    useEffect(() => {
         dispatch(searchAction.resetResult())
     }, [])
+
+    useEffect(() => {
+        if (searchResult)
+            setCurrentTrip(searchResult.filter((trip) => trip.id === currrentTickets.tickets[0].schedule.id)[0])
+    }, [searchResult])
 
     return (
         <div>
@@ -177,10 +194,14 @@ const ChangeTicket = ({ close }) => {
                     <div className={styles.container}>
                         <h2 style={{ textAlign: 'center' }}>Đổi vé</h2>
                         <span className={styles.inforTitle}>Chuyến xe: </span>
-                        <span className={styles.inforValue}>{`${currrentTickets.trip.route.departure.name} - ${currrentTickets.trip.route.destination.name}`}</span>
+                        {currrentTickets.trip.turn === true ? (
+                            <span className={styles.inforValue}>{`${currrentTickets.trip.route.departure.name} - ${currrentTickets.trip.route.destination.name}`}</span>
+                        ) : (
+                            <span className={styles.inforValue}>{`${currrentTickets.trip.route.destination.name} - ${currrentTickets.trip.route.departure.name}`}</span>
+                        )}
                         <br />
                         <span className={styles.inforTitle}>Thời gian khởi hành: </span>
-                        <span className={styles.inforValue}>{`${currrentTickets.trip.departTime}h`}</span>
+                        <span className={styles.inforValue}>{`${currrentTickets.tickets[0].schedule.departTime.slice(0, -3)}h - Ngày ${convertToDisplayDate(currrentTickets.tickets[0].schedule.departDate)}`}</span>
                         <br />
                         <br />
                         <div>
@@ -198,20 +219,21 @@ const ChangeTicket = ({ close }) => {
                             <div className={styles.ticketContainer}>
                                 {currrentTickets.tickets.map((ticket) => (
                                     <div className={styles.ticketCover}>
-                                        <div key={ticket.code} className={styles.ticketItem}>
+                                        <div key={ticket.id} className={styles.ticketItem}>
                                             <label htmlFor={ticket.seat}>
                                                 <input type="checkbox"
                                                     name={ticket.seat}
-                                                    checked={listChange.includes(ticket.seat)}
+                                                    value={ticket.id}
+                                                    checked={listChange.map((ticket) => ticket.seat).includes(ticket.seat)}
                                                     onChange={handleChooseTicket}
                                                     style={{ marginRight: '10px', width: '20px', height: '20px' }}
                                                 />
                                                 <br />
-                                                <span>Ghế: </span>
+                                                <span>Vé: </span>
                                                 <b>{ticket.seat}</b>
                                                 <br />
-                                                <i style={{ fontSize: '13px' }}>Mã ghế: </i>
-                                                <i style={{ fontSize: '13px' }}>{ticket.code}</i>
+                                                <i style={{ fontSize: '13px' }}>Mã vé: </i>
+                                                <i style={{ fontSize: '13px' }}>{ticket.id}</i>
                                             </label>
                                         </div>
                                     </div>
@@ -244,7 +266,7 @@ const ChangeTicket = ({ close }) => {
                                 với chuyến xe cũ </span>
                             <br />
                             {error && <i style={{ color: 'red', fontSize: '15px' }}>Vui lòng chọn vé cần đổi</i>}
-                            <Button text='Tiếp tục' className={styles.nextBtn} onClick={handleSelectTicket}></Button>
+                            <Button text='Tiếp tục' className={styles.nextBtn} onClick={handleSelectTicket} loading={loading}></Button>
                         </div>
                     </div>
                 )}
@@ -255,13 +277,17 @@ const ChangeTicket = ({ close }) => {
                         {action === 'changeSeat' && (
                             <div>
                                 <span>{`Chọn ${listChange.length} ghế`}</span>
-                                <SeatMap seatMap={currrentTickets.trip.route.busType.seatMap}
-                                    booked={[]}
-                                    selectedSeats={selectedSeats}
-                                    handleSeatClick={handleSeatClick}>
-                                </SeatMap>
+                                {
+                                    currentTrip && (
+                                        <SeatMap seatMap={currentTrip.tripInfor.route.busType.seatMap}
+                                            booked={currentTrip.tickets}
+                                            selectedSeats={selectedSeats}
+                                            handleSeatClick={handleSeatClick}>
+                                        </SeatMap>
+                                    )
+                                }
                                 {error && <i style={{ color: 'red', fontSize: '15px' }}>{`Vui lòng chọn đủ số ghế cần đổi (${listChange.length}) ghế`} </i>}
-                                <Button text='Tiếp tục' className={styles.nextBtn} onClick={handleSeatProcess}></Button>
+                                <Button text='Tiếp tục' className={styles.nextBtn} onClick={handleSeatProcess} loading={loading}></Button>
                             </div>
                         )}
                         {
@@ -277,11 +303,11 @@ const ChangeTicket = ({ close }) => {
                                                 minDate={new Date()}
                                             />
                                         </div>
-                                        <Button text='Tìm kiếm' 
-                                                className={styles.searchBtn} 
-                                                loading={loading}
-                                                onClick={getNewTrip}
-                                                >
+                                        <Button text='Tìm kiếm'
+                                            className={styles.searchBtn}
+                                            loading={loading}
+                                            onClick={getNewTrip}
+                                        >
                                         </Button>
                                     </div>
                                     <div className={styles.resultContainer}>
@@ -293,7 +319,8 @@ const ChangeTicket = ({ close }) => {
                                         ) :
                                             (
                                                 <div className={styles.listResult}>
-                                                    {searchResult.map((trip) => (
+                                                    <i><b>Hãy chọn {listChange.length} vé từ 1 chuyến xe khác</b></i>
+                                                    {searchResult.filter((trip)=> trip.id !== currentTrip.id).map((trip) => (
                                                         <SearchItem trip={trip} key={trip.id} sameTrip={true}></SearchItem>
                                                     ))}
                                                 </div>
@@ -310,24 +337,47 @@ const ChangeTicket = ({ close }) => {
                     <div>
                         <h2 style={{ textAlign: 'center' }}>Xác nhận đổi vé</h2>
                         <span className={styles.inforTitle}>Chuyến xe: </span>
-                        <span className={styles.inforValue}>{`${currrentTickets.trip.route.departure.name} - ${currrentTickets.trip.route.destination.name}`}</span>
-                        <br />
-                        <span className={styles.inforTitle}>Thời gian khởi hành: </span>
-                        <span className={styles.inforValue}>{`${currrentTickets.trip.departTime}h`}</span>
+                        {currrentTickets.trip.turn === true ? (
+                            <span className={styles.inforValue}>{`${currrentTickets.trip.route.departure.name} - ${currrentTickets.trip.route.destination.name}`}</span>
+                        ) : (
+                            <span className={styles.inforValue}>{`${currrentTickets.trip.route.destination.name} - ${currrentTickets.trip.route.departure.name}`}</span>
+                        )}
                         <br />
                         {
                             action === 'changeSeat' && (
                                 <div>
-                                    <span>Đổi ghế: </span>
-                                    <span>{listChange.join()}</span>
+                                    <span className={styles.inforTitle}>Thời gian khởi hành: </span>
+                                    <span className={styles.inforValue}>{`${currrentTickets.tickets[0].schedule.departTime.slice(0, -3)}h - Ngày ${convertToDisplayDate(currrentTickets.tickets[0].schedule.departDate)}`}</span>
+                                    <span className={styles.inforTitle}>Đổi ghế: </span>
+                                    <b>{listChange.map((ticket)=>ticket.seat).join()}</b>
                                     <span>{` ---> `}</span>
-                                    <span>{selectedSeats.join()}</span>
+                                    <b>{selectedSeats.join()}</b>
                                 </div>
                             )
                         }
+                        {
+                            action === 'changeTrip' && (
+                                <div>
+                                    <b style={{ textDecoration: 'underline' }}>Đổi chuyến</b>
+                                    <br />
+                                    <span className={styles.inforTitle}> Chuyến cũ: </span>
+                                    <span className={styles.inforValue}>{`${currrentTickets.tickets[0].schedule.departTime.slice(0, -3)}h - Ngày ${convertToDisplayDate(currrentTickets.tickets[0].schedule.departDate)}`}</span>
+                                    <br />
+                                    <span className={styles.inforTitle}> Ghế: </span>
+                                    <b>{listChange.map((ticket)=>ticket.seat).join()}</b>
+                                    <div>----------------------------------------------</div>
+                                    <span className={styles.inforTitle}> Chuyến mới: </span>
+                                    <span className={styles.inforValue}>{`${newTrip.departTime.slice(0, -3)}h - Ngày ${convertToDisplayDate(newTrip.departDate)}`}</span>
+                                    <br />
+                                    <span className={styles.inforTitle}> Ghế: </span>
+                                    <b>{newSeats.join()}</b>
+                                </div>
+                            )
+                        }
+                        <br />
                         <b>Lưu ý: </b>
                         <span>Hệ thống chỉ hỗ trợ đổi vé một lần. Bạn sẽ không thể đổi hay hủy vé sau khi đổi.</span>
-                        <Button text='Xác nhận đổi vé' className={styles.nextBtn} onClick={handleSeatProcess}></Button>
+                        <Button text='Xác nhận đổi vé' className={styles.nextBtn} onClick={handleConfirmChange}></Button>
                     </div>
                 )
             }

@@ -12,8 +12,11 @@ import { useSelector } from 'react-redux'
 import { selectListRoute } from '../../../feature/route/route.slice'
 import routeThunk from '../../../feature/route/route.service'
 import { useDispatch } from 'react-redux'
+import { selectUser } from '../../../feature/auth/auth.slice'
+import TripInfor from './tripInfor'
 
 const Home = () => {
+    const user = useSelector(selectUser)
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch()
     const listRoute = useSelector(selectListRoute)
@@ -40,6 +43,7 @@ const Home = () => {
                 <>
                 { listRoute.length >0 && <Header active="home" listRoute={listRoute}></Header>}
                     <div className={styles.homeContainer}> 
+                        {user && <TripInfor></TripInfor>}
                         <Featured></Featured>
                         <Comment listComment={COMMENT_LIST}></Comment>    
                     </div>

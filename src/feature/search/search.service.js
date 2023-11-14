@@ -23,8 +23,29 @@ const getTrips = createAsyncThunk('search/trip', async (searchInfor, thunkAPI) =
     }
 })
 
+const getSameTrips = createAsyncThunk('trips/same-trip', async ({tripId, availability, departDate}, thunkAPI) => {
+    try {
+        const response = await axiosClient.get('trips/same-trip', {
+            params: {
+                "tripId": tripId,
+                "availability": availability,
+                "departDate": format(parse(departDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd'),
+            }
+        })
+        return response
+    }
+    catch (error) {
+        const message =
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+})
+
 const searchThunk = {
-    getTrips
+    getTrips,
+    getSameTrips
 }
 
 export default searchThunk

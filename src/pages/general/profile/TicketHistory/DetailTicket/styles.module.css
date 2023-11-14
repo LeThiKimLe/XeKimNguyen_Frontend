@@ -1,4 +1,4 @@
-.logout_confirmation {
+.container {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     box-shadow: 0 2px 3px #ccc;
   }
   
-  .logout_mask {
+  .mask {
     position: absolute;
     top: 0;
     left: 0;
@@ -22,7 +22,6 @@
     z-index: 1;
   }
 
-  
   @keyframes zoomIn {
     from {
       transform: scale(0);
@@ -31,30 +30,17 @@
       transform: scale(1);
     }
   }
-  
-  .logout_dialog {
+
+  .dialog {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
+    
+    width: 1000px;
+    max-height: 700px;
     z-index: 2;
     animation: zoomIn 0.5s forwards;
-  }
-
-  .logout_title{
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    align-items: center;
-  }
-  
-  .logout_actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  
-  .logout_actions button {
-    margin-left: 10px;
-    padding: 10px;
-    border-radius: 10px;
+    overflow: auto;
+    position: relative;
+    transition: all 0.3s ease-in-out;
   }

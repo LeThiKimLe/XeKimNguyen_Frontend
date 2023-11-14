@@ -1,7 +1,7 @@
 .container{
     width: 100%;
     text-align: center;
-    margin: 50px 0;
+    margin: 20px 0;
 }
 
 .status{
@@ -134,3 +134,14 @@
 
 }
 
+.ticket-state.success{
+    color: green !important;
+}
+
+.ticket-state.pending{
+    color: rgb(141, 141, 4) !important;
+}
+
+.ticket-state.cancel{
+    color: red !important;
+}

@@ -4,23 +4,30 @@ import { DateRangePicker } from 'react-date-range'
 import { DateRange } from 'react-date-range'
 import { format } from 'date-fns'
 import { OptionButton } from '../../../../components/common/button'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Select from 'react-select'
-import { ticketHistory } from '../../../../utils/test_data'
-import { convertToTime, c } from '../../../../utils/unitUtils'
+// import { ticketHistory } from '../../../../utils/test_data'
+import { convertToTime, convertToDisplayDate} from '../../../../utils/unitUtils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUpRightFromSquare, faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import TicketAction from './TicketAction'
 import { ticketAction } from '../../../../feature/ticket/ticket.slice'
 import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { selectUserBookingHistory } from '../../../../feature/booking/booking.slice'
+import bookingThunk from '../../../../feature/booking/booking.service'
+import { STATE_DICTIONARY } from '../../../../utils/constants'
+import DetailTicket from './DetailTicket'
 
 const TicketHistory = () => {
 
+    const ticketHistory = useSelector(selectUserBookingHistory)
     const [ticketState, setTicketState] = useState('')
     const [bookingCode, setBookingCode] = useState('')
     const [ticketActionOp, setTicketActionOp] = useState('')
     const [allowAction, setAllowAction] = useState(true)
     const dispatch = useDispatch()
+    const [showTicket, setShowTicket] = useState(null)
 
     const [dateRange, setDateRange] = useState([
         {
@@ -31,7 +38,7 @@ const TicketHistory = () => {
     ]);
 
     const stateOptions = [
-        { value: 'pending', label: 'Chờ thanh toán' },
+        { value: 'pending', label: 'Đang giữ chỗ' },
         { value: 'cancel', label: 'Bị hủy' },
         { value: 'success', label: 'Thành công' },
     ]
@@ -40,7 +47,6 @@ const TicketHistory = () => {
         { value: 'edit', label: 'Sửa vé' },
         { value: 'change', label: 'Đổi vé' },
         { value: 'cancel', label: 'Hủy vé' },
-
     ]
     
     const [openDate, setOpenDate] = useState(false)
@@ -70,21 +76,25 @@ const TicketHistory = () => {
     const validateTime = () => {
         if (selectedRow)
         {
-            const [day, month, year] = selectedRow.trip.departDate.split('-')
-            const targetDate = new Date(year, month - 1, day)
-            const today = new Date()
-
-            if (today > targetDate) {
-                return false
-            } else {
-                return true
-            }
+            return selectedRow.tickets.every((ticket)=> {
+                const targetDate = new Date(ticket.schedule.departDate + "T" + ticket.schedule.departTime)
+                const today = new Date()
+                if (today > targetDate) {
+                    return false
+                } else {
+                    return true
+                }
+            })
         }
-        return true
     }
+
+    useEffect(()=>{
+        dispatch(bookingThunk.getUserHistory())
+    }, [])
 
     return (
         <div>
+            {showTicket && <DetailTicket booking={showTicket} onClose={()=>setShowTicket(null)}></DetailTicket>}
             <Container fluid>
                 <Row>
                     <Col>
@@ -157,7 +167,7 @@ const TicketHistory = () => {
                                     <th>Mã đặt vé</th>
                                     <th>Số vé</th>
                                     <th>Tuyến đường</th>
-                                    <th>Ngày đi</th>
+                                    <th>Ngày đặt vé</th>
                                     <th>Tổng tiền</th>
                                     <th>Thanh toán</th>
                                     <th>Trạng thái</th>
@@ -173,12 +183,31 @@ const TicketHistory = () => {
                                         /></td>
                                         <td>{booking.code}</td>
                                         <td>{booking.ticketNumber}</td>
-                                        <td>{`${booking.trip.route.departure.name} - ${booking.trip.route.destination.name}`}</td>
-                                        <td>{`${convertToTime(booking.trip.departTime)} - ${booking.trip.departDate}`}</td>
-                                        <td>{`${(booking.ticketNumber * booking.trip.ticketPrice).toLocaleString()}`}</td>
-                                        <td>{booking.transaction.paymentMethod}</td>
-                                        <td><span className={styles[booking.status]}>{stateOptions.filter((option) => option.value === booking.status)[0].label}</span></td>
-                                        <td><a href='#'><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></td>
+                                        {booking.trip.turn === true ? (
+                                            <td>{`${booking.trip.startStation.name} - ${booking.trip.endStation.name}`}</td>
+                                        ) : (
+                                            <td>{`${booking.trip.endStation.name} - ${booking.trip.startStation.name}`}</td>
+                                        )}
+                                        <td>{format(new Date(booking.bookingDate), 'HH:mm dd/MM/yyyy')}</td>
+                                        {booking.transaction ? (
+                                            <>
+                                            <td>{`${(booking.transaction.amount).toLocaleString()} đ`}</td>
+                                            <td>{booking.transaction.paymentMethod}</td>
+                                            </>
+                                        ): (
+                                            <>
+                                            <td>---</td>
+                                            {
+                                                booking.status === 'Đã hủy' ? (
+                                                    <td>---</td>
+                                                ): (
+                                                    <td><a href={`/payment/${booking.code}`}>Thanh toán ngay</a></td>
+                                                )
+                                            }
+                                            </>
+                                        )}
+                                        <td><span className={styles[STATE_DICTIONARY.filter((state) => state.value === booking.status)[0].key]}>{booking.status}</span></td>
+                                        <td><a href='#' onClick={()=>setShowTicket(booking)} ><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></td>
                                     </tr>
                                 ))}
                             </tbody>

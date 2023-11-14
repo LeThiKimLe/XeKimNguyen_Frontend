@@ -1,50 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useSelector } from 'react-redux';
-import { selectBookingSessionTime } from '../../../feature/booking/booking.slice';
+import { useSelector } from "react-redux";
+import { selectBookingSessionTime } from "../../../feature/booking/booking.slice";
 
-const CountDown = () => {
-	// We need ref in this, because we are dealing
-	// with JS setInterval to keep track of it and
-	// stop it when needed
-	const Ref = useRef(null);
-    const bookingTime = useSelector(selectBookingSessionTime)
+const CountDown = ({onTimeout}) => {
 
-	// The state for our timer
+	const bookingTime = useSelector(selectBookingSessionTime)
 	const [timer, setTimer] = useState('10:00');
+
+	const Ref = useRef(null)
 
 	const getTimeRemaining = (e) => {
 		const total = Date.parse(e) - Date.parse(new Date());
 		const seconds = Math.floor((total / 1000) % 60);
 		const minutes = Math.floor((total / 1000 / 60) % 60);
-		const hours = Math.floor((total / 1000 / 60 / 60) % 24);
 		return {
-			total, hours, minutes, seconds
+			total, minutes, seconds
 		};
 	}
 
 	const startTimer = (e) => {
-		let { total, hours, minutes, seconds } 
+		let { total, minutes, seconds } 
 					= getTimeRemaining(e);
-		if (total >= 0) {
-
-			// update the timer
-			// check if less than 10 then we need to 
-			// add '0' at the beginning of the variable
+		if ( total >= 10000) {
 			setTimer(
 				(minutes > 9 ? minutes : '0' + minutes) + ':'
 				+ (seconds > 9 ? seconds : '0' + seconds)
 			)
 		}
+		else{
+			clearInterval(Ref.current)
+			onTimeout()
+		}
 	}
 
 	const clearTimer = (e) => {
-		// If you adjust it you should also need to
-		// adjust the Endtime formula we are about
-		// to code next 
-		// setTimer('00:10:00');
-		// If you try to remove this line the 
-		// updating of timer Variable will be
-		// after 1000ms or 1sec
 		if (Ref.current) clearInterval(Ref.current);
 		const id = setInterval(() => {
 			startTimer(e);
@@ -53,34 +42,16 @@ const CountDown = () => {
 	}
 
 	const getDeadTime = () => {
-		// let deadline = new Date(bookingTime);
-		let deadline = new Date();
-		// This is where you need to adjust if 
-		// you entend to add more time
-        return new Date(deadline.getTime() + 10 * 60000); 
+        return  new Date(((new Date(bookingTime)).getTime() + 10 * 60000)); 
+        // return  new Date(((new Date()).getTime() + 3 * 60000)); 
 	}
-
-	// We can use useEffect so that when the component
-	// mount the timer will start as soon as possible
-	// We put empty array to act as componentDid
-	// mount only
 
 	useEffect(() => {
 		clearTimer(getDeadTime());
 	}, []);
 
-	// Another way to call the clearTimer() to start
-	// the countdown is via action event from the
-	// button first we create function to be called
-	// by the button
-
-	const onClickReset = () => {
-		clearTimer(getDeadTime());
-	}
-
 	return (
-			<i>{timer}</i>
+		<i>{timer}</i>
 	)
 }
-
 export default CountDown;

@@ -67,8 +67,10 @@
   }
 
   .loginTabContainer{
-    width: 80%;
-  }
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
    
   /* Tab Container */
   .loginTabContainer .Tabs {

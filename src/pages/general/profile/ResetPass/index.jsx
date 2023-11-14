@@ -106,6 +106,13 @@ const ResetPassword = () => {
         navigate('/login')
     }
 
+    useEffect(() => {
+        dispatch(authActions.reset())
+        return () => {
+            dispatch(authActions.reset())
+        };
+    }, [])
+
     return (
         <div>
             {message !== '' && <Message message={message} messagetype={error ? 2 : 1} />}

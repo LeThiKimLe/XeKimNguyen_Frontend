@@ -53,7 +53,6 @@ const searchSlice = createSlice({
                     schedules.forEach((schedule)=>{
                         listSchedule.push({
                             ...schedule,
-                            bookedSeat:[],
                             tripInfor: tripInfor
                         })
                     })
@@ -61,6 +60,26 @@ const searchSlice = createSlice({
                 state.result.listTrip = listSchedule
             })
             .addCase(searchThunk.getTrips.rejected, (state, action)=> {
+                state.result.message = action.payload
+                state.result.listTrip = []
+            })
+            .addCase(searchThunk.getSameTrips.fulfilled, (state, action) => {
+
+                const listSchedule = []
+                const listTrip = action.payload
+
+                listTrip.forEach((trip)=>{
+                    const {schedules, ...tripInfor} = trip
+                    schedules.forEach((schedule)=>{
+                        listSchedule.push({
+                            ...schedule,
+                            tripInfor: tripInfor
+                        })
+                    })
+                })
+                state.result.listTrip = listSchedule
+            })
+            .addCase(searchThunk.getSameTrips.rejected, (state, action)=> {
                 state.result.message = action.payload
                 state.result.listTrip = []
             })

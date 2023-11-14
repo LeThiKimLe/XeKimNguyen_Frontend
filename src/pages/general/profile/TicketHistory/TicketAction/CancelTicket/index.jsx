@@ -1,20 +1,27 @@
 import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleExclamation, faCircleCheck  } from '@fortawesome/free-solid-svg-icons'
+import { faCircleExclamation, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 import Button, { OptionButton } from '../../../../../../components/common/button'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectCurrentTicket, selectProcess } from '../../../../../../feature/ticket/ticket.slice'
 import { useDispatch } from 'react-redux'
 import { ticketAction } from '../../../../../../feature/ticket/ticket.slice'
+import { convertToDisplayDate } from '../../../../../../utils/unitUtils'
+import ticketThunk from '../../../../../../feature/ticket/ticket.service'
+import { selectLoading } from '../../../../../../feature/ticket/ticket.slice'
+import bookingThunk from '../../../../../../feature/booking/booking.service'
 
-const CancelTicket = ({close}) => {
+const CancelTicket = ({ close }) => {
     const [confirm, setConfirm] = useState(false)
     const process = useSelector(selectProcess)
     const [error, setError] = useState(false)
     const currrentTickets = useSelector(selectCurrentTicket)
     const [listCancel, setListCancel] = useState([])
     const dispatch = useDispatch()
+    const [message, setMessage] = useState('')
+    const loading = useSelector(selectLoading)
+    const [policy, setPolicy] = useState(null)
     const handleConfirmPolicy = () => {
         if (confirm)
             dispatch(ticketAction.comeForward())
@@ -23,25 +30,45 @@ const CancelTicket = ({close}) => {
     }
 
     const handleSelectTicket = () => {
-        if (listCancel.length !== 0)
-            dispatch(ticketAction.comeForward())
+        if (listCancel.length !== 0) {
+            dispatch(ticketThunk.verifyCancelTicketPolicy({ bookingCode: currrentTickets.code, listCancel: listCancel }))
+                .unwrap()
+                .then((response) => {
+                    setMessage('')
+                    setPolicy(response)
+                    dispatch(ticketAction.comeForward())
+                })
+                .catch((error) => {
+                    setMessage(error)
+                })
+        }
         else
             setError(true)
     }
 
     const handleConfirmCancel = () => {
-        dispatch(ticketAction.comeForward())
-        // call asynThunk here
-        dispatch(ticketAction.finishAction())
+        dispatch(ticketThunk.cancelTicket({ bookingCode: currrentTickets.code, listCancel: listCancel }))
+        .then(() => {
+            setMessage('')
+            dispatch(ticketAction.comeForward())
+            dispatch(bookingThunk.getUserHistory())
+            dispatch(ticketAction.finishAction())
+        })
+        .catch((error) => {
+            setMessage(error)
+        })
     }
 
     const handleChooseTicket = (e) => {
-        if (listCancel.includes(e.target.name)) {
-            const newList = listCancel.filter((item) => item !== e.target.name)
+        if (listCancel.map((ticket) => ticket.seat).includes(e.target.name)) {
+            const newList = listCancel.filter((item) => item.seat !== e.target.name)
             setListCancel(newList)
         }
         else {
-            setListCancel([...listCancel, e.target.name])
+            setListCancel([...listCancel, {
+                id: e.target.value,
+                seat: e.target.name
+            }])
         }
     }
 
@@ -49,8 +76,12 @@ const CancelTicket = ({close}) => {
         if (listCancel.length === currrentTickets.tickets.length)
             setListCancel([])
         else
-            setListCancel(currrentTickets.tickets.map((ticket) => ticket.seat))
-
+            setListCancel(currrentTickets.tickets.map((ticket) => {
+                return {
+                    id: ticket.id,
+                    seat: ticket.seat
+                }
+            }))
     }
 
     useEffect(() => {
@@ -124,7 +155,7 @@ const CancelTicket = ({close}) => {
                         <br />
                         {error && <i style={{ color: 'red' }}>Vui lòng xác nhận đồng ý với chính sách hủy vé</i>}
                     </div>
-                    <Button text='Tiếp tục' onClick={handleConfirmPolicy} className={styles.nextBtn}></Button>
+                    <Button text='Tiếp tục' onClick={handleConfirmPolicy} className={styles.nextBtn} loading={loading}></Button>
                 </div>
             )
             }
@@ -132,11 +163,15 @@ const CancelTicket = ({close}) => {
                 (
                     <div className={styles.container}>
                         <h2 style={{ textAlign: 'center' }}>Hủy vé</h2>
-                        <span className={styles.inforTitle}>Chuyến xe: </span>
-                        <span className={styles.inforValue}>{`${currrentTickets.trip.route.departure.name} - ${currrentTickets.trip.route.destination.name}`}</span>
+                        <span className={styles.inforTitle}>Tuyến xe: </span>
+                        {currrentTickets.trip.turn === true ? (
+                            <span className={styles.inforValue}>{`${currrentTickets.trip.route.departure.name} - ${currrentTickets.trip.route.destination.name}`}</span>
+                        ) : (
+                            <span className={styles.inforValue}>{`${currrentTickets.trip.route.destination.name} - ${currrentTickets.trip.route.departure.name}`}</span>
+                        )}
                         <br />
                         <span className={styles.inforTitle}>Thời gian khởi hành: </span>
-                        <span className={styles.inforValue}>{`${currrentTickets.trip.departTime}h`}</span>
+                        <span className={styles.inforValue}>{`${currrentTickets.tickets[0].schedule.departTime.slice(0, -3)}h - Ngày ${convertToDisplayDate(currrentTickets.tickets[0].schedule.departDate)}`}</span>
                         <br />
                         <br />
                         <div>
@@ -154,20 +189,21 @@ const CancelTicket = ({close}) => {
                             <div className={styles.ticketContainer}>
                                 {currrentTickets.tickets.map((ticket) => (
                                     <div className={styles.ticketCover}>
-                                        <div key={ticket.code} className={styles.ticketItem}>
+                                        <div key={ticket.id} className={styles.ticketItem}>
                                             <label htmlFor={ticket.seat}>
                                                 <input type="checkbox"
                                                     name={ticket.seat}
-                                                    checked={listCancel.includes(ticket.seat)}
+                                                    value={ticket.id}
+                                                    checked={listCancel.map((ticket) => ticket.seat).includes(ticket.seat)}
                                                     onChange={handleChooseTicket}
                                                     style={{ marginRight: '10px', width: '20px', height: '20px' }}
                                                 />
                                                 <br />
-                                                <span>Ghế: </span>
+                                                <span>Vé: </span>
                                                 <b>{ticket.seat}</b>
                                                 <br />
-                                                <i style={{ fontSize: '13px' }}>Mã ghế: </i>
-                                                <i style={{ fontSize: '13px' }}>{ticket.code}</i>
+                                                <i style={{ fontSize: '13px' }}>Mã vé: </i>
+                                                <i style={{ fontSize: '13px' }}>{ticket.id}</i>
 
                                             </label>
                                         </div>
@@ -181,7 +217,8 @@ const CancelTicket = ({close}) => {
                                 về cho tài khoản đã thanh toán vé trong vòng 3-5 ngày làm việc </span>
                             <br />
                             {error && <i style={{ color: 'red', fontSize: '15px' }}>Vui lòng chọn vé cần hủy</i>}
-                            <Button text='Tiếp tục' className={styles.nextBtn} onClick={handleSelectTicket}></Button>
+                            {message !== '' && <i>{message}</i>}
+                            <Button text='Tiếp tục' className={styles.nextBtn} onClick={handleSelectTicket} loading={loading}></Button>
                         </div>
                     </div>
                 )}
@@ -190,41 +227,62 @@ const CancelTicket = ({close}) => {
                     <div className={styles.container}>
                         <h2 style={{ textAlign: 'center' }}>Xác nhận hủy vé</h2>
                         <span className={styles.inforTitle}>Chuyến xe: </span>
-                        <span className={styles.inforValue}>{`${currrentTickets.trip.route.departure.name} - ${currrentTickets.trip.route.destination.name}`}</span>
+                        {currrentTickets.trip.turn === true ? (
+                            <span className={styles.inforValue}>{`${currrentTickets.trip.route.departure.name} - ${currrentTickets.trip.route.destination.name}`}</span>
+                        ) : (
+                            <span className={styles.inforValue}>{`${currrentTickets.trip.route.destination.name} - ${currrentTickets.trip.route.departure.name}`}</span>
+                        )}
                         <br />
                         <span className={styles.inforTitle}>Thời gian khởi hành: </span>
-                        <span className={styles.inforValue}>{`${currrentTickets.trip.departTime}h`}</span>
+                        <span className={styles.inforValue}>{`${currrentTickets.tickets[0].schedule.departTime.slice(0, -3)}h - Ngày ${convertToDisplayDate(currrentTickets.tickets[0].schedule.departDate)}`}</span>
                         <br />
                         <span className={styles.inforTitle}>Số lượng vé hủy: </span>
                         <span className={styles.inforValue}>{listCancel.length}</span>
                         <br />
                         <span className={styles.inforTitle}>Số ghế: </span>
-                        <span className={styles.inforValue}>{listCancel.join()}</span>
+                        <span className={styles.inforValue}>{listCancel.map((ticket) => ticket.seat).join()}</span>
                         <br />
                         <span className={styles.inforTitle}>Thời gian hủy vé: </span>
                         <span className={styles.inforValue}>{`${(new Date()).toLocaleDateString()} - ${(new Date()).toLocaleTimeString()}`}</span>
                         <br />
-                        <span className={styles.inforTitle}>Số tiền khách hàng đã thanh toán: </span>
-                        <span className={styles.inforValue}>0đ</span>
+                        <span className={styles.inforTitle}>Số tiền khách hàng đã thanh toán cho {listCancel.length} vé: </span>
+                        {
+                            currrentTickets.transaction ? (
+                                <span className={styles.inforValue}>{(currrentTickets.transaction.amount/currrentTickets.ticketNumber*listCancel.length).toLocaleString()}đ</span>
+                            ) : (
+                                <span className={styles.inforValue}>0đ</span>
+                            )
+                        }
                         <br />
                         <span className={styles.inforTitle}>Số tiền sẽ hoàn lại: </span>
-                        <span className={styles.inforValue}>0đ</span>
+                        {policy ? (
+                            <span className={styles.inforValue}>{policy.transaction.amount.toLocaleString()}đ</span>
+                        ): (
+                            <span className={styles.inforValue}>0đ</span>
+                        )}
                         <br />
                         <span className={styles.inforTitle}>Chính sách áp dung: </span>
-                        <span className={styles.inforValue}>Hỗ trợ hủy ngay đối với vé chưa thanh toán</span>
+                        {
+                            policy ? (
+                                <span className={styles.inforValue}>{policy.policy.description}</span>
+                             ) : (
+                                <span className={styles.inforValue}>{'--Đang xác minh--'}
+                                </span>
+                             )
+                        }
                         <br />
-                        <Button text='Xác nhận hủy vé' className={styles.nextBtn} onClick={handleConfirmCancel}></Button>
+                        <Button text='Xác nhận hủy vé' className={styles.nextBtn} onClick={handleConfirmCancel} loading={loading}></Button>
                     </div>
                 )
             }
             {
                 process === 4 && (
                     <div className={styles.container}>
-                        <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
-                            <FontAwesomeIcon icon={faCircleCheck} color='green' size={'2x'}/>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <FontAwesomeIcon icon={faCircleCheck} color='green' size={'2x'} />
                             <span>Vé đã được hủy thành công</span>
                         </div>
-                        <OptionButton text='Đóng' className={styles.nextBtn} onClick={close}></OptionButton>
+                        <OptionButton text='Đóng' className={styles.nextBtn} onClick={close} loading={loading}></OptionButton>
                     </div>
                 )
             }

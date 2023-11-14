@@ -29,8 +29,8 @@ const List = () => {
     const dispatch = useDispatch()
     const listRoute = useSelector(selectListRoute)
     const listTrip = useSelector(selectRearchResult)
-    const [search, setSearch] = useState(true)
 
+    const [search, setSearch] = useState(true)
     const seatMap = useSelector(selectSeatMap)
     const [resetFilter, setResetFilter] = useState(false)
 
@@ -53,7 +53,7 @@ const List = () => {
         const name = event.currentTarget.dataset.name
         const value = !sortOptions[name].value
 
-        if (value===true)
+        if (value === true)
             setSortState(name)
         else
             setSortState('')
@@ -133,7 +133,6 @@ const List = () => {
                 }
                 )
                 .catch((error) => {
-                    console.log(error)
                     setLoading(false)
                     setSearch(false)
                     setResetFilter(false)
@@ -141,24 +140,24 @@ const List = () => {
         }
     }, [search]);
 
-    useEffect(()=>{
+    useEffect(() => {
         setFilterResult(listTrip)
         setUnsortTrip(listTrip)
         setBackupTrips(listTrip)
     }, [listTrip])
 
-    useEffect(()=>{
-        if (resetFilter === true){
+    useEffect(() => {
+        if (resetFilter === true) {
             Object.entries(sortOptions).filter(([key, value]) => value.value === true)
-            .forEach(([key, value]) => {
-                setSortOptions((prevOptions) => ({
-                    ...prevOptions,
-                    [key]: {
-                        ...prevOptions[key],
-                        value: false
-                    }
-                }))
-            })
+                .forEach(([key, value]) => {
+                    setSortOptions((prevOptions) => ({
+                        ...prevOptions,
+                        [key]: {
+                            ...prevOptions[key],
+                            value: false
+                        }
+                    }))
+                })
         }
 
     }, [resetFilter])
@@ -181,7 +180,7 @@ const List = () => {
                                             className={styles.searchInput}
                                             readOnly
                                             value={searchInfor.turn === 1 ? searchInfor.searchRoute.departure.name
-                                                              : searchInfor.searchRoute.destination.name} />
+                                                : searchInfor.searchRoute.destination.name} />
                                     </div>
                                     <div className={styles.exchangeBtn}>
                                         <FontAwesomeIcon icon={faArrowRight} className={styles.searchItemIcon} />
@@ -191,8 +190,8 @@ const List = () => {
                                         <input type="text"
                                             className={styles.searchInput}
                                             readOnly
-                                            value={searchInfor.turn === 1 ? searchInfor.searchRoute.destination.name 
-                                                              : searchInfor.searchRoute.departure.name} />
+                                            value={searchInfor.turn === 1 ? searchInfor.searchRoute.destination.name
+                                                : searchInfor.searchRoute.departure.name} />
                                     </div>
                                 </div>
                                 <div className={`${styles.searchItem} ${styles.searchDate}`}>

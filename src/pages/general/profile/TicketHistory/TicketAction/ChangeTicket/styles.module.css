@@ -29,6 +29,7 @@
     background-color: var(--primary-color);
     border: 1px solid #ccc;
     border-radius: 10px;
+    min-width: 100px;
 }
 
 .ticketItem{

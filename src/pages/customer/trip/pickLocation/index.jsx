@@ -22,10 +22,11 @@ const PickLocation = ({ pick, listLocation, setLocation, selected }) => {
                 {listLocation.map((location) => (
                     <div key={`${location.id}`} className={styles.pick_location}>
                         <label className={selected == location.id ? `${styles.location_label} ${styles.selected}` : styles.location_label}>
+
                             <input
                                 type="radio"
                                 value={location.id}
-                                checked={selected === location.id}
+                                checked={selected == location.id}
                                 onChange={handleOptionChange}
                                 className={styles.pick_radio}
                             />

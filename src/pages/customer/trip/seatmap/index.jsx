@@ -33,7 +33,7 @@ const SeatMap = ({ seatMap, booked, selectedSeats, handleSeatClick }) => {
                           <Seat
                             seatName={seat.name}
                             key={`${floorNumber}-${rowNumber}-${colNumber}`}
-                            state={booked.includes(seat.name) ? 'booked' : (selectedSeats.includes(seat.name) ? 'selecting' : 'active')}
+                            state={booked.map((ticket)=> ticket.seat).includes(seat.name) ? 'booked' : (selectedSeats.includes(seat.name) ? 'selecting' : 'active')}
                             chooseSeat={() => handleSeatChoose(seat.name)}
                           />
                         </div>

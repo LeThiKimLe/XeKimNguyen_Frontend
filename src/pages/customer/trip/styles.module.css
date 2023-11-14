@@ -191,7 +191,6 @@
 .payment_direct span:first-child{
     font-size: 20px;
     font-weight: 700;
-    margin-left: 30px;
 }
 
 @keyframes linearAppear {

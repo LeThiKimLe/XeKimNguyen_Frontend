@@ -14,11 +14,12 @@ import { convertToTime, convertToDisplayDate } from '../../../utils/unitUtils'
 import { selectUser } from '../../../feature/auth/auth.slice'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { bookingActions } from '../../../feature/booking/booking.slice'
+import { bookingActions, selectBookingCode } from '../../../feature/booking/booking.slice'
 import { selectLoading, selectError, selectMessage } from '../../../feature/booking/booking.slice'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import bookingThunk from '../../../feature/booking/booking.service'
 import './custom.css'
+import { selectChangeInfor, ticketAction, selectNewSeat } from '../../../feature/ticket/ticket.slice'
 
 const Trip = ({ tabStyle }) => {
     const dispatch = useDispatch()
@@ -28,7 +29,7 @@ const Trip = ({ tabStyle }) => {
     const inforForm = useRef(null)
     const [message, setMessage] = useState({ message: '', messagetype: 2 })
     const loading = useSelector(selectLoading)
-    const error = useSelector(selectError)
+    const bookingCode = useSelector(selectBookingCode)
 
     const [pickLocation, setPickLocation] = useState(currentTrip.tripInfor.stopStations.filter((stop) => (
         currentTrip.tripInfor.turn === true ?
@@ -88,7 +89,6 @@ const Trip = ({ tabStyle }) => {
             type: "email",
             placeholder: "Email",
             errorMessage: "Email sai định dạng",
-
             label: "Email",
             required: true
         }
@@ -103,8 +103,11 @@ const Trip = ({ tabStyle }) => {
     const handleConfirmChange = () => {
         setConfirm(!isConfirmed);
     };
+    
+    const changeInfor = useSelector(selectChangeInfor)
+    const newInfor = useSelector(selectNewSeat)
+    const [selectedSeats, setSelectedSeats] = useState(newInfor.length>0 ? newInfor : []);
 
-    const [selectedSeats, setSelectedSeats] = useState([]);
     const handleSeatClick = useCallback((seatName) => {
         if (selectedSeats.includes(seatName)) {
             setSelectedSeats(selectedSeats.filter((seat) => seat !== seatName));
@@ -117,18 +120,6 @@ const Trip = ({ tabStyle }) => {
         }
     }, [selectedSeats, message.messagetype]);
 
-    const generateRandomCode = () => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let code = '';
-
-        for (let i = 0; i < 6; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            code += characters.charAt(randomIndex);
-        }
-
-        return code;
-    }
-
     const handlePayment = () => {
         if (selectedSeats.length === 0)
             setMessage({ message: 'Vui lòng chọn chỗ', messagetype: message.messagetype + 1 })
@@ -137,7 +128,6 @@ const Trip = ({ tabStyle }) => {
         else if (isConfirmed === false)
             setMessage({ message: 'Vui lòng tích xác nhận điều khoản', messagetype: message.messagetype + 1 })
         else {
-            const bookingCode = generateRandomCode()
             const bookingInfor = {
                 bookingTrip: currentTrip,
                 bookingUser: userInfor,
@@ -151,8 +141,7 @@ const Trip = ({ tabStyle }) => {
                 dispatch(bookingThunk.bookingForUser(bookingInfor))
                 .unwrap()
                 .then((response)=>{
-                    // navigate(`/payment/${response.bookingCode}`)
-                    navigate(`/payment/${bookingCode}`)
+                    navigate(`/payment/${response.code}`)  
                 })
                 .catch((error) => {
                     setMessage({message: error, messagetype: 2})
@@ -162,20 +151,33 @@ const Trip = ({ tabStyle }) => {
                 dispatch(bookingThunk.bookingForGuest(bookingInfor))
                 .unwrap()
                 .then((response)=>{
-                    // navigate(`/payment/${response.bookingCode}`)
-                    navigate(`/payment/${bookingCode}`)
+                    navigate(`/payment/${response.code}`)
                 })
                 .catch((error) => {
                     setMessage({message: error, messagetype: 2})
                 })
             }
-
         }
     }
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [])
+    
+    const handleSeatTabStyle = useCallback((seatName) => {
+        if (selectedSeats.includes(seatName)) {
+            setSelectedSeats(selectedSeats.filter((seat) => seat !== seatName));
+        } else {
+            if (selectedSeats.length < changeInfor.length)
+                setSelectedSeats([...selectedSeats, seatName]);
+        }
+    }, [selectedSeats, message.messagetype]);
+
+    const handleNext = () => {
+        dispatch(ticketAction.setNewChangeInfor(selectedSeats))
+        dispatch(ticketAction.comeForward())
+    }
+
     if (!tabStyle) {
         return (
             <>
@@ -188,7 +190,7 @@ const Trip = ({ tabStyle }) => {
                             <div className={styles.trip_infor}>
                                 <div className={styles.infor_segment}>
                                     <h2>Chọn ghế</h2>
-                                    <SeatMap seatMap={currentTrip.tripInfor.route.busType.seatMap} booked={currentTrip.bookedSeat} selectedSeats={selectedSeats} handleSeatClick={handleSeatClick}></SeatMap>
+                                    <SeatMap seatMap={currentTrip.tripInfor.route.busType.seatMap} booked={currentTrip.tickets} selectedSeats={selectedSeats} handleSeatClick={handleSeatClick}></SeatMap>
                                 </div>
                                 <div className={styles.infor_segment}>
                                     <h2>Thông tin đón trả</h2>
@@ -278,28 +280,14 @@ const Trip = ({ tabStyle }) => {
                 <Tabs>
                     <TabList>
                         <Tab>Chọn ghế</Tab>
-                        <Tab>Chọn điểm đón - trả</Tab>
                     </TabList>
                     <TabPanel>
                         <SeatMap seatMap={currentTrip.tripInfor.route.busType.seatMap}
-                            booked={currentTrip.bookedSeat}
-                            selectedSeats={selectedSeats}
-                            handleSeatClick={handleSeatClick}>
+                                 booked={currentTrip.tickets}
+                                 selectedSeats={selectedSeats}
+                                 handleSeatClick={handleSeatTabStyle}>
                         </SeatMap>
-                    </TabPanel>
-                    <TabPanel>
-                        <div className={styles.pick_area}>
-                            <PickLocation pick={true} 
-                                          listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')} 
-                                          setLocation={handlePickLocation} 
-                                          selected={pickLocation}>        
-                            </PickLocation>
-                            <PickLocation pick={false}
-                                         listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')} 
-                                         setLocation={handleDropLocation} 
-                                         selected={dropLocation}>
-                            </PickLocation>
-                        </div>
+                        <Button onClick={handleNext} text='Tiếp tục'></Button>
                     </TabPanel>
                 </Tabs>
             </div>

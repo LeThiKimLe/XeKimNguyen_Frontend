@@ -203,3 +203,39 @@ export const BILL_INFOR = [
         required: true,
     }
 ]
+
+export const STATE_DICTIONARY = [
+    {
+        key: 'success',
+        value: 'Thành công',
+        message: 'Đặt vé thành công'
+    },
+    {
+        key: 'pending',
+        value: 'Giữ chỗ',
+        message: 'Chờ thanh toán'
+    },
+    {
+        key: 'cancel',
+        value: 'Đã hủy',
+        message: 'Thanh toán thất bại'
+    }
+] 
+
+export const TICKET_STATE_DICTIONARY = [
+    {
+        key: 'success',
+        value: 'Đã thanh toán',
+        message: 'Thành công'
+    },
+    {
+        key: 'pending',
+        value: 'Chờ thanh toán',
+        message: 'Chờ thanh toán'
+    },
+    {
+        key: 'cancel',
+        value: 'Đã hủy',
+        message: 'Đã hủy'
+    }
+]

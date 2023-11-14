@@ -9,6 +9,8 @@ import Button from '../../../../components/common/button'
 import { tripActions } from '../../../../feature/trip/trip.slice'
 import Trip from '../../trip'
 import { useState } from 'react'
+import { ticketAction } from '../../../../feature/ticket/ticket.slice'
+import { selectNewTrip } from '../../../../feature/ticket/ticket.slice'
 
 const SearchItem = ({ trip, sameTrip }) => {
 
@@ -16,7 +18,7 @@ const SearchItem = ({ trip, sameTrip }) => {
 
     const searchInfor = useSelector(selectSearchInfor)
 
-    const [selectTrip, setSelectTrip] = useState(false)
+    const newTrip = useSelector(selectNewTrip)
 
     const navigate = useNavigate()
 
@@ -27,7 +29,10 @@ const SearchItem = ({ trip, sameTrip }) => {
 
     const showDetailSelector =  () => {
         dispatch(tripActions.getCurTrip(trip))
-        setSelectTrip(!selectTrip)
+        if (newTrip && newTrip.id === trip.id)
+            dispatch(ticketAction.setNewTrip(null))
+        else
+            dispatch(ticketAction.setNewTrip(trip))
     }
     
     const startStation = trip.tripInfor.turn === true ? trip.tripInfor.startStation : trip.tripInfor.endStation
@@ -62,10 +67,10 @@ const SearchItem = ({ trip, sameTrip }) => {
                 {sameTrip ? (
                     <div>
                         <i><a href='#' onClick={showDetailSelector}>
-                            {selectTrip === true ? 'Đóng' : 'Chọn chuyến' }
+                            {newTrip && newTrip.id === trip.id ? 'Đóng' : 'Chọn chuyến' }
                         </a>
                         </i>
-                        {selectTrip === true && (
+                        {newTrip && newTrip.id === trip.id && (
                             <Trip tabStyle={true}></Trip>
                         )}
                     </div>
