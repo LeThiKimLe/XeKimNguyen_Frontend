@@ -44,8 +44,7 @@ const TicketHistory = () => {
     ]
 
     const ticketActions = [
-        { value: 'edit', label: 'Sửa vé' },
-        { value: 'change', label: 'Đổi vé' },
+        { value: 'change', label: 'Đổi - Sửa vé' },
         { value: 'cancel', label: 'Hủy vé' },
     ]
     

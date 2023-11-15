@@ -14,6 +14,7 @@ import routeThunk from '../../../feature/route/route.service'
 import { useDispatch } from 'react-redux'
 import { selectUser } from '../../../feature/auth/auth.slice'
 import TripInfor from './tripInfor'
+import { Helmet } from 'react-helmet';
 
 const Home = () => {
     const user = useSelector(selectUser)

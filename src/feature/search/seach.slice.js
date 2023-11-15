@@ -18,14 +18,14 @@ const initialState = {
     },
     result: {
         message: '',
-        listTrip : []
+        listTrip: []
     },
 }
 
 const searchSlice = createSlice({
     name: 'search',
     initialState,
-    reducers:{
+    reducers: {
         setSearch: (state, action) => {
             const searchInfor = action.payload
             state.infor = searchInfor
@@ -37,20 +37,18 @@ const searchSlice = createSlice({
         resetResult: (state) => {
             state.result = {
                 message: '',
-                listTrip : []
+                listTrip: []
             }
         }
     },
     extraReducers: (builder) => {
         builder
             .addCase(searchThunk.getTrips.fulfilled, (state, action) => {
-
                 const listSchedule = []
                 const listTrip = action.payload
-
-                listTrip.forEach((trip)=>{
-                    const {schedules, ...tripInfor} = trip
-                    schedules.forEach((schedule)=>{
+                listTrip.forEach((trip) => {
+                    const { schedules, ...tripInfor } = trip
+                    schedules.forEach((schedule) => {
                         listSchedule.push({
                             ...schedule,
                             tripInfor: tripInfor
@@ -59,32 +57,28 @@ const searchSlice = createSlice({
                 })
                 state.result.listTrip = listSchedule
             })
-            .addCase(searchThunk.getTrips.rejected, (state, action)=> {
+            .addCase(searchThunk.getTrips.rejected, (state, action) => {
                 state.result.message = action.payload
                 state.result.listTrip = []
             })
             .addCase(searchThunk.getSameTrips.fulfilled, (state, action) => {
 
                 const listSchedule = []
-                const listTrip = action.payload
-
-                listTrip.forEach((trip)=>{
-                    const {schedules, ...tripInfor} = trip
-                    schedules.forEach((schedule)=>{
-                        listSchedule.push({
-                            ...schedule,
-                            tripInfor: tripInfor
-                        })
+                const trip = action.payload
+                const { schedules, ...tripInfor } = trip
+                schedules.forEach((schedule) => {
+                    listSchedule.push({
+                        ...schedule,
+                        tripInfor: tripInfor
                     })
                 })
                 state.result.listTrip = listSchedule
             })
-            .addCase(searchThunk.getSameTrips.rejected, (state, action)=> {
+            .addCase(searchThunk.getSameTrips.rejected, (state, action) => {
                 state.result.message = action.payload
                 state.result.listTrip = []
             })
     }
-
 })
 
 export const selectSearchInfor = (state) => state.search.infor

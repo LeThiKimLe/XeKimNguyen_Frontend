@@ -87,7 +87,6 @@ axiosClient.interceptors.response.use(
       try{
           const accessToken = await refreshAccessToken();
           originalRequest.headers.Authorization = `Bearer ${accessToken}`
-          console.log(originalRequest.url)
           return axiosClient(originalRequest);
         }
     catch (error) {
