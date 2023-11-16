@@ -17,7 +17,11 @@ import { selectRearchResult } from '../../../../../../feature/search/seach.slice
 import notfound from '../../../../../../assets/notfound.png'
 import SearchItem from '../../../../../customer/list/searchItem'
 import { convertToDisplayDate } from '../../../../../../utils/unitUtils'
-import { selectNewTrip, selectNewSeat } from '../../../../../../feature/ticket/ticket.slice'
+import { selectNewTrip, selectNewSeat, selectMessage, selectModifiedTrip } from '../../../../../../feature/ticket/ticket.slice'
+import PickLocation from '../../../../../customer/trip/pickLocation'
+import { selectCurrentTrip, tripActions } from '../../../../../../feature/trip/trip.slice';
+import ticketThunk from '../../../../../../feature/ticket/ticket.service'
+import bookingThunk from '../../../../../../feature/booking/booking.service'
 
 const ChangeTicket = ({ close }) => {
     const process = useSelector(selectProcess)
@@ -32,10 +36,12 @@ const ChangeTicket = ({ close }) => {
     const [loading, setLoading] = useState(false)
     const newTrip = useSelector(selectNewTrip)
     const newSeats = useSelector(selectNewSeat)
-    const [currentTrip, setCurrentTrip] = useState(null)
+    const currentTrip = useSelector(selectModifiedTrip)
     const dispatch = useDispatch()
+    const message = useSelector(selectMessage)
+
     const handleChooseTicket = (e) => {
-        if (listChange.includes(e.target.name)) {
+        if (listChange.map((ticket)=>ticket.seat).includes(e.target.name)) {
             const newList = listChange.filter((item) => item.seat !== e.target.name)
             setListChange(newList)
         }
@@ -54,7 +60,6 @@ const ChangeTicket = ({ close }) => {
             try {
                 dispatch(searchThunk.getSameTrips({
                     tripId: currrentTickets.trip.id,
-                    availability: listChange.length,
                     departDate: format(newDepDate, 'dd/MM/yyyy'),
                 }))
                     .then(() => {
@@ -117,16 +122,31 @@ const ChangeTicket = ({ close }) => {
     }
 
     const handleConfirmChange = () => {
-        //Gọi API đổi vé tại đây
-        dispatch(ticketAction.finishAction())
-        dispatch(ticketAction.comeForward())
+        setLoading(true)
+        dispatch(ticketThunk.changeTicket({
+            bookingCode: currrentTickets.code,
+            listChange: listChange,
+            listNew: action==='changeSeat' ? selectedSeats : newSeats,
+            newScheduleId: action === 'changeSeat' ? currentTrip.id : newTrip.id
+        }
+        ))
+            .unwrap()
+            .then(() => {
+                setLoading(false)
+                dispatch(bookingThunk.getUserHistory())
+                dispatch(ticketAction.finishAction())
+                dispatch(ticketAction.comeForward())
+            })
+            .catch((error) => {
+                setLoading(false)
+                console.log(error)
+            })
     }
 
     const getNewTrip = async () => {
         setLoading(true)
         dispatch(searchThunk.getSameTrips({
             tripId: currrentTickets.trip.id,
-            availability: listChange.length,
             departDate: format(newDepDate, 'dd/MM/yyyy'),
         }))
             .unwrap()
@@ -164,12 +184,12 @@ const ChangeTicket = ({ close }) => {
 
     useEffect(() => {
         if (searchResult.length !== 0) {
-            setCurrentTrip(searchResult.filter((trip) => trip.id === currrentTickets.tickets[0].schedule.id)[0])
+            dispatch(ticketAction.setModifiedTrip(searchResult.filter((trip) => trip.id === currrentTickets.tickets[0].schedule.id)[0]))
         }
     }, [searchResult])
 
     console.log(currrentTickets)
-    
+
     return (
         <div>
             {process === 1 && (
@@ -239,7 +259,7 @@ const ChangeTicket = ({ close }) => {
                                                 <input type="checkbox"
                                                     name={ticket.seat}
                                                     value={ticket.id}
-                                                    checked={listChange.map((ticket) => ticket.seat).includes(ticket.seat)}
+                                                    checked={listChange.map((tk) => tk.seat).includes(ticket.seat)}
                                                     onChange={handleChooseTicket}
                                                     style={{ marginRight: '10px', width: '20px', height: '20px' }}
                                                 />
@@ -257,15 +277,6 @@ const ChangeTicket = ({ close }) => {
                             <br />
                             <span className={styles.inforTitle}>Chọn hành động*</span>
                             <div>
-                                <label htmlFor="changeStation" style={{ margin: '5px 0' }}>
-                                    <input type="radio" name='changeStation'
-                                        checked={action === 'changeStation'}
-                                        onChange={handleChangeAction}
-                                        style={{ marginRight: '10px', width: '15px', height: '15px' }}
-                                    />
-                                    <span style={action === 'changeSeat' ? { color: '#d09c0c', fontWeight: '600' } : { fontWeight: '600' }}>Đổi trạm đón - trả</span>
-                                </label>
-                                <br />
                                 <label htmlFor="changeSeat" style={{ margin: '5px 0' }}>
                                     <input type="radio" name='changeSeat'
                                         checked={action === 'changeSeat'}
@@ -350,30 +361,12 @@ const ChangeTicket = ({ close }) => {
                                             (
                                                 <div className={styles.listResult}>
                                                     <i><b>Hãy chọn {listChange.length} vé từ 1 chuyến xe khác</b></i>
-                                                    {searchResult.filter((trip) => !currentTrip || trip.id !== currentTrip.id).map((trip) => (
+                                                    {searchResult.filter((trip) => !currentTrip || (trip.id !== currentTrip.id && trip.availability >= listChange.length)).map((trip) => (
                                                         <SearchItem trip={trip} key={trip.id} sameTrip={true}></SearchItem>
                                                     ))}
                                                 </div>
                                             )}
                                     </div>
-                                </div>
-                            )
-                        }
-                        {
-                            action === 'changeStation' && (
-                                <div className={styles.infor_segment}>
-                                    {/* <h2>Thông tin đón - trả</h2>
-                                    <div className={styles.pick_area}>
-                                        <PickLocation   pick={true} 
-                                                        listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')} 
-                                                        setLocation={handlePickLocation} selected={pickLocation}>         
-                                        </PickLocation>
-                                        <PickLocation   pick={false} 
-                                                        listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')} 
-                                                        setLocation={handleDropLocation} 
-                                                        selected={dropLocation}>
-                                        </PickLocation>
-                                    </div> */}
                                 </div>
                             )
                         }
@@ -396,6 +389,7 @@ const ChangeTicket = ({ close }) => {
                                 <div>
                                     <span className={styles.inforTitle}>Thời gian khởi hành: </span>
                                     <span className={styles.inforValue}>{`${currrentTickets.tickets[0].schedule.departTime.slice(0, -3)}h - Ngày ${convertToDisplayDate(currrentTickets.tickets[0].schedule.departDate)}`}</span>
+                                    <br />
                                     <span className={styles.inforTitle}>Đổi ghế: </span>
                                     <b>{listChange.map((ticket) => ticket.seat).join()}</b>
                                     <span>{` ---> `}</span>
@@ -425,7 +419,14 @@ const ChangeTicket = ({ close }) => {
                         <br />
                         <b>Lưu ý: </b>
                         <span>Hệ thống chỉ hỗ trợ đổi vé một lần. Bạn sẽ không thể đổi hay hủy vé sau khi đổi.</span>
-                        <Button text='Xác nhận đổi vé' className={styles.nextBtn} onClick={handleConfirmChange}></Button>
+                        {message !== '' && (<p style={{color: 'red'}}>{message}</p>)} 
+                        { message ==='' &&
+                            <Button text='Xác nhận đổi vé' 
+                                 className={styles.nextBtn} 
+                                 onClick={handleConfirmChange} 
+                                 loading={loading}>
+                            </Button>
+                        }
                     </div>
                 )
             }

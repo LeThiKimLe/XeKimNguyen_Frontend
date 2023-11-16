@@ -23,12 +23,11 @@ const getTrips = createAsyncThunk('search/trip', async (searchInfor, thunkAPI) =
     }
 })
 
-const getSameTrips = createAsyncThunk('trips/same-trip', async ({tripId, availability, departDate}, thunkAPI) => {
+const getSameTrips = createAsyncThunk('trips/same-trip', async ({tripId, departDate}, thunkAPI) => {
     try {
         const response = await axiosClient.get('trips/same-trip', {
             params: {
                 "tripId": tripId,
-                "availability": availability,
                 "departDate": format(parse(departDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd'),
             }
         })

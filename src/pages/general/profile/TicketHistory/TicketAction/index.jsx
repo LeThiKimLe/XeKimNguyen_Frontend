@@ -1,6 +1,7 @@
 import styles from './styles.module.css'
 import CancelTicket from './CancelTicket'
 import ChangeTicket from './ChangeTicket'
+import EditTicket from './EditTicket'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch } from 'react-redux'
@@ -110,6 +111,7 @@ const TicketAction = ({ type, close }) => {
                 <div className={styles.action_content}>
                     {type === 'cancel' && <CancelTicket close={closeForm}></CancelTicket>}
                     {type === 'change' && <ChangeTicket close={closeForm}></ChangeTicket>}
+                    {type === 'edit' && <EditTicket close={closeForm}></EditTicket>}
                 </div>
             </DialogDiv>
         </div>

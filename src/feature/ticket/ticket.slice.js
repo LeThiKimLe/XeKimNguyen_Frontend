@@ -11,7 +11,8 @@ const initialState = {
     finishAction: false,
     newTrip: null,
     listChange: [],
-    listNew: []
+    listNew: [],
+    modifiedTrip: null
 }
 
 const ticketSlice = createSlice({
@@ -34,6 +35,7 @@ const ticketSlice = createSlice({
             state.newTrip = null
             state.listChange = []
             state.listNew = []
+            state.modifiedTrip = null
         },
         setCurrentTicket : (state, action) => {
             state.currentTicket = action.payload
@@ -47,6 +49,9 @@ const ticketSlice = createSlice({
         },
         finishAction: (state) => {
             state.finishAction = true
+        },
+        setModifiedTrip: (state, action) => {
+            state.modifiedTrip = action.payload
         },
         setNewTrip: (state, action) => {
             state.newTrip = action.payload
@@ -71,6 +76,22 @@ const ticketSlice = createSlice({
             state.error = false
         })
         .addCase(ticketThunk.cancelTicket.rejected, (state, action) => {
+            state.error = true
+            state.loading = false
+            state.message = action.payload
+        })
+
+        .addCase(ticketThunk.changeTicket.pending, (state) => {
+            state.loading = true
+        })
+        .addCase(ticketThunk.changeTicket.fulfilled, (state, action) => {
+            state.loading = false
+            state.newTrip = null
+            state.listChange = []
+            state.listNew = []
+            state.error = false
+        })
+        .addCase(ticketThunk.changeTicket.rejected, (state, action) => {
             state.error = true
             state.loading = false
             state.message = action.payload
@@ -101,6 +122,7 @@ export const selectNewTrip = (state) => state.ticket.newTrip
 export const selectChangeInfor = (state) => state.ticket.listChange
 export const selectNewSeat = (state) => state.ticket.listNew
 export const selectLoading = (state) => state.ticket.loading
+export const selectModifiedTrip = (state) => state.ticket.modifiedTrip
 
 export const ticketAction = ticketSlice.actions
 

@@ -44,8 +44,9 @@ const TicketHistory = () => {
     ]
 
     const ticketActions = [
-        { value: 'change', label: 'Đổi - Sửa vé' },
+        { value: 'change', label: 'Đổi vé' },
         { value: 'cancel', label: 'Hủy vé' },
+        {value: 'edit', label: 'Sửa điểm đón - trả'}
     ]
     
     const [openDate, setOpenDate] = useState(false)

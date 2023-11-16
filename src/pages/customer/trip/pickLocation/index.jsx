@@ -7,17 +7,23 @@ import { addHoursToTime } from '../../../../utils/unitUtils';
 import { selectCurrentTrip } from '../../../../feature/trip/trip.slice';
 import { useSelector } from 'react-redux';
 
-const PickLocation = ({ pick, listLocation, setLocation, selected }) => {
+const PickLocation = ({ pick, listLocation, setLocation, selected, getObject }) => {
 
     const trip = useSelector(selectCurrentTrip)
 
     const handleOptionChange = (event) => {
-        setLocation(event.target.value)
+       
+        if (getObject)
+        {
+            setLocation(listLocation.filter((location)=> location.id == event.target.value)[0])
+        }
+        else
+            setLocation(event.target.value)
     }
 
     return (
         <div className={`${styles.pick_container} ${pick ? styles.pick_separate : ''}`}>
-            <h3 className={styles.pick_title}>{pick ? "Điểm đón" : "Điểm trả"}</h3>
+            { !getObject && <h3 className={styles.pick_title}>{pick ? "Điểm đón" : "Điểm trả"}</h3>}
             <div className={styles.list_locations}>
                 {listLocation.map((location) => (
                     <div key={`${location.id}`} className={styles.pick_location}>
