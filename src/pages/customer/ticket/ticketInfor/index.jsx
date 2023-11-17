@@ -186,7 +186,6 @@ const TicketInfor = ({booking}) => {
                                 </div>
                             </Col>
                         ))}
-                        
                     </Row>
                 </Container>
             </div>

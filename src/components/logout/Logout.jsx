@@ -17,9 +17,13 @@ const LogoutConfirmation = ({ onConfirm, onCancel, type }) => {
       <div className={styles.logout_dialog}>
         <div className={styles.logout_title}>
           <FontAwesomeIcon icon={faCircleExclamation} color='#febb02' size='2x' />
-          { type === 'inform' ?
-            (<span>Bạn vừa đổi mật khẩu, hãy đăng nhập lại với mật khẩu mới</span>)
-            : (<span>Bạn thực sự muốn đăng xuất?</span>)
+          { type === 'inform' &&
+            (<span>Bạn vừa đổi mật khẩu, hãy đăng nhập lại với mật khẩu mới</span>)}
+          {type === 'confirm' &&
+             (<span>Bạn thực sự muốn đăng xuất?</span>)
+          }
+          {type === 'interupt' &&
+             (<span>Phiên đăng nhập của bạn bị gián đoạn. Hãy đăng nhập lại</span>)
           }
         </div>
         <div className={styles.logout_actions}>

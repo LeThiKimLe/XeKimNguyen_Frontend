@@ -252,7 +252,7 @@ const ChangeTicket = ({ close }) => {
                             </label>
                             <br />
                             <div className={styles.ticketContainer}>
-                                {currrentTickets.tickets.map((ticket) => (
+                                {currrentTickets.tickets.filter((ticket)=>ticket.state !== 'Đã hủy').map((ticket) => (
                                     <div className={styles.ticketCover}>
                                         <div key={ticket.id} className={styles.ticketItem}>
                                             <label htmlFor={ticket.seat}>
@@ -273,6 +273,7 @@ const ChangeTicket = ({ close }) => {
                                         </div>
                                     </div>
                                 ))}
+                                
                             </div>
                             <br />
                             <span className={styles.inforTitle}>Chọn hành động*</span>

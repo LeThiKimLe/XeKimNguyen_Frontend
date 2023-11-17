@@ -10,7 +10,7 @@
     justify-content: center;
     padding-left: 0px;
     list-style: none;
-    gap: 30px;
+    gap: 10px;
 }
 
 .editTicket .react-tabs__tab{
@@ -19,6 +19,10 @@
     padding: 10px 0;
     border-bottom: 2px solid white;
     cursor: pointer;
+}
+
+.editTicket .react-tabs__tab:hover{
+    background-color: rgb(204, 204, 204, 0.5);
 }
 
 .editTicket .react-tabs__tab--selected {

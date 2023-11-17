@@ -109,6 +109,19 @@ const ticketSlice = createSlice({
             state.loading = false
             state.message = action.payload
         })
+
+        .addCase(ticketThunk.editTicket.pending, (state) => {
+            state.loading = true
+        })
+        .addCase(ticketThunk.editTicket.fulfilled, (state, action) => {
+            state.loading = false
+            state.error = false
+        })
+        .addCase(ticketThunk.editTicket.rejected, (state, action) => {
+            state.error = true
+            state.loading = false
+            state.message = action.payload
+        })
     }
 })
 

@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux'
 import { ticketAction } from '../../../../../../feature/ticket/ticket.slice'
 import { convertToDisplayDate } from '../../../../../../utils/unitUtils'
 import ticketThunk from '../../../../../../feature/ticket/ticket.service'
-import { selectLoading, selectModifiedTrip} from '../../../../../../feature/ticket/ticket.slice'
+import { selectLoading, selectModifiedTrip } from '../../../../../../feature/ticket/ticket.slice'
 import bookingThunk from '../../../../../../feature/booking/booking.service'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { selectRearchResult } from '../../../../../../feature/search/seach.slice'
@@ -41,7 +41,7 @@ const EditTicket = ({ close }) => {
                 departDate: format(departDate, 'dd/MM/yyyy'),
             }))
                 .then(() => {
-                    
+
                 })
                 .catch((error) => {
                     console.log(error)
@@ -53,8 +53,7 @@ const EditTicket = ({ close }) => {
     }
 
     const handleConfirmPolicy = () => {
-        if (confirm)
-        {
+        if (confirm) {
             dispatch(ticketAction.comeForward())
             handleLoadStation()
         }
@@ -63,17 +62,22 @@ const EditTicket = ({ close }) => {
     }
 
     const handleConfirmEdit = () => {
-        // Gọi API sửa vé tại đây
-        // dispatch(ticketThunk.cancelTicket({ bookingCode: currrentTickets.code, listCancel: listCancel }))
-        //     .then(() => {
-        //         setMessage('')
+        dispatch(ticketThunk.editTicket(
+            {
+                bookingCode: currrentTickets.code,
+                pickStationId: pickLocation.id,
+                dropStationId: dropLocation.id
+            }))
+            .unwrap()
+            .then(() => {
+                setMessage('')
                 dispatch(ticketAction.comeForward())
                 dispatch(bookingThunk.getUserHistory())
                 dispatch(ticketAction.finishAction())
-        //     })
-        //     .catch((error) => {
-        //         setMessage(error)
-        //     })
+            })
+            .catch((error) => {
+                setMessage(error)
+            })
     }
 
     const handlePickLocation = useCallback((location) => {
@@ -85,11 +89,10 @@ const EditTicket = ({ close }) => {
     }, [])
 
     const handleChooseLocation = () => {
-        if (pickLocation.id === currrentTickets.pickStation.id && dropLocation.id === currrentTickets.dropStation.id)
-        {
+        if (pickLocation.id === currrentTickets.pickStation.id && dropLocation.id === currrentTickets.dropStation.id) {
             setMessage('Bạn chưa thay đổi điểm đi hoặc đón')
         }
-        else{
+        else {
             setMessage('')
             dispatch(ticketAction.comeForward())
         }
@@ -105,6 +108,8 @@ const EditTicket = ({ close }) => {
             dispatch(ticketAction.setModifiedTrip(searchResult.filter((trip) => trip.id === currrentTickets.tickets[0].schedule.id)[0]))
         }
     }, [searchResult])
+
+    console.log(currrentTickets)
 
     return (
         <div style={{ height: '100%' }}>
@@ -147,41 +152,43 @@ const EditTicket = ({ close }) => {
                         <span className={styles.inforTitle}>Chọn điểm đón - trả: </span>
                         <div className={`editTicket ${styles.tabStyle}`}>
                             {currentTrip ? (
-                            <Tabs>
-                                <TabList>
-                                    <Tab> <b>Điểm đón</b> </Tab>
-                                    <Tab> <b>Điểm trả</b> </Tab>
-                                </TabList>
-                                <TabPanel>
-                                    <PickLocation pick={true}
-                                        listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')}
-                                        setLocation={handlePickLocation}
-                                        selected={pickLocation.id}
-                                        getObject = {true}
-                                    >
-                                    </PickLocation>
-                                </TabPanel>
-                                <TabPanel>
-                                    <PickLocation pick={false}
-                                        listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')}
-                                        setLocation={handleDropLocation}
-                                        selected={dropLocation.id}
-                                        getObject = {true}
+                                <Tabs>
+                                    <TabList>
+                                        <Tab> <b>Điểm đón</b> </Tab>
+                                        <Tab> <b>Điểm trả</b> </Tab>
+                                    </TabList>
+                                    <TabPanel>
+                                        <PickLocation pick={true}
+                                            listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')}
+                                            setLocation={handlePickLocation}
+                                            selected={pickLocation.id}
+                                            getObject={true}
+                                            modifiedTrip={currentTrip}
                                         >
-                                    </PickLocation>
-                                </TabPanel>
-                            </Tabs>
-                            ):(
-                                <div style={{color: 'red'}}>
-                                    <i>Đã có lỗi xảy ra. Vui lòng thử lại sau</i>
+                                        </PickLocation>
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <PickLocation pick={false}
+                                            listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')}
+                                            setLocation={handleDropLocation}
+                                            selected={dropLocation.id}
+                                            getObject={true}
+                                            modifiedTrip={currentTrip}
+                                        >
+                                        </PickLocation>
+                                    </TabPanel>
+                                </Tabs>
+                            ) : (
+                                <div style={{ color: 'red' }}>
+                                    <i>Đang load dữ liệu. Vui lòng chờ trong giây lát ...</i>
                                 </div>
                             )}
                         </div>
                         <br />
                         <div>
-                            {message !== '' && <i>{message}</i>}
+                            {message !== '' && <i style={{ color: 'red' }}>{message}</i>}
                             {currentTrip && (
-                            <Button text='Tiếp tục' className={styles.nextBtn} onClick={handleChooseLocation} loading={loading}></Button>
+                                <Button text='Tiếp tục' className={styles.nextBtn} onClick={handleChooseLocation} loading={loading}></Button>
                             )}
                         </div>
                     </div>
@@ -200,7 +207,7 @@ const EditTicket = ({ close }) => {
                         <span className={styles.inforTitle}>Thời gian khởi hành: </span>
                         <span className={styles.inforValue}>{`${currrentTickets.tickets[0].schedule.departTime.slice(0, -3)}h - Ngày ${convertToDisplayDate(currrentTickets.tickets[0].schedule.departDate)}`}</span>
                         <br />
-                        
+
                         <span className={styles.inforTitle}>Điểm đón - trả cũ: </span>
                         <span className={styles.inforValue}>{`${currrentTickets.pickStation.station.name} - ${currrentTickets.dropStation.station.name}`}</span>
                         <br />
@@ -208,7 +215,6 @@ const EditTicket = ({ close }) => {
                         <span className={styles.inforTitle}>Điểm đón - trả mới: </span>
                         <span className={styles.inforValue}>{`${pickLocation.station.name} - ${dropLocation.station.name}`}</span>
                         <br />
-
                         <Button text='Xác nhận sửa vé' className={styles.nextBtn} onClick={handleConfirmEdit} loading={loading}></Button>
                     </div>
                 )

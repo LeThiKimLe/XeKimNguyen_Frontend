@@ -9,7 +9,7 @@ const initialState = {
     message: '',
     error: false,
     loading: false,
-    loggingOut: false
+    loggingOut: false,
 }
 
 const authSlice = createSlice({
@@ -25,6 +25,12 @@ const authSlice = createSlice({
         },
         cancelogout: (state) => {
             state.loggingOut = false
+        },
+        deleteUserInfor : (state) => {
+            localStorage.removeItem("current_user")
+            state.isLoggedIn = false
+            state.user = null
+            state.loggingOut = false
         }
     },
     extraReducers: (builder) => {
@@ -36,6 +42,7 @@ const authSlice = createSlice({
                 state.loading = false
                 state.isLoggedIn = true
                 state.user = action.payload
+                localStorage.setItem('validSession', 'true');
             })
             .addCase(authThunk.login.rejected, (state, action) => {
                 state.error = true
@@ -139,5 +146,6 @@ export const selectUserRoleId = (state) => {
     }
     return 0
 }
+
 
 export default authSlice.reducer

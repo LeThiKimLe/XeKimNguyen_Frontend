@@ -7,9 +7,11 @@ import { addHoursToTime } from '../../../../utils/unitUtils';
 import { selectCurrentTrip } from '../../../../feature/trip/trip.slice';
 import { useSelector } from 'react-redux';
 
-const PickLocation = ({ pick, listLocation, setLocation, selected, getObject }) => {
+const PickLocation = ({ pick, listLocation, setLocation, selected, getObject, modifiedTrip }) => {
 
-    const trip = useSelector(selectCurrentTrip)
+    const tripCur =  useSelector(selectCurrentTrip)
+
+    const trip = modifiedTrip ? modifiedTrip : tripCur
 
     const handleOptionChange = (event) => {
        
@@ -21,6 +23,8 @@ const PickLocation = ({ pick, listLocation, setLocation, selected, getObject }) 
             setLocation(event.target.value)
     }
 
+    console.log(selected)
+
     return (
         <div className={`${styles.pick_container} ${pick ? styles.pick_separate : ''}`}>
             { !getObject && <h3 className={styles.pick_title}>{pick ? "Điểm đón" : "Điểm trả"}</h3>}
@@ -28,7 +32,6 @@ const PickLocation = ({ pick, listLocation, setLocation, selected, getObject }) 
                 {listLocation.map((location) => (
                     <div key={`${location.id}`} className={styles.pick_location}>
                         <label className={selected == location.id ? `${styles.location_label} ${styles.selected}` : styles.location_label}>
-
                             <input
                                 type="radio"
                                 value={location.id}
@@ -36,11 +39,10 @@ const PickLocation = ({ pick, listLocation, setLocation, selected, getObject }) 
                                 onChange={handleOptionChange}
                                 className={styles.pick_radio}
                             />
-
+                            <span>{location.id}</span>
                             <span className={styles.location_time}>{addHoursToTime(trip.departTime, location.arrivalTime)}</span>
                             <span>-</span>
                             <span className={styles.location_name}>{location.station.name}</span>
-
                         </label>
                         <div className={styles.location_addr}>
                             <FontAwesomeIcon icon={faLocationDot} />

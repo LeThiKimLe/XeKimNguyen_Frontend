@@ -138,9 +138,15 @@
     padding: 5px 10px;
 }
 
-.actionSelect li:hover{
-    background-color: #e2dfdf;
+.actionSelect li:not(.disable):hover{
+    background-color: rgb(147, 230, 247, 0.5);
     cursor: pointer;
+}
+
+.actionSelect li.disable{
+    color: #686666;
+    background-color: #ada5a552;
+    cursor: none;
 }
 
 .actionContainer i{

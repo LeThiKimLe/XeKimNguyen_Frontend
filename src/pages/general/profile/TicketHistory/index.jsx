@@ -7,7 +7,7 @@ import { OptionButton } from '../../../../components/common/button'
 import { useEffect, useState } from 'react'
 import Select from 'react-select'
 // import { ticketHistory } from '../../../../utils/test_data'
-import { convertToTime, convertToDisplayDate} from '../../../../utils/unitUtils'
+import { convertToTime, convertToDisplayDate } from '../../../../utils/unitUtils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUpRightFromSquare, faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import TicketAction from './TicketAction'
@@ -22,13 +22,10 @@ import DetailTicket from './DetailTicket'
 const TicketHistory = () => {
 
     const ticketHistory = useSelector(selectUserBookingHistory)
-    const [ticketState, setTicketState] = useState('')
-    const [bookingCode, setBookingCode] = useState('')
     const [ticketActionOp, setTicketActionOp] = useState('')
-    const [allowAction, setAllowAction] = useState(true)
     const dispatch = useDispatch()
     const [showTicket, setShowTicket] = useState(null)
-
+    const [sortHistory, setSortHistory] = useState([...ticketHistory])
     const [dateRange, setDateRange] = useState([
         {
             startDate: new Date('2023/01/01'),
@@ -38,19 +35,23 @@ const TicketHistory = () => {
     ]);
 
     const stateOptions = [
-        { value: 'pending', label: 'Đang giữ chỗ' },
-        { value: 'cancel', label: 'Bị hủy' },
+        { value: 'pending', label: 'Giữ chỗ' },
+        { value: 'cancel', label: 'Đã hủy' },
         { value: 'success', label: 'Thành công' },
     ]
 
-    const ticketActions = [
-        { value: 'change', label: 'Đổi vé' },
-        { value: 'cancel', label: 'Hủy vé' },
-        {value: 'edit', label: 'Sửa điểm đón - trả'}
-    ]
-    
+    const [ticketActions, setTicketActions] = useState([
+        { value: 'change', label: 'Đổi vé', active: true },
+        { value: 'cancel', label: 'Hủy vé', active: true },
+        { value: 'edit', label: 'Sửa vé', active: true }
+    ])
+
     const [openDate, setOpenDate] = useState(false)
     const [openAction, setOpenAction] = useState(false)
+
+    const [searchCode, setSearchCode] = useState('')
+    const [searchState, setSearchState] = useState('')
+    const [searchSpan, setSearchSpan] = useState('')
 
     const isEvenRow = (index) => {
         return index % 2 === 0;
@@ -61,6 +62,7 @@ const TicketHistory = () => {
     const handleRowSelect = (booking) => {
         setSelectedRow(booking);
         dispatch(ticketAction.setCurrentTicket(booking))
+        setOpenAction(false)
     };
 
     const handleAction = (action) => {
@@ -74,9 +76,8 @@ const TicketHistory = () => {
     }
 
     const validateTime = () => {
-        if (selectedRow)
-        {
-            return selectedRow.tickets.every((ticket)=> {
+        if (selectedRow) {
+            return selectedRow.tickets.every((ticket) => {
                 const targetDate = new Date(ticket.schedule.departDate + "T" + ticket.schedule.departTime)
                 const today = new Date()
                 if (today > targetDate) {
@@ -88,33 +89,126 @@ const TicketHistory = () => {
         }
     }
 
-    useEffect(()=>{
+    const validateUse = () => {
+        if (selectedRow) {
+            const state = STATE_DICTIONARY.filter((state) => state.value === selectedRow.status)[0].key
+            return state !== 'cancel'
+        }
+    }
+
+    useEffect(() => {
+
+        const cancelScan = () => {
+            return (
+                selectedRow.tickets.some((ticket) => ticket.histories.length === 0 ||
+                    ticket.state !== 'Đã hủy')
+            )
+        }
+
+        const changeScan = () => {
+            let allTicketsValid = true;
+            for (const ticket of selectedRow.tickets) {
+                if (ticket.histories.length > 0 && ticket.histories.some(history => history.action === 'Đổi')) {
+                    allTicketsValid = false;
+                    break;
+                }
+            }
+            return allTicketsValid;
+        }
+
+        const editScan = () => {
+            const allTicketsValid = selectedRow.tickets.every((ticket) => {
+                const targetDate = new Date(ticket.schedule.departDate + "T" + ticket.schedule.departTime);
+                const today = new Date();
+                return targetDate.getTime() - today.getTime() > (4 * 60 * 60 * 1000);
+            });
+            return allTicketsValid;
+        }
+
+        if (openAction === true) {
+            const updateAction = ticketActions.map(item => {
+                if (item.value === 'change') {
+                    return { ...item, active: changeScan() };
+                } else if (item.value === 'cancel') {
+                    return { ...item, active: cancelScan() }
+                }
+                else
+                    return { ...item, active: editScan() }
+            });
+            setTicketActions(updateAction)
+        }
+
+    }, [openAction])
+
+    const timeSort = (b, a) => {
+        const timeA = new Date(a.bookingDate);
+        const timeB = new Date(b.bookingDate);
+        return timeA - timeB;
+    }
+
+    useEffect(() => {
         dispatch(bookingThunk.getUserHistory())
     }, [])
 
+    useEffect(() => {
+        const copyHistory = [...ticketHistory]
+        const filter = copyHistory.filter((booking) => booking.code.includes(searchCode))
+        setSortHistory(filter.sort(timeSort))
+
+    }, [searchCode])
+
+    useEffect(() => {
+        const copyHistory = [...ticketHistory]
+        setSortHistory(copyHistory.sort(timeSort))
+    }, [ticketHistory])
+
+    useEffect(() => {
+        const copyHistory = [...ticketHistory]
+        if (searchState) {
+            setSortHistory(copyHistory.filter((booking) => booking.status === searchState.label)
+                .sort(timeSort))
+        }
+        else
+            setSortHistory(copyHistory.sort(timeSort))
+    }, [searchState])
+
+    useEffect(() => {
+        const copyHistory = [...ticketHistory]
+        const filter = copyHistory.filter((booking) => new Date(booking.bookingDate) >= dateRange[0].startDate
+            && new Date(booking.bookingDate) <= dateRange[0].endDate)
+        setSortHistory(filter.sort(timeSort))
+    }, [dateRange])
+
+    console.log(ticketHistory)
+
     return (
         <div>
-            {showTicket && <DetailTicket booking={showTicket} onClose={()=>setShowTicket(null)}></DetailTicket>}
+            {showTicket && <DetailTicket booking={showTicket} onClose={() => setShowTicket(null)}></DetailTicket>}
             <Container fluid>
                 <Row>
                     <Col>
                         <p className={styles.filterTitle}>Mã đặt vé</p>
-                        <input type="text" placeholder='Mã vé' className={styles.filterInput} />
+                        <input type="text"
+                            placeholder='Mã vé'
+                            className={styles.filterInput}
+                            value={searchCode}
+                            onChange={(e) => setSearchCode(e.target.value)} />
                     </Col>
                     <Col>
                         <p className={styles.filterTitle}>Trạng thái</p>
                         <div style={{ width: '100%' }}>
                             <Select options={stateOptions}
-                                value={ticketState}
-                                onChange={setTicketState}
+                                value={searchState}
+                                onChange={setSearchState}
                                 className={styles.selectItem}
                                 placeholder="Trạng thái"
+                                isClearable={true}
                             >
                             </Select>
                         </div>
                     </Col>
                     <Col style={{ position: 'relative' }}>
-                        <p className={styles.filterTitle}>Thời gian</p>
+                        <p className={styles.filterTitle}>Thời gian đặt vé</p>
                         <input type="text"
                             value={`${format(dateRange[0].startDate, 'dd/MM/yyyy')} - ${format(dateRange[0].endDate, 'dd/MM/yyyy')}`}
                             onClick={() => setOpenDate(!openDate)}
@@ -134,29 +228,34 @@ const TicketHistory = () => {
                         }
                     </Col>
                 </Row>
-                { selectedRow!== null &&
+                {selectedRow !== null &&
                     <Row>
-                    <Col>
-                        <div className={styles.actionContainer}>
-                            <div onClick={validateTime() ? () => setOpenAction(!openAction) : null} className={`${styles.actionBtn} ${selectedRow}  ${validateTime() ? '' : styles.disable}`}>
-                                <span styles={{ padding: '0 5px' }}>Hành động</span>
-                                <FontAwesomeIcon icon={faCaretDown} />
+                        <Col>
+                            <div className={styles.actionContainer}>
+                                <div onClick={validateTime() && validateUse() ? () => setOpenAction(!openAction) : null}
+                                    className={`${styles.actionBtn} ${selectedRow}  ${validateTime() && validateUse() ? '' : styles.disable}`}>
+                                    <span styles={{ padding: '0 5px' }}>Hành động</span>
+                                    <FontAwesomeIcon icon={faCaretDown} />
+                                </div>
+                                {
+                                    openAction &&
+                                    <ul className={styles.actionSelect}>
+                                        {
+                                            ticketActions.map((action) => (
+                                                <li key={action.value}
+                                                    onClick={action.active === true ? () => handleAction(action) : null}
+                                                    className={action.active === false ? styles.disable : ''} >
+                                                    {action.label}
+                                                </li>
+                                            ))
+                                        }
+                                    </ul>
+                                }
+                                <i onClick={resetTicketChoose}>Bỏ chọn</i>
                             </div>
-                            {
-                                openAction &&
-                                <ul className={styles.actionSelect}>
-                                    {
-                                        ticketActions.map((action) => (
-                                            <li key={action.value} onClick={()=>handleAction(action)}>{action.label}</li>
-                                        ))
-                                    }
-                                </ul>
-                            }
-                            <i onClick={resetTicketChoose}>Bỏ chọn</i>
-                        </div>
-                        
-                    </Col>
-                </Row>
+
+                        </Col>
+                    </Row>
                 }
                 <Row style={{ margin: '20px 0' }}>
                     <Col className={styles.historyContainer}>
@@ -175,7 +274,7 @@ const TicketHistory = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {ticketHistory.map((booking, index) => (
+                                {sortHistory.map((booking, index) => (
                                     <tr key={booking.code} className={`${isEvenRow(index) ? styles.even : styles.odd} ${selectedRow && selectedRow.code === booking.code ? styles.selected : ''}`} >
                                         <td><input type="radio"
                                             checked={selectedRow ? selectedRow.code === booking.code : false}
@@ -191,23 +290,23 @@ const TicketHistory = () => {
                                         <td>{format(new Date(booking.bookingDate), 'HH:mm dd/MM/yyyy')}</td>
                                         {booking.transaction ? (
                                             <>
-                                            <td>{`${(booking.transaction.amount).toLocaleString()} đ`}</td>
-                                            <td>{booking.transaction.paymentMethod}</td>
+                                                <td>{`${(booking.transaction.amount).toLocaleString()} đ`}</td>
+                                                <td>{booking.transaction.paymentMethod}</td>
                                             </>
-                                        ): (
+                                        ) : (
                                             <>
-                                            <td>---</td>
-                                            {
-                                                booking.status === 'Đã hủy' ? (
-                                                    <td>---</td>
-                                                ): (
-                                                    <td><a href={`/payment/${booking.code}`}>Thanh toán ngay</a></td>
-                                                )
-                                            }
+                                                <td>---</td>
+                                                {
+                                                    booking.status === 'Đã hủy' ? (
+                                                        <td>---</td>
+                                                    ) : (
+                                                        <td><a href={`/payment/${booking.code}`}>Thanh toán ngay</a></td>
+                                                    )
+                                                }
                                             </>
                                         )}
                                         <td><span className={styles[STATE_DICTIONARY.filter((state) => state.value === booking.status)[0].key]}>{booking.status}</span></td>
-                                        <td><a href='#' onClick={()=>setShowTicket(booking)} ><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></td>
+                                        <td><a href='#' onClick={() => setShowTicket(booking)} ><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -216,9 +315,9 @@ const TicketHistory = () => {
                 </Row>
             </Container>
             {ticketActionOp !== '' ? (
-                <TicketAction type={ticketActionOp.value} close={()=>setTicketActionOp('')}></TicketAction>
-             )
-            :null}
+                <TicketAction type={ticketActionOp.value} close={() => setTicketActionOp('')}></TicketAction>
+            )
+                : null}
         </div>
     )
 }

@@ -68,11 +68,32 @@ const verifyCancelTicketPolicy = createAsyncThunk('tickets/cancel-policy', async
     }
 })
 
+const editTicket = createAsyncThunk('tickets/edit', async ({bookingCode, pickStationId, dropStationId}, thunkAPI) => {
+    try {
+        const response = await axiosClient.put('tickets/edit',
+            {
+                "bookingCodeId": bookingCode,
+                "pickStationId": pickStationId,
+                "dropStatationId": dropStationId
+            }
+        )
+        return response
+    }
+    catch (error) {
+        const message =
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+})
+
 
 const ticketThunk = {
     cancelTicket,
     verifyCancelTicketPolicy,
-    changeTicket
+    changeTicket,
+    editTicket
 }
 
 export default ticketThunk

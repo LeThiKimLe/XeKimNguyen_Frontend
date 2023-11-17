@@ -11,6 +11,7 @@ import Ticket from './pages/customer/ticket';
 import Bill from './pages/customer/bill';
 import About from './pages/customer/about';
 import Payment from './pages/customer/payment';
+import ProtectedRoute from './components/privateRoute';
 
 function App() {
 
@@ -22,7 +23,9 @@ function App() {
                     <Route path="/trips" element={<List />}></Route>
                     <Route path="/login" element={<Login />}></Route>
                     <Route path="/trip/:id" element={<Trip />}></Route>
-                    <Route path="/profile/:action" element={<Profile />}></Route>
+                    <Route element={<ProtectedRoute />}>
+                        <Route path="/profile/:action" element={<Profile/>}></Route>  
+                    </Route>
                     <Route path="/schedule" element={<Schedule />}></Route>
                     <Route path="/ticket" element={<Ticket />}></Route>
                     <Route path="/bill" element={<Bill />}></Route>

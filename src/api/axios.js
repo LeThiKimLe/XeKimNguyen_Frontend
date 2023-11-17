@@ -1,6 +1,7 @@
 import axios from 'axios';
 import queryString from 'query-string'
 
+
 const API_URL = process.env.REACT_APP_API_URL
 
 const axiosClient = axios.create({
@@ -51,6 +52,7 @@ const refreshAccessToken = () => {
         'Authorization': `Bearer ${refreshToken}`
       }
     });
+
     axiosRefreshClient.post('/auth/refresh-token')
       .then(response => {
         // Xử lý phản hồi thành công
@@ -61,10 +63,12 @@ const refreshAccessToken = () => {
           refreshToken: response.data.refreshToken
         };
         localStorage.setItem('current_user', JSON.stringify(updatedUser));
+        localStorage.setItem('validSession', 'true');
         resolve(response.data.accessToken);
       })
       .catch(error => {
         // Xử lý lỗi
+        localStorage.setItem('validSession', 'false');
         console.error(error);
         reject(error);
       });
