@@ -18,6 +18,7 @@ import { selectUserBookingHistory } from '../../../../feature/booking/booking.sl
 import bookingThunk from '../../../../feature/booking/booking.service'
 import { STATE_DICTIONARY } from '../../../../utils/constants'
 import DetailTicket from './DetailTicket'
+import { selectCurrentTicket } from '../../../../feature/ticket/ticket.slice'
 
 const TicketHistory = () => {
 
@@ -33,7 +34,7 @@ const TicketHistory = () => {
             key: 'selection'
         }
     ]);
-
+    const currentBooking = useSelector(selectCurrentTicket)
     const stateOptions = [
         { value: 'pending', label: 'Giữ chỗ' },
         { value: 'cancel', label: 'Đã hủy' },
@@ -100,7 +101,7 @@ const TicketHistory = () => {
 
         const cancelScan = () => {
             return (
-                selectedRow.tickets.some((ticket) => ticket.histories.length === 0 ||
+                selectedRow.tickets.some((ticket) => ticket.histories && ticket.histories.length === 0 ||
                     ticket.state !== 'Đã hủy')
             )
         }
@@ -108,7 +109,7 @@ const TicketHistory = () => {
         const changeScan = () => {
             let allTicketsValid = true;
             for (const ticket of selectedRow.tickets) {
-                if (ticket.histories.length > 0 && ticket.histories.some(history => history.action === 'Đổi')) {
+                if (ticket.histories && ticket.histories.length > 0 && ticket.histories.some(history => history.action === 'Đổi')) {
                     allTicketsValid = false;
                     break;
                 }
@@ -154,12 +155,13 @@ const TicketHistory = () => {
         const copyHistory = [...ticketHistory]
         const filter = copyHistory.filter((booking) => booking.code.includes(searchCode))
         setSortHistory(filter.sort(timeSort))
-
     }, [searchCode])
 
     useEffect(() => {
         const copyHistory = [...ticketHistory]
         setSortHistory(copyHistory.sort(timeSort))
+        if (currentBooking)
+            dispatch(ticketAction.setCurrentTicket(ticketHistory.filter((booking) => booking.code === currentBooking.code)[0]))
     }, [ticketHistory])
 
     useEffect(() => {
@@ -280,7 +282,7 @@ const TicketHistory = () => {
                                             checked={selectedRow ? selectedRow.code === booking.code : false}
                                             onChange={() => handleRowSelect(booking)}
                                         /></td>
-                                        <td>{booking.code}</td>
+                                        <td>{`${booking.code}`}</td>
                                         <td>{booking.ticketNumber}</td>
                                         {booking.trip.turn === true ? (
                                             <td>{`${booking.trip.startStation.name} - ${booking.trip.endStation.name}`}</td>

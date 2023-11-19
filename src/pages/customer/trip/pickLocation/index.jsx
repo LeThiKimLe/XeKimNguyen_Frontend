@@ -23,8 +23,6 @@ const PickLocation = ({ pick, listLocation, setLocation, selected, getObject, mo
             setLocation(event.target.value)
     }
 
-    console.log(selected)
-
     return (
         <div className={`${styles.pick_container} ${pick ? styles.pick_separate : ''}`}>
             { !getObject && <h3 className={styles.pick_title}>{pick ? "Điểm đón" : "Điểm trả"}</h3>}
@@ -39,7 +37,6 @@ const PickLocation = ({ pick, listLocation, setLocation, selected, getObject, mo
                                 onChange={handleOptionChange}
                                 className={styles.pick_radio}
                             />
-                            <span>{location.id}</span>
                             <span className={styles.location_time}>{addHoursToTime(trip.departTime, location.arrivalTime)}</span>
                             <span>-</span>
                             <span className={styles.location_name}>{location.station.name}</span>

@@ -256,7 +256,8 @@ const CancelTicket = ({ close }) => {
                         <br />
                         <span className={styles.inforTitle}>Số tiền sẽ hoàn lại: </span>
                         {policy ? (
-                            <span className={styles.inforValue}>{policy.transaction.amount.toLocaleString()}đ</span>
+                            <span className={styles.inforValue}>{policy.transaction ? policy.transaction.amount.toLocaleString() : '0'}đ</span>
+
                         ): (
                             <span className={styles.inforValue}>0đ</span>
                         )}
@@ -264,7 +265,7 @@ const CancelTicket = ({ close }) => {
                         <span className={styles.inforTitle}>Chính sách áp dung: </span>
                         {
                             policy ? (
-                                <span className={styles.inforValue}>{policy.policy.description}</span>
+                                <span className={styles.inforValue}>{policy.policy? policy.policy.description : policy.message}</span>
                              ) : (
                                 <span className={styles.inforValue}>{'--Đang xác minh--'}
                                 </span>

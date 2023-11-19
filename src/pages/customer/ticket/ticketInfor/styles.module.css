@@ -145,3 +145,8 @@
 .ticket-state.cancel{
     color: red !important;
 }
+
+.ticket-state.canceling{
+    color: rgb(255, 153, 0) !important;
+}
+

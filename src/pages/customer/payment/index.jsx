@@ -133,7 +133,9 @@ const Payment = () => {
                 .then((history) => {
                     if (history.filter((booking) => booking.code === urlBookingCode
                         && getBookingState(booking.status) === 'pending'
-                        && isValidBookingSession(booking.bookingDate) === true).length === 1) {
+                        && isValidBookingSession(booking.bookingDate) === true
+                        && booking.tickets.some((ticket) => ticket.state === 'Chờ thanh toán').length === 1
+                    )) {
                         setValidPayment(true)
                         setShowInvalidDialog(false)
                         const currentBooking = history.filter((booking) => booking.code === urlBookingCode)[0]

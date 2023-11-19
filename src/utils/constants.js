@@ -237,5 +237,10 @@ export const TICKET_STATE_DICTIONARY = [
         key: 'cancel',
         value: 'Đã hủy',
         message: 'Đã hủy'
-    }
+    },
+    {
+        key: 'canceling',
+        value: 'Chờ hủy',
+        message: 'Chờ hủy'
+    },
 ]

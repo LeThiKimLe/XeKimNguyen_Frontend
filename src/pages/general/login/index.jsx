@@ -66,7 +66,7 @@ const Login = () => {
             placeholder: "Mật khẩu",
             errorMessage: "Mật khẩu có ít nhất 6 ký tự",
             label: "Mật khẩu",
-            // pattern: "^.{6,}$",
+            pattern: "^.{6,}$",
             required: true
         },
     ]
