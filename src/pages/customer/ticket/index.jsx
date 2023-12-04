@@ -5,7 +5,7 @@ import Footer from '../../../components/footer'
 import FormInput from '../../../components/common/formInput'
 import { TICKET_INFOR } from '../../../utils/constants'
 import Button from '../../../components/common/button'
-import {useState, useRef} from 'react'
+import {useState, useRef, useEffect} from 'react'
 import SectionTitle from '../../../components/common/sectionTitle'
 import ReCAPTCHA from 'react-google-recaptcha'
 import TicketInfor from './ticketInfor'
@@ -33,16 +33,23 @@ const Ticket = () => {
         const token = captchaRef.current.getValue()
         console.log(token)
         captchaRef.current.reset()
-        // dispatch(bookingActions.reset())
-        // dispatch(bookingThunk.getBookingInfor({searchInfor, captcha:token}))
-        // .unwrap()
-        // .then(()=>{
-        //     setShowTicket(true)
-        // })
-        // .catch((error) => {
-        //     setShowTicket(false)
-        // })
+        dispatch(bookingActions.reset())
+        dispatch(bookingThunk.getBookingInfor({searchInfor, captcha:token}))
+        .unwrap()
+        .then((resp)=>{
+            setShowTicket(true)
+            console.log(resp)
+        })
+        .catch((error) => {
+            setShowTicket(false)
+        })
     }
+
+    useEffect(()=>{
+        return () => {
+            dispatch(bookingActions.resetMessage())
+        };
+    }, [])
     
     return (
         <>

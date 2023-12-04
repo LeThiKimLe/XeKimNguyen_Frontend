@@ -116,9 +116,9 @@ const cancelPayment = createAsyncThunk('bookings/cancel', async (bookingCode, th
 }
 )
 
-const getUserHistory = createAsyncThunk('bookings/booking-history', async (thunkAPI) => {
+const getUserHistory = createAsyncThunk('bookings/booking-history', async (_,thunkAPI) => {
     try {
-        const response = await axiosClient.post('bookings/booking-history')
+        const response = await axiosClient.get('bookings/booking-history')
         return response
     }
     catch (error) {
@@ -133,7 +133,7 @@ const getUserHistory = createAsyncThunk('bookings/booking-history', async (thunk
 
 const keepPayment = createAsyncThunk('bookings/keep-booking', async (bookingCode, thunkAPI) => {
     try {
-        const response = await axiosClient.put('bookings/keep-booking',null,{
+        const response = await axiosClient.post('bookings/keep-booking',null,{
             params: {
                 "bookingCode": bookingCode
             }

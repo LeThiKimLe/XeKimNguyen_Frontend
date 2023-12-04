@@ -96,7 +96,6 @@ const ticketSlice = createSlice({
             state.loading = false
             state.message = action.payload
         })
-
         .addCase(ticketThunk.verifyCancelTicketPolicy.pending, (state) => {
             state.loading = true
         })
@@ -109,7 +108,6 @@ const ticketSlice = createSlice({
             state.loading = false
             state.message = action.payload
         })
-
         .addCase(ticketThunk.editTicket.pending, (state) => {
             state.loading = true
         })

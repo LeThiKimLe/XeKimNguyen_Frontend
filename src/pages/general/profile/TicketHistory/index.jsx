@@ -98,22 +98,24 @@ const TicketHistory = () => {
     }
 
     useEffect(() => {
-
         const cancelScan = () => {
             return (
-                selectedRow.tickets.some((ticket) => ticket.histories && ticket.histories.length === 0 ||
-                    ticket.state !== 'Đã hủy')
+                selectedRow.tickets.every((ticket) => ticket.histories && ticket.histories.length === 0 ||
+                    ticket.state !== 'Đã hủy' && ticket.state !== 'Chờ hủy' && ticket.histories.every((his) => his.action !== 'Đổi'))
             )
         }
-
         const changeScan = () => {
             let allTicketsValid = true;
-            for (const ticket of selectedRow.tickets) {
-                if (ticket.histories && ticket.histories.length > 0 && ticket.histories.some(history => history.action === 'Đổi')) {
-                    allTicketsValid = false;
-                    break;
+            const validTickets = selectedRow.tickets.filter((tk) => tk.state !== "Đã hủy" &&  tk.state !== "Chờ hủy")
+            if (validTickets.length > 0)
+                for (const ticket of selectedRow.tickets) {
+                    if (ticket.histories && ticket.histories.length > 0 && ticket.histories.some(history => history.action === 'Đổi')) {
+                        allTicketsValid = false
+                        break;
+                    }
                 }
-            }
+            else
+                allTicketsValid = false
             return allTicketsValid;
         }
 

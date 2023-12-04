@@ -2,12 +2,13 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosClient from "../../api/axios";
 
 
-const cancelTicket = createAsyncThunk('tickets/request-cancel', async ({bookingCode, listCancel}, thunkAPI) => {
+const cancelTicket = createAsyncThunk('tickets/request-cancel', async ({bookingCode, payment, listCancel}, thunkAPI) => {
     try {
         const response = await axiosClient.post('tickets/request-cancel',
             {
                 "bookingCode": bookingCode,
                 "numberTicket": listCancel.length,
+                "paymentMethod": payment,
                 "ticketIdList": listCancel.map((ticket)=> ticket.id)
             }
         )
@@ -48,12 +49,13 @@ const changeTicket = createAsyncThunk('tickets/change', async ({bookingCode, lis
     }
 })
 
-const verifyCancelTicketPolicy = createAsyncThunk('tickets/cancel-policy', async ({bookingCode, listCancel}, thunkAPI) => {
+const verifyCancelTicketPolicy = createAsyncThunk('tickets/cancel-policy', async ({bookingCode, payment, listCancel}, thunkAPI) => {
     try {
         const response = await axiosClient.post('tickets/cancel-policy',
             {
                 "bookingCode": bookingCode,
                 "numberTicket": listCancel.length,
+                "paymentMethod": payment,
                 "ticketIdList": listCancel.map((ticket)=> ticket.id)
             }
         )

@@ -351,7 +351,6 @@ const FilterBar = ({ listTrip, sort, setResult, reset }) => {
                 }))
             })
         }
-
     }, [reset])
 
 

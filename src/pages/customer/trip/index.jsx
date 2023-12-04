@@ -190,7 +190,7 @@ const Trip = ({ tabStyle }) => {
                             <div className={styles.trip_infor}>
                                 <div className={styles.infor_segment}>
                                     <h2>Chọn ghế</h2>
-                                    <SeatMap seatMap={currentTrip.tripInfor.route.busType.seatMap} booked={currentTrip.tickets} selectedSeats={selectedSeats} handleSeatClick={handleSeatClick}></SeatMap>
+                                    <SeatMap seatMap={currentTrip.tripInfor.route.busType.seatMap} booked={currentTrip.tickets.filter((tk) => tk.state !== "Đã hủy" && tk.state !== "Chờ hủy")} selectedSeats={selectedSeats} handleSeatClick={handleSeatClick}></SeatMap>
                                 </div>
                                 <div className={styles.infor_segment}>
                                     <h2>Thông tin đón trả</h2>

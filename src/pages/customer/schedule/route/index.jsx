@@ -4,6 +4,11 @@ import { faArrowRightArrowLeft, faCircleDot } from '@fortawesome/free-solid-svg-
 import {OptionButton} from '../../../../components/common/button'
 import { useEffect, useState } from 'react' 
 import { convertToStamp } from '../../../../utils/unitUtils'
+import { parse, format } from 'date-fns'
+import { useDispatch } from 'react-redux'
+import { searchAction } from '../../../../feature/search/seach.slice'
+import { useNavigate } from 'react-router-dom'
+
 const Route = ({route, reverse}) => {
 
     const reverseSchedule = (schedule) => {
@@ -11,17 +16,34 @@ const Route = ({route, reverse}) => {
         return splited.reverse().join(' -> ');
     }
 
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
     const cusRoute = reverse 
                     ? {...route, 
                         departure: route.destination,
                         destination: route.departure,
                         schedule: reverseSchedule(route.schedule)
                     } : route
+    
+    const handleSearch = () => {
+        const searcInfor = {
+            departDate: format(new Date(), 'dd/MM/yyyy'),
+            arrivalDate: format(new Date(), 'dd/MM/yyyy'),
+            departLocation: cusRoute.departure,
+            desLocation: cusRoute.destination,
+            numberTicket: 1,
+            oneway: true,
+            searchRoute: route,
+            turn: !reverse         
+        }
+        dispatch(searchAction.setSearch(searcInfor))
+        navigate('/trips');
+    }
 
     return (
         <div className={styles.container}>
             <div className={styles.sub_container}>
-
             <div className={styles.routeName}>
                 <span className={styles.routePlace}>{cusRoute.departure.name}</span>
                 <FontAwesomeIcon icon={faArrowRightArrowLeft}/>
@@ -50,7 +72,7 @@ const Route = ({route, reverse}) => {
             </div>
             <div className={styles.searchArea}>
                 <i className={styles.note}>* Giá vé chưa bao gồm phụ phí xe, dịp lễ</i>
-                <OptionButton text="Tìm chuyến xe" className={styles.findBtn}></OptionButton>
+                <OptionButton text="Tìm chuyến xe" className={styles.findBtn} onClick={handleSearch}></OptionButton>
             </div>
             </div>  
         </div>

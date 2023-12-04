@@ -20,6 +20,7 @@ import { authActions } from '../../../feature/auth/auth.slice'
 import TicketHistory from './TicketHistory'
 import ProfileInfor from './ProfileInfor'
 import ResetPassword from './ResetPass'
+import LogoutConfirmation from '../../../components/logout/Logout'
 
 const Profile = () => {
 
@@ -35,13 +36,23 @@ const Profile = () => {
         navigate(`/profile/${action.name}`)
     }
 
+    const [validSession, setValidSession] = useState(
+        JSON.parse(localStorage.getItem('validSession')),
+    )
+    const [confirm, setConfirm] = useState(false)
+    const handleLogout = () => {
+        dispatch(authActions.deleteUserInfor())
+    }
+    window.addEventListener('storage', () => {
+        setValidSession(JSON.parse(localStorage.getItem('validSession')))
+    })
     useEffect(() => {
         return () => {
             dispatch(authActions.reset());
         };
-    }, []);
+    }, [])
 
-
+    if (validSession)
     return (
         <div>
             <Navbar></Navbar>
@@ -90,5 +101,14 @@ const Profile = () => {
             <Footer></Footer>
         </div>
     )
+    else {
+        if (confirm === false)
+            return (
+                <LogoutConfirmation
+                    type="interupt"
+                    onConfirm={handleLogout}
+                ></LogoutConfirmation>
+            )
+    }
 }
 export default Profile

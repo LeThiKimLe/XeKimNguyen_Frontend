@@ -19,7 +19,6 @@ import { tripActions } from '../../../../../../feature/trip/trip.slice'
 import PickLocation from '../../../../../customer/trip/pickLocation'
 import './custom.css'
 
-
 const EditTicket = ({ close }) => {
     const [confirm, setConfirm] = useState(false)
     const process = useSelector(selectProcess)
@@ -33,7 +32,6 @@ const EditTicket = ({ close }) => {
     const dispatch = useDispatch()
     const currentTrip = useSelector(selectModifiedTrip)
     const searchResult = useSelector(selectRearchResult)
-
     const handleLoadStation = async () => {
         try {
             dispatch(searchThunk.getSameTrips({
@@ -108,8 +106,6 @@ const EditTicket = ({ close }) => {
             dispatch(ticketAction.setModifiedTrip(searchResult.filter((trip) => trip.id === currrentTickets.tickets[0].schedule.id)[0]))
         }
     }, [searchResult])
-
-    console.log(currrentTickets)
 
     return (
         <div style={{ height: '100%' }}>

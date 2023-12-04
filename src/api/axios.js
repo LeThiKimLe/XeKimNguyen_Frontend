@@ -64,12 +64,13 @@ const refreshAccessToken = () => {
         };
         localStorage.setItem('current_user', JSON.stringify(updatedUser));
         localStorage.setItem('validSession', 'true');
+        window.dispatchEvent(new Event('storage'))
         resolve(response.data.accessToken);
       })
       .catch(error => {
         // Xử lý lỗi
         localStorage.setItem('validSession', 'false');
-        console.error(error);
+        window.dispatchEvent(new Event('storage'))
         reject(error);
       });
   });

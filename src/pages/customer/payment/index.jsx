@@ -22,7 +22,7 @@ import Message from '../../../components/message'
 import { selectUserBookingHistory, selectBookingSessionTime } from '../../../feature/booking/booking.slice'
 import { useParams } from 'react-router-dom';
 import { STATE_DICTIONARY } from '../../../utils/constants'
-
+import { selectIsLoggedIn } from '../../../feature/auth/auth.slice'
 
 const Payment = () => {
 
@@ -33,6 +33,7 @@ const Payment = () => {
     const bookingCode = useSelector(selectBookingCode)
     const bookingSession = useSelector(selectBookingSessionTime)
     const [payment, setPayment] = useState('Momo')
+    const isLogin = useSelector(selectIsLoggedIn)
     const handleChooseMethod = (e) => {
         setPayment(e.target.value)
     }
@@ -48,7 +49,7 @@ const Payment = () => {
 
     const handlePayment = () => {
         dispatch(bookingActions.resetMessage())
-        dispatch(bookingThunk.bookingPayment({ bookingCode, payment }))
+        dispatch(bookingThunk.bookingPayment({ bookingCode: urlBookingCode, payment }))
             .unwrap()
             .then(() => {
                 setShowCountDown(false)
@@ -60,7 +61,7 @@ const Payment = () => {
     }
 
     const handleCancel = () => {
-        dispatch(bookingThunk.cancelPayment(bookingCode))
+        dispatch(bookingThunk.cancelPayment(urlBookingCode))
             .unwrap()
             .then(() => {
                 navigate('/')
@@ -76,7 +77,7 @@ const Payment = () => {
     }
 
     const handleContinue = () => {
-        dispatch(bookingThunk.keepPayment(bookingCode))
+        dispatch(bookingThunk.keepPayment(urlBookingCode))
             .unwrap()
             .then(() => {
                 setShowPendingDialog(false)
@@ -115,8 +116,6 @@ const Payment = () => {
         }
     }
 
-    console.log(bookingSession)
-
     useEffect(() => {
         const getBookingState = (status) => {
             return STATE_DICTIONARY.filter((state) => state.value === status)[0].key
@@ -128,40 +127,52 @@ const Payment = () => {
             return minutesDifference >= 0 && minutesDifference < 10
         }
         if (isValidPayment === false) {
-            dispatch(bookingThunk.getUserHistory())
-                .unwrap()
-                .then((history) => {
-                    if (history.filter((booking) => booking.code === urlBookingCode
-                        && getBookingState(booking.status) === 'pending'
-                        && isValidBookingSession(booking.bookingDate) === true
-                        && booking.tickets.some((ticket) => ticket.state === 'Chờ thanh toán').length === 1
-                    )) {
-                        setValidPayment(true)
-                        setShowInvalidDialog(false)
-                        const currentBooking = history.filter((booking) => booking.code === urlBookingCode)[0]
-                        dispatch(bookingActions.updateBookingSession({
-                            bookingCode: currentBooking.code,
-                            bookingSession: currentBooking.bookingDate,
-                            bookingInfor: getBookingInfor(currentBooking)
-                        }))
-                    }
-                    else {
-                        setValidPayment(false)
-                        setShowInvalidDialog(true)
-                    }
-                })
-                .catch((error) => {
-                    if (bookingCode !== '') {
-                        if (bookingSession && isValidBookingSession(bookingSession) === true) {
+            if (isLogin)
+                dispatch(bookingThunk.getUserHistory())
+                    .unwrap()
+                    .then((history) => {
+                        if (history.filter((booking) => booking.code === urlBookingCode
+                            && getBookingState(booking.status) === 'pending'
+                            && isValidBookingSession(booking.bookingDate) === true
+                            && booking.tickets.some((ticket) => ticket.state === 'Chờ thanh toán').length === 1
+                        )) {
                             setValidPayment(true)
                             setShowInvalidDialog(false)
+                            const currentBooking = history.filter((booking) => booking.code === urlBookingCode)[0]
+                            dispatch(bookingActions.updateBookingSession({
+                                bookingCode: currentBooking.code,
+                                bookingSession: currentBooking.bookingDate,
+                                bookingInfor: getBookingInfor(currentBooking)
+                            }))
                         }
                         else {
                             setValidPayment(false)
                             setShowInvalidDialog(true)
                         }
+                    })
+                    .catch((error) => {
+                        if (bookingCode !== '') {
+                            if (bookingSession && isValidBookingSession(bookingSession) === true) {
+                                setValidPayment(true)
+                                setShowInvalidDialog(false)
+                            }
+                            else {
+                                setValidPayment(false)
+                                setShowInvalidDialog(true)
+                            }
+                        }
+                    })
+            else
+                if (bookingCode !== '') {
+                    if (bookingSession && isValidBookingSession(bookingSession) === true) {
+                        setValidPayment(true)
+                        setShowInvalidDialog(false)
                     }
-                })
+                    else {
+                        setValidPayment(false)
+                        setShowInvalidDialog(true)
+                    }
+                }
         }
     }, [bookingCode])
 
@@ -170,7 +181,7 @@ const Payment = () => {
         dispatch(bookingActions.resetMessage())
         return () => {
             dispatch(bookingActions.resetMessage())
-            dispatch(bookingActions.clearBookingSession())
+            // dispatch(bookingActions.clearBookingSession())
         }
     }, [])
 

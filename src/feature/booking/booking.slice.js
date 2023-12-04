@@ -96,6 +96,8 @@ const bookingSlice = createSlice({
         .addCase(bookingThunk.bookingPayment.fulfilled, (state, action) => {
             state.loading = false
             state.message = action.payload
+            state.bookingSessionTime = null
+            state.bookingCode = ''
             state.error = false
         })
         .addCase(bookingThunk.bookingPayment.rejected, (state, action) => {

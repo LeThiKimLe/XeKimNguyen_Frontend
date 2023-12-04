@@ -39,6 +39,7 @@ const ChangeTicket = ({ close }) => {
     const currentTrip = useSelector(selectModifiedTrip)
     const dispatch = useDispatch()
     const message = useSelector(selectMessage)
+    const [filterTicket, setFilterTicket] = useState(currrentTickets.tickets)
 
     const handleChooseTicket = (e) => {
         if (listChange.map((ticket)=>ticket.seat).includes(e.target.name)) {
@@ -188,7 +189,10 @@ const ChangeTicket = ({ close }) => {
         }
     }, [searchResult])
 
-    console.log(currrentTickets)
+    useEffect(()=>{
+        if (currrentTickets)
+            setFilterTicket(currrentTickets.tickets.filter((tk)=>tk.state !== 'Đã hủy' && tk.state !== 'Chờ hủy'))
+    }, [currrentTickets])
 
     return (
         <div>
@@ -252,7 +256,7 @@ const ChangeTicket = ({ close }) => {
                             </label>
                             <br />
                             <div className={styles.ticketContainer}>
-                                {currrentTickets.tickets.filter((ticket)=>ticket.state !== 'Đã hủy').map((ticket) => (
+                                {filterTicket.filter((ticket)=>ticket.state !== 'Đã hủy').map((ticket) => (
                                     <div className={styles.ticketCover}>
                                         <div key={ticket.id} className={styles.ticketItem}>
                                             <label htmlFor={ticket.seat}>

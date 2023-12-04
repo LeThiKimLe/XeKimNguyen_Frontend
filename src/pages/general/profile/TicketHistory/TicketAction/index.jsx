@@ -57,27 +57,21 @@ const TicketAction = ({ type, close }) => {
         oldWidth: 0,
         oldHeight: 0
     })
-
     const closeForm = () => {
         dispatch(ticketAction.reset())
         close()
     }
-
     const preventClose = (e) => {
         e.stopPropagation()
     }
-
     const moveForward = () => {
         dispatch(ticketAction.comeBackward())
     }
-
     const previousSize = useRef({
         width: 0,
         height: 0
     });
-
     const dialog = useRef(null);
-
     useEffect(() => {
         const divElement = dialog.current
         if (divElement) {
@@ -95,7 +89,6 @@ const TicketAction = ({ type, close }) => {
             }
         }
     }, [process]);
-
     return (
         <div className={styles.container} onClick={closeForm}>
             <div className={styles.mask}></div>

@@ -22,6 +22,7 @@ const CancelTicket = ({ close }) => {
     const [message, setMessage] = useState('')
     const loading = useSelector(selectLoading)
     const [policy, setPolicy] = useState(null)
+    const [filterTicket, setFilterTicket] = useState(currrentTickets.tickets)
     const handleConfirmPolicy = () => {
         if (confirm)
             dispatch(ticketAction.comeForward())
@@ -31,7 +32,11 @@ const CancelTicket = ({ close }) => {
 
     const handleSelectTicket = () => {
         if (listCancel.length !== 0) {
-            dispatch(ticketThunk.verifyCancelTicketPolicy({ bookingCode: currrentTickets.code, listCancel: listCancel }))
+            dispatch(ticketThunk.verifyCancelTicketPolicy({
+                    bookingCode: currrentTickets.code,
+                    payment: policy && policy.transaction ? 
+                                (policy.transaction ? policy.transaction.paymentMethod : "") : "",
+                    listCancel: listCancel }))
                 .unwrap()
                 .then((response) => {
                     setMessage('')
@@ -47,7 +52,11 @@ const CancelTicket = ({ close }) => {
     }
 
     const handleConfirmCancel = () => {
-        dispatch(ticketThunk.cancelTicket({ bookingCode: currrentTickets.code, listCancel: listCancel }))
+        dispatch(ticketThunk.cancelTicket({ 
+            bookingCode: currrentTickets.code,
+            payment: policy && policy.transaction ? 
+                                (policy.transaction ? policy.transaction.paymentMethod : "") : "", 
+            listCancel: listCancel }))
         .then(() => {
             setMessage('')
             dispatch(ticketAction.comeForward())
@@ -95,6 +104,11 @@ const CancelTicket = ({ close }) => {
                 setError(false)
         }
     }, [listCancel])
+
+    useEffect(()=>{
+        if (currrentTickets)
+            setFilterTicket(currrentTickets.tickets.filter((tk)=>tk.state !== 'Đã hủy' && tk.state !== 'Chờ hủy'))
+    }, [currrentTickets])
 
     return (
         <div style={{ height: '100%' }}>
@@ -187,7 +201,7 @@ const CancelTicket = ({ close }) => {
                             </label>
                             <br />
                             <div className={styles.ticketContainer}>
-                                {currrentTickets.tickets.map((ticket) => (
+                                {filterTicket.map((ticket) => (
                                     <div className={styles.ticketCover}>
                                         <div key={ticket.id} className={styles.ticketItem}>
                                             <label htmlFor={ticket.seat}>

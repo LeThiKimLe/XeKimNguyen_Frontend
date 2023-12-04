@@ -183,7 +183,6 @@ const Login = () => {
         //         console.log(error)
         //     })
         setValuesSignup({ ...valuesSignup, process: 1 })
-
     }
 
     const handleValidateOTP = (e) => {
@@ -198,7 +197,6 @@ const Login = () => {
         //         console.log(error)
         //     })
         setValuesSignup({ ...valuesSignup, process: 2 })
-
     }
 
     const handleSignUp = (e) => {

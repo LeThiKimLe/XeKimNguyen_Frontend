@@ -49,10 +49,6 @@ const Navbar = () => {
     const user = JSON.parse(localStorage.getItem('current_user'))
     const actionList = PROFILE_ACTION
 
-    const logout = () => {
-
-    }
-
     const handleAction = (action) => {
        
         if (action.navigate===true)
@@ -74,11 +70,19 @@ const Navbar = () => {
             window.location.reload()
         })
     };
-
     const handleCancelLogout = () => {
         dispatch(authActions.cancelogout())
     };
-
+    const [validSession, setValidSession] = useState(
+        JSON.parse(localStorage.getItem('validSession')),
+    )
+    window.addEventListener('storage', () => {
+        setValidSession(JSON.parse(localStorage.getItem('validSession')))
+    })
+    useEffect(() => {
+        if (validSession === false)
+            dispatch(authActions.deleteUserInfor())
+    }, [validSession])
     return (
         <>
         <div className={styles.navbar}>

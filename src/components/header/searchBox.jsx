@@ -119,6 +119,8 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
         }
     }, [currentInfor.desLocation])
 
+    console.log(currentInfor)
+
     return (
         <>
             {message.content !== '' && <Message message={message.content} repeat={message.repeat} />}

@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useSelector } from "react-redux";
 import { selectBookingSessionTime } from "../../../feature/booking/booking.slice";
-
+import { selectBookingCode } from './../../../feature/booking/booking.slice';
 const CountDown = ({onTimeout}) => {
 
 	const bookingTime = useSelector(selectBookingSessionTime)
 	const [timer, setTimer] = useState('10:00');
-
+	const bookingCode = useSelector(selectBookingCode)
 	const Ref = useRef(null)
 
 	const getTimeRemaining = (e) => {
@@ -47,8 +47,9 @@ const CountDown = ({onTimeout}) => {
 	}
 
 	useEffect(() => {
-		clearTimer(getDeadTime());
-	}, []);
+		if (bookingCode !=='')
+			clearTimer(getDeadTime())
+	}, [bookingCode]);
 
 	return (
 		<i>{timer}</i>

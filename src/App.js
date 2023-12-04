@@ -11,8 +11,8 @@ import Ticket from './pages/customer/ticket';
 import Bill from './pages/customer/bill';
 import About from './pages/customer/about';
 import Payment from './pages/customer/payment';
-import ProtectedRoute from './components/privateRoute';
-
+// import ProtectedRoute from './components/privateRoute';
+import ProtectedRoute from './privateRoute';
 function App() {
 
     return (
