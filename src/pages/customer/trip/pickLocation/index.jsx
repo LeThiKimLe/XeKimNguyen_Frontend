@@ -44,7 +44,7 @@ const PickLocation = ({ pick, listLocation, setLocation, selected, getObject, mo
                         <div className={styles.location_addr}>
                             <FontAwesomeIcon icon={faLocationDot} />
                             <span>{location.station.address}
-                                <a href={`https://www.google.com/maps?q=${location.latitude},${location.longitude}`} target="_blank">Xem vị trí</a>
+                                <a href={`https://www.google.com/maps?q=${location.station.latitude},${location.station.longitude}`} target="_blank">Xem vị trí</a>
                             </span>
                         </div>
                     </div>
