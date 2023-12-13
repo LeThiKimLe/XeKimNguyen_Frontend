@@ -28,7 +28,8 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
     const twoMonthsLater = new Date();
     twoMonthsLater.setMonth(today.getMonth() + 2);
     const depOptions = listDeparture.map((dep) => { return { value: dep.key, label: dep.location.name } })
-    const desOptions = currentInfor.departLocation ? (listDestination.filter((des) => des.key === currentInfor.departLocation.value)[0].location.map(
+    const desOptions = currentInfor.departLocation && listDestination.filter((des) => des.key === currentInfor.departLocation.value)[0] ? 
+    (listDestination.filter((des) => des.key === currentInfor.departLocation.value)[0].location.map(
         (des) => {
             return {
                 value: { id: des.routeId, turn: des.round },
@@ -118,9 +119,16 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
             })
         }
     }, [currentInfor.desLocation])
-
-    console.log(currentInfor)
-
+    useEffect(() => {
+        if (currentInfor.departDate)
+        {
+            if (parse(currentInfor.departDate, 'dd/MM/yyyy', new Date()).getDate() - new Date().getDate() < 0)
+                setCurrentInfor({
+                    ...currentInfor,
+                    departDate: format(new Date(), 'dd/MM/yyyy')
+            })
+        }
+    }, [currentInfor])
     return (
         <>
             {message.content !== '' && <Message message={message.content} repeat={message.repeat} />}

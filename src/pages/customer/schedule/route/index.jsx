@@ -27,7 +27,7 @@ const Route = ({route, reverse}) => {
                     } : route
     
     const handleSearch = () => {
-        const searcInfor = {
+        const searchInfor = {
             departDate: format(new Date(), 'dd/MM/yyyy'),
             arrivalDate: format(new Date(), 'dd/MM/yyyy'),
             departLocation: cusRoute.departure,
@@ -37,7 +37,7 @@ const Route = ({route, reverse}) => {
             searchRoute: route,
             turn: !reverse         
         }
-        dispatch(searchAction.setSearch(searcInfor))
+        dispatch(searchAction.setSearch(searchInfor))
         navigate('/trips');
     }
 
@@ -72,7 +72,7 @@ const Route = ({route, reverse}) => {
             </div>
             <div className={styles.searchArea}>
                 <i className={styles.note}>* Giá vé chưa bao gồm phụ phí xe, dịp lễ</i>
-                <OptionButton text="Tìm chuyến xe" className={styles.findBtn} onClick={handleSearch}></OptionButton>
+                {/* <OptionButton text="Tìm chuyến xe" className={styles.findBtn} onClick={handleSearch}></OptionButton> */}
             </div>
             </div>  
         </div>

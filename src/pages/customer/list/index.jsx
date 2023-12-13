@@ -124,7 +124,8 @@ const List = () => {
             setLoading(true)
             setResetFilter(true)
             window.scrollTo(0, 330);
-            dispatch(searchThunk.getTrips(searchInfor))
+            setTimeout(() => {
+                dispatch(searchThunk.getTrips(searchInfor))
                 .unwrap()
                 .then(() => {
                     setLoading(false)
@@ -137,6 +138,7 @@ const List = () => {
                     setSearch(false)
                     setResetFilter(false)
                 })
+            }, 1000)
         }
     }, [search]);
 
@@ -159,7 +161,6 @@ const List = () => {
                     }))
                 })
         }
-
     }, [resetFilter])
 
     return (
