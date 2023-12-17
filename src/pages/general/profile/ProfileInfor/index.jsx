@@ -106,8 +106,6 @@ const ProfileInfor = () => {
         setUpdated(false)
     }
 
-    console.log(valueInfor)
-
     const userInfor = UPDATE_INFOR
 
     const onChangeInfor = (e) => {

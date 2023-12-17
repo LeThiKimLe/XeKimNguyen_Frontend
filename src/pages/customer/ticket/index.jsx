@@ -31,14 +31,12 @@ const Ticket = () => {
     const handleSearchTicket = async (e) => {
         e.preventDefault()
         const token = captchaRef.current.getValue()
-        console.log(token)
         captchaRef.current.reset()
         dispatch(bookingActions.reset())
         dispatch(bookingThunk.getBookingInfor({searchInfor, captcha:token}))
         .unwrap()
         .then((resp)=>{
             setShowTicket(true)
-            console.log(resp)
         })
         .catch((error) => {
             setShowTicket(false)

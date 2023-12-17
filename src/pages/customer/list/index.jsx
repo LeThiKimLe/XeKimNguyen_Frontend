@@ -167,7 +167,9 @@ const List = () => {
         <div>
             <Navbar></Navbar>
             <Header type="list" />
-            <div className={styles.listContainer}>
+            {
+                searchInfor.searchRoute && (
+                    <div className={styles.listContainer}>
                 <div className={styles.subContainer}>
                     <SearchBox listRoute={listRoute} parentClass={styles.searchBox} setSearchAction={triggerSearch}></SearchBox>
                     <div className={styles.listWrapper}>
@@ -243,6 +245,8 @@ const List = () => {
                     </div>
                 </div>
             </div>
+                )
+            }
             <Footer></Footer>
         </div>
     )

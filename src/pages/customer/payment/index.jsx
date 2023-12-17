@@ -55,9 +55,7 @@ const Payment = () => {
                 setShowCountDown(false)
                 setShowSuccessDialog(true)
             })
-            .catch((error) => {
-                console.log(error)
-            })
+            .catch((error) => {})
     }
 
     const handleCancel = () => {
@@ -67,7 +65,6 @@ const Payment = () => {
                 navigate('/')
             })
             .catch((error) => {
-                console.log(error)
                 navigate('/')
             })
     }
@@ -83,9 +80,7 @@ const Payment = () => {
                 setShowPendingDialog(false)
                 setShowCountDown(true)
             })
-            .catch((error) => {
-                console.log(error)
-            })
+            .catch((error) => {})
     }
 
     const handleTimeout = () => {
@@ -123,7 +118,6 @@ const Payment = () => {
         const isValidBookingSession = (bookingTime) => {
             const timeDifference = new Date().getTime() - new Date(bookingTime).getTime();
             const minutesDifference = Math.floor(timeDifference / (1000 * 60));
-            console.log(minutesDifference)
             return minutesDifference >= 0 && minutesDifference < 10
         }
         if (isValidPayment === false) {

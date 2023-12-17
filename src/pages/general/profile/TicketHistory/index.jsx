@@ -19,6 +19,7 @@ import bookingThunk from '../../../../feature/booking/booking.service'
 import { STATE_DICTIONARY } from '../../../../utils/constants'
 import DetailTicket from './DetailTicket'
 import { selectCurrentTicket } from '../../../../feature/ticket/ticket.slice'
+import { sort } from 'slick/finder'
 
 const TicketHistory = () => {
 
@@ -106,7 +107,7 @@ const TicketHistory = () => {
         }
         const changeScan = () => {
             let allTicketsValid = true;
-            const validTickets = selectedRow.tickets.filter((tk) => tk.state !== "Đã hủy" &&  tk.state !== "Chờ hủy")
+            const validTickets = selectedRow.tickets.filter((tk) => tk.state !== "Đã hủy" && tk.state !== "Chờ hủy")
             if (validTickets.length > 0)
                 for (const ticket of selectedRow.tickets) {
                     if (ticket.histories && ticket.histories.length > 0 && ticket.histories.some(history => history.action === 'Đổi')) {
@@ -116,7 +117,14 @@ const TicketHistory = () => {
                 }
             else
                 allTicketsValid = false
-            return allTicketsValid;
+
+            const allTicketsValidTime = selectedRow.tickets.every((ticket) => {
+                const targetDate = new Date(ticket.schedule.departDate + "T" + ticket.schedule.departTime);
+                const today = new Date();
+                return targetDate.getTime() - today.getTime() > (24 * 60 * 60 * 1000);
+            });
+
+            return allTicketsValidTime && allTicketsValid
         }
 
         const editScan = () => {
@@ -131,7 +139,7 @@ const TicketHistory = () => {
         if (openAction === true) {
             const updateAction = ticketActions.map(item => {
                 if (item.value === 'change') {
-                    return { ...item, active: changeScan() };
+                    return { ...item, active: changeScan() }
                 } else if (item.value === 'cancel') {
                     return { ...item, active: cancelScan() }
                 }
@@ -182,8 +190,6 @@ const TicketHistory = () => {
             && new Date(booking.bookingDate) <= dateRange[0].endDate)
         setSortHistory(filter.sort(timeSort))
     }, [dateRange])
-
-    console.log(ticketHistory)
 
     return (
         <div>
@@ -263,58 +269,68 @@ const TicketHistory = () => {
                 }
                 <Row style={{ margin: '20px 0' }}>
                     <Col className={styles.historyContainer}>
-                        <table className={styles.tableHistory}>
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Mã đặt vé</th>
-                                    <th>Số vé</th>
-                                    <th>Tuyến đường</th>
-                                    <th>Ngày đặt vé</th>
-                                    <th>Tổng tiền</th>
-                                    <th>Thanh toán</th>
-                                    <th>Trạng thái</th>
-                                    <th>Chi tiết</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {sortHistory.map((booking, index) => (
-                                    <tr key={booking.code} className={`${isEvenRow(index) ? styles.even : styles.odd} ${selectedRow && selectedRow.code === booking.code ? styles.selected : ''}`} >
-                                        <td><input type="radio"
-                                            checked={selectedRow ? selectedRow.code === booking.code : false}
-                                            onChange={() => handleRowSelect(booking)}
-                                        /></td>
-                                        <td>{`${booking.code}`}</td>
-                                        <td>{booking.ticketNumber}</td>
-                                        {booking.trip.turn === true ? (
-                                            <td>{`${booking.trip.startStation.name} - ${booking.trip.endStation.name}`}</td>
-                                        ) : (
-                                            <td>{`${booking.trip.endStation.name} - ${booking.trip.startStation.name}`}</td>
-                                        )}
-                                        <td>{format(new Date(booking.bookingDate), 'HH:mm dd/MM/yyyy')}</td>
-                                        {booking.transaction ? (
-                                            <>
-                                                <td>{`${(booking.transaction.amount).toLocaleString()} đ`}</td>
-                                                <td>{booking.transaction.paymentMethod}</td>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <td>---</td>
-                                                {
-                                                    booking.status === 'Đã hủy' ? (
+                        {
+                            sortHistory.length === 0 && (
+                                <div style={{ textAlign: 'center' }}><b>Bạn chưa có lần đặt vé nào</b></div>
+                            )
+                        }
+                        {
+                            sortHistory.length > 0 && (
+                                <table className={styles.tableHistory}>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Mã đặt vé</th>
+                                            <th>Số vé</th>
+                                            <th>Tuyến đường</th>
+                                            <th>Ngày đặt vé</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Thanh toán</th>
+                                            <th>Trạng thái</th>
+                                            <th>Chi tiết</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {sortHistory.map((booking, index) => (
+                                            <tr key={booking.code} className={`${isEvenRow(index) ? styles.even : styles.odd} ${selectedRow && selectedRow.code === booking.code ? styles.selected : ''}`} >
+                                                <td><input type="radio"
+                                                    checked={selectedRow ? selectedRow.code === booking.code : false}
+                                                    onChange={() => handleRowSelect(booking)}
+                                                /></td>
+                                                <td>{`${booking.code}`}</td>
+                                                <td>{booking.ticketNumber}</td>
+                                                {booking.trip.turn === true ? (
+                                                    <td>{`${booking.trip.startStation.name} - ${booking.trip.endStation.name}`}</td>
+                                                ) : (
+                                                    <td>{`${booking.trip.endStation.name} - ${booking.trip.startStation.name}`}</td>
+                                                )}
+                                                <td>{format(new Date(booking.bookingDate), 'HH:mm dd/MM/yyyy')}</td>
+                                                {booking.transaction ? (
+                                                    <>
+                                                        <td>{`${(booking.transaction.amount).toLocaleString()} đ`}</td>
+                                                        <td>{booking.transaction.paymentMethod}</td>
+                                                    </>
+                                                ) : (
+                                                    <>
                                                         <td>---</td>
-                                                    ) : (
-                                                        <td><a href={`/payment/${booking.code}`}>Thanh toán ngay</a></td>
-                                                    )
-                                                }
-                                            </>
-                                        )}
-                                        <td><span className={styles[STATE_DICTIONARY.filter((state) => state.value === booking.status)[0].key]}>{booking.status}</span></td>
-                                        <td><a href='#' onClick={() => setShowTicket(booking)} ><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                                        {
+                                                            booking.status === 'Đã hủy' ? (
+                                                                <td>---</td>
+                                                            ) : (
+                                                                <td><a href={`/payment/${booking.code}`}>Thanh toán ngay</a></td>
+                                                            )
+                                                        }
+                                                    </>
+                                                )}
+                                                <td><span className={styles[STATE_DICTIONARY.filter((state) => state.value === booking.status)[0].key]}>{booking.status}</span></td>
+                                                <td><a href='#' onClick={() => setShowTicket(booking)} ><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )
+                        }
+
                     </Col>
                 </Row>
             </Container>

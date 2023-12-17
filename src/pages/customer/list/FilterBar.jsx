@@ -185,8 +185,6 @@ const FilterBar = ({ listTrip, sort, setResult, reset }) => {
         if (conditions.length === 0)
             setVehicleFilter(listTrip)
         else {
-            console.log('setvehicle')
-            console.log(conditions)
             const filteredTrips = listTrip.filter(trip =>
                 conditions.some((key) => trip.tripInfor.route.busType.name.includes(key))
             )

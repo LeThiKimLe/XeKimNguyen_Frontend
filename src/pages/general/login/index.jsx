@@ -56,7 +56,7 @@ const Login = () => {
             placeholder: "Số điện thoại",
             errorMessage: "Sai số điện thoại",
             label: "Số điện thoại",
-            // pattern: "^0[0-9]{9,10}$",
+            pattern: "^0[0-9]{9,10}$",
             required: true
         },
         {
@@ -99,7 +99,7 @@ const Login = () => {
             name: "email",
             type: "email",
             placeholder: "Email",
-            errorMessage: "",
+            errorMessage: "Điền đúng định dạng email",
             label: "Email",
             required: true,
 
@@ -147,9 +147,7 @@ const Login = () => {
                 dispatch(authActions.reset());
                 navigate('/')
             })
-            .catch((error) => {
-                console.log('fail')
-            })
+            .catch((error) => {})
     }
 
     useEffect(() => {
@@ -196,6 +194,8 @@ const Login = () => {
         //     .catch((error) => {
         //         console.log(error)
         //     })
+        // if (valuesSignup.otp !== "123456")
+        //     dispatch(authActions.)
         setValuesSignup({ ...valuesSignup, process: 2 })
     }
 

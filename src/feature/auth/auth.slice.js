@@ -133,7 +133,7 @@ export const selectError = (state) => state.auth.error
 export const selectLogout = (state) => state.auth.loggingOut
 export const selectUser = (state) => state.auth.user
 export const selectUserRoleId = (state) => {
-    if (state.auth.user)
+    if (state.auth.user && state.auth.user.user)
     {
         if (state.auth.user.user.customer)
             return 1;

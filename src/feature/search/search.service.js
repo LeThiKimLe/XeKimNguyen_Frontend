@@ -15,7 +15,7 @@ const getTrips = createAsyncThunk('search/trip', async (searchInfor, thunkAPI) =
         return response
     }
     catch (error) {
-        const message =
+        const message = 'Không tìm thấy chuyến xe' ||
             (error.response && error.response.data && error.response.data.message) ||
             error.message ||
             error.toString();
@@ -34,7 +34,7 @@ const getSameTrips = createAsyncThunk('trips/same-trip', async ({tripId, departD
         return response
     }
     catch (error) {
-        const message =
+        const message = 'Không tìm thấy chuyến xe' ||
             (error.response && error.response.data && error.response.data.message) ||
             error.message ||
             error.toString();

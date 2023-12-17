@@ -86,7 +86,7 @@ const ticketSlice = createSlice({
         })
         .addCase(ticketThunk.changeTicket.fulfilled, (state, action) => {
             state.loading = false
-            state.newTrip = null
+            // state.newTrip = null
             state.listChange = []
             state.listNew = []
             state.error = false

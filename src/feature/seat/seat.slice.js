@@ -16,9 +16,6 @@ const seatSlice = createSlice({
         .addCase(seatThunk.getSeatMap.fulfilled, (state, action) => {
             state.seatMap = action.payload
         })
-        .addCase(seatThunk.getSeatMap.rejected, (state, action) => {
-            console.log(action.payload)
-        })
     }
 })
 

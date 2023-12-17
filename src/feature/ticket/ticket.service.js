@@ -41,7 +41,7 @@ const changeTicket = createAsyncThunk('tickets/change', async ({bookingCode, lis
         return response
     }
     catch (error) {
-        const message =
+        const message = 'Vé không thỏa điều kiện đổi vé (trước 24h trước giờ khởi hành)' ||
             (error.response && error.response.data && error.response.data.message) ||
             error.message ||
             error.toString();
@@ -62,7 +62,7 @@ const verifyCancelTicketPolicy = createAsyncThunk('tickets/cancel-policy', async
         return response
     }
     catch (error) {
-        const message =
+        const message = 'Vé không thỏa điều kiện hủy vé' ||
             (error.response && error.response.data && error.response.data.message) ||
             error.message ||
             error.toString();

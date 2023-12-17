@@ -67,10 +67,19 @@ const getBookingInfor = createAsyncThunk('bookings/tickets', async ({ searchInfo
         return response
     }
     catch (error) {
-        const message =
-            (error.response && error.response.data && error.response.data.message) ||
-            error.message ||
-            error.toString();
+        let message = '';
+        if (error.response) {
+            if (error.response.status === 400) {
+                message = 'Vui lòng xác minh mã CAPTCHA';
+            } else if (error.response.status === 404) {
+                message = 'Không tìm thấy thông tin';
+            }
+            else {
+                message = 'Không tìm thấy thông tin' || error.response.data && error.response.data.message ? error.response.data.message : error.message;
+            }
+        } else {
+            message = 'Không tìm thấy thông tin' || error.message || error.toString();
+        }
         return thunkAPI.rejectWithValue(message);
     }
 }

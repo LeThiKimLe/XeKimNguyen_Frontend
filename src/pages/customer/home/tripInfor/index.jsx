@@ -15,7 +15,6 @@ const TripInfor = () => {
     const userHistory = useSelector(selectUserBookingHistory)
     const userTickets = useRef([])
     const [currentTicket, setCurrentTicket] = useState([])
-    console.log(userHistory)
     useEffect(()=>{
         dispatch(bookingThunk.getUserHistory())
     }, [])

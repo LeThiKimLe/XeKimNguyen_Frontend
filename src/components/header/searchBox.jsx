@@ -123,12 +123,13 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
         if (currentInfor.departDate)
         {
             if (parse(currentInfor.departDate, 'dd/MM/yyyy', new Date()).getDate() - new Date().getDate() < 0)
-                setCurrentInfor({
-                    ...currentInfor,
-                    departDate: format(new Date(), 'dd/MM/yyyy')
+                if (currentInfor.seatchRoute)
+                    setCurrentInfor({
+                        ...currentInfor,
+                        departDate: format(new Date(), 'dd/MM/yyyy')
             })
         }
-    }, [currentInfor])
+    }, [])
     return (
         <>
             {message.content !== '' && <Message message={message.content} repeat={message.repeat} />}
