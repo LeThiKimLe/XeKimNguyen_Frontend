@@ -25,17 +25,29 @@ export const addHoursToTime = (timeString, hours) => {
     var parts = timeString.split(':');
     var hour = parseInt(parts[0]);
     var minute = parseInt(parts[1]);
-  
     var date = new Date();
     date.setHours(hour);
     date.setMinutes(minute);
-    date.setHours(date.getHours() + hours);
-  
+    var minutesToAdd = Math.floor(hours * 60); // Chuyển đổi số lẻ giờ thành phút
+    date.setMinutes(date.getMinutes() + minutesToAdd);
     var newHour = date.getHours().toString().padStart(2, '0');
     var newMinute = date.getMinutes().toString().padStart(2, '0');
-  
     return newHour + ':' + newMinute;
   }
+
+export const subtractHoursFromTime = (timeString, hours) => {
+    var parts = timeString.split(':');
+    var hour = parseInt(parts[0]);
+    var minute = parseInt(parts[1]);
+    var date = new Date();
+    date.setHours(hour);
+    date.setMinutes(minute);
+    var minutesToSubtract = Math.floor(hours * 60); // Chuyển đổi số lẻ giờ thành phút
+    date.setMinutes(date.getMinutes() - minutesToSubtract);
+    var newHour = date.getHours().toString().padStart(2, '0');
+    var newMinute = date.getMinutes().toString().padStart(2, '0');
+    return newHour + ':' + newMinute;
+} 
 
 export const convertToDisplayDate = (dataDate) => {
     return format(parse(dataDate, 'yyyy-MM-dd', new Date()), 'dd/MM/yyyy')
