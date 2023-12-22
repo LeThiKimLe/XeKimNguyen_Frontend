@@ -84,6 +84,16 @@ const Featured = () => {
         }
     }
 
+    const getImage = (index) => {
+        const divide = index % 3
+        if (divide === 0)
+            return Feature1
+        else if (divide === 1)
+            return Feature2
+        else
+            return Feature3
+    }
+
     useEffect(() => {
         const loadData = () => {
             dispatch(routeThunk.getRoute())
@@ -103,9 +113,9 @@ const Featured = () => {
 
             <Slider {...settings}>
                 {
-                    listRoute.map((route) => (
+                    listRoute.map((route, index) => (
                         <div className={styles.featuredItem} role="button" key={route.id} onClick={() => handleSearch(route)}>
-                            <img src={Feature1}
+                            <img src={getImage(index)}
                                 alt=""
                                 className={styles.futuredImg} />
                             <div className={styles.featuredTitles}>

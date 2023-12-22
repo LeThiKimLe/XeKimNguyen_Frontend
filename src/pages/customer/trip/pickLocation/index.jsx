@@ -48,7 +48,6 @@ const PickLocation = ({ pick, listLocation, setLocation, selected, getObject, mo
                             id: locationDes.id,
                             arrivalTime: addHoursToTime(trip.departTime, duration / 3600)
                         })
-                        console.log(duration/3600)  
                     }
                     else{
                         updateList.push({
@@ -137,7 +136,7 @@ const PickLocation = ({ pick, listLocation, setLocation, selected, getObject, mo
         <div className={`${styles.pick_container} ${pick ? styles.pick_separate : ''}`}>
             {!getObject && <h3 className={styles.pick_title}>{pick ? "Điểm đón" : "Điểm trả"}</h3>}
             <div className={styles.list_locations}>
-                {listLocation.map((location) => (
+                {listLocation.filter((local) => local.active === true).map((location) => (
                     <div key={`${location.id}`} className={styles.pick_location}>
                         <label className={selected == location.id ? `${styles.location_label} ${styles.selected}` : styles.location_label}>
                             <input
