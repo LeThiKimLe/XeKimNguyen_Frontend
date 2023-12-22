@@ -109,8 +109,8 @@ axiosClient.interceptors.response.use(
                         return axiosClient(originalRequest)
                     })
                     .catch((refreshError) => {
-                        console.log(refreshError)
-                        return Promise.reject(refreshError)
+                        isRefreshing = false
+                        return Promise.reject(error)
                     })
             } else {
                 return new Promise((resolve) => {

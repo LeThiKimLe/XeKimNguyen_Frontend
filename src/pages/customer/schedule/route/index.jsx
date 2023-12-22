@@ -5,17 +5,18 @@ import {OptionButton} from '../../../../components/common/button'
 import { useEffect, useState } from 'react' 
 import { convertToStamp } from '../../../../utils/unitUtils'
 import { parse, format } from 'date-fns'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { searchAction } from '../../../../feature/search/seach.slice'
 import { useNavigate } from 'react-router-dom'
+import { selectListRoute } from '../../../../feature/route/route.slice'
+import { getDesandDep } from '../../../../utils/routeUtils'
 
 const Route = ({route, reverse}) => {
-
+    const listRoute = useSelector(selectListRoute)
     const reverseSchedule = (schedule) => {
         const splited = schedule.split(' -> ');
         return splited.reverse().join(' -> ');
     }
-
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -27,18 +28,27 @@ const Route = ({route, reverse}) => {
                     } : route
     
     const handleSearch = () => {
-        const searchInfor = {
-            departDate: format(new Date(), 'dd/MM/yyyy'),
-            arrivalDate: format(new Date(), 'dd/MM/yyyy'),
-            departLocation: cusRoute.departure,
-            desLocation: cusRoute.destination,
-            numberTicket: 1,
-            oneway: true,
-            searchRoute: route,
-            turn: !reverse         
+        var listRoutes = listRoute
+        if (listRoutes.length > 0)
+        {
+            const { departure, destination } = getDesandDep(
+                listRoutes,
+                cusRoute.departure.name,
+                cusRoute.destination.name,
+            )
+            const currentInfor = {
+                arrivalDate: format(new Date(), 'dd/MM/yyyy'),
+                departDate: format(new Date(), 'dd/MM/yyyy'),
+                departLocation: departure,
+                desLocation: destination,
+                numberTicket: 1,
+                searchRoute: route,
+                oneway: true,
+                turn: !reverse,
+            }
+            dispatch(searchAction.setSearch(currentInfor))
+            navigate('/trips'); 
         }
-        dispatch(searchAction.setSearch(searchInfor))
-        navigate('/trips');
     }
 
     return (
@@ -72,7 +82,7 @@ const Route = ({route, reverse}) => {
             </div>
             <div className={styles.searchArea}>
                 <i className={styles.note}>* Giá vé chưa bao gồm phụ phí xe, dịp lễ</i>
-                {/* <OptionButton text="Tìm chuyến xe" className={styles.findBtn} onClick={handleSearch}></OptionButton> */}
+                <OptionButton text="Tìm chuyến xe" className={styles.findBtn} onClick={handleSearch}></OptionButton>
             </div>
             </div>  
         </div>

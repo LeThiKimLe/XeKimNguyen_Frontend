@@ -182,7 +182,7 @@ const List = () => {
                                         <input type="text"
                                             className={styles.searchInput}
                                             readOnly
-                                            value={searchInfor.turn === 1 ? searchInfor.searchRoute.departure.name
+                                            value={(searchInfor.turn === true ||  searchInfor.turn === 1) ? searchInfor.searchRoute.departure.name
                                                 : searchInfor.searchRoute.destination.name} />
                                     </div>
                                     <div className={styles.exchangeBtn}>
@@ -193,7 +193,7 @@ const List = () => {
                                         <input type="text"
                                             className={styles.searchInput}
                                             readOnly
-                                            value={searchInfor.turn === 1 ? searchInfor.searchRoute.destination.name
+                                            value={(searchInfor.turn === true ||  searchInfor.turn === 1)? searchInfor.searchRoute.destination.name
                                                 : searchInfor.searchRoute.departure.name} />
                                     </div>
                                 </div>

@@ -8,10 +8,20 @@ import 'slick-carousel/slick/slick-theme.css';
 import Feature1 from '../../../../assets/feature1.png';
 import Feature2 from '../../../../assets/feature2.png';
 import Feature3 from '../../../../assets/feature3.png';
-
+import { selectListRoute } from '../../../../feature/route/route.slice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getRouteJourney } from '../../../../utils/tripUtils';
+import {getDesandDep} from '../../../../utils/routeUtils'
+import { searchAction } from '../../../../feature/search/seach.slice';
+import format from 'date-fns/format';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import routeThunk from '../../../../feature/route/route.service';
 const Featured = () => {
     const {t, i18n} = useTranslation();
-
+    const listRoute = useSelector(selectListRoute)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const settings = {
         dots: true,
         infinite: true,
@@ -50,53 +60,60 @@ const Featured = () => {
           ]
     }
 
+    const handleSearch = (route) => {
+        var listRoutes = listRoute
+        if (listRoutes.length > 0)
+        {
+            const { departure, destination } = getDesandDep(
+                listRoutes,
+                route.departure.name,
+                route.destination.name,
+            )
+            const currentInfor = {
+                arrivalDate: format(new Date(), 'dd/MM/yyyy'),
+                departDate: format(new Date(), 'dd/MM/yyyy'),
+                departLocation: departure,
+                desLocation: destination,
+                numberTicket: 1,
+                searchRoute: route,
+                oneway: true,
+                turn: true,
+            }
+            dispatch(searchAction.setSearch(currentInfor))
+            navigate('/trips'); 
+        }
+    }
+
+    useEffect(() => {
+        const loadData = () => {
+            dispatch(routeThunk.getRoute())
+            .then(() => {}
+            )
+            .catch((error)=>{});
+        };
+        if (listRoute.length === 0)
+            loadData();
+    }, [])
+
     return(
         <>
         <div className={styles.featuredContainer}>
             <SectionTitle title={t("feature.title")}
                     subtitle={t("feature.slogan")}></SectionTitle>
 
-            {/* <div className={styles.featured}> */}
             <Slider {...settings}>
-                <div className={styles.featuredItem}>
-                    <img src={Feature1}
-                        alt=""
-                        className={styles.futuredImg} />
-                    <div className={styles.featuredTitles}>
-                        <h1>Ho Chi Minh - Nha Trang</h1>
-                        <h2>200.000 VND</h2>
-                    </div>
-                </div>
-
-                <div className={styles.featuredItem}>
-                    <img src={Feature2}
-                        alt=""
-                        className={styles.futuredImg} />
-                    <div className={styles.featuredTitles}>
-                        <h1>Da Lat - Ho Chi Minh</h1>
-                        <h2>150.000 VND</h2>
-                    </div>
-                </div>
-
-                <div className={styles.featuredItem}>
-                    <img src={Feature3}
-                        alt=""
-                        className={styles.futuredImg} />
-                    <div className={styles.featuredTitles}>
-                        <h1>Da Nang - Ho Chi Minh</h1>
-                        <h2>400.000 VND</h2>
-                    </div>
-                </div>
-
-                <div className={styles.featuredItem}>
-                    <img src={Feature1}
-                        alt=""
-                        className={styles.futuredImg} />
-                    <div className={styles.featuredTitles}>
-                        <h1>Vung Tau - Ho Chi Minh</h1>
-                        <h2>100.000 VND</h2>
-                    </div>
-                </div>
+                {
+                    listRoute.map((route) => (
+                        <div className={styles.featuredItem} role="button" key={route.id} onClick={() => handleSearch(route)}>
+                            <img src={Feature1}
+                                alt=""
+                                className={styles.futuredImg} />
+                            <div className={styles.featuredTitles}>
+                                <h1>{getRouteJourney(route)}</h1>
+                            </div>
+                        </div>
+                    ))
+                }
             </Slider>
             {/* </div> */}
         </div>

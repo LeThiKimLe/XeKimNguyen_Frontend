@@ -20,6 +20,8 @@ const initialState = {
         message: '',
         listTrip: []
     },
+    listDeparture: [],
+    listDestination: [],
 }
 
 const searchSlice = createSlice({
@@ -39,7 +41,13 @@ const searchSlice = createSlice({
                 message: '',
                 listTrip: []
             }
-        }
+        },
+        setListDeparture: (state, action) => {
+            state.listDeparture = action.payload
+        },
+        setListDestination: (state, action) => {
+            state.listDestination = action.payload
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -83,9 +91,9 @@ const searchSlice = createSlice({
 
 export const selectSearchInfor = (state) => state.search.infor
 export const selectRearchResult = (state) => state.search.result.listTrip
-
+export const selectListDeparture = (state) => state.search.listDeparture
+export const selectListDestination = (state) => state.search.listDestination
 export const searchAction = searchSlice.actions;
-
 
 const searchPersistConfig = {
     key: 'search',

@@ -2,7 +2,7 @@ import styles from './styles.module.css'
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { searchAction } from '../../feature/search/seach.slice';
-import { selectSearchInfor } from '../../feature/search/seach.slice';
+import { selectSearchInfor, selectListDeparture, selectListDestination } from '../../feature/search/seach.slice';
 import { createListRoutes } from '../../utils/routeUtils';
 import { useState, useRef, useEffect, useMemo, memo } from 'react'
 import Message from '../message';
@@ -14,12 +14,15 @@ import Select from 'react-select'
 import { useNavigate } from 'react-router-dom';
 import { format, parse } from 'date-fns';
 import { selectLoadingState } from '../../feature/route/route.slice';
+import searchThunk from '../../feature/search/search.service';
 
 const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch()
     const searchInfor = useSelector(selectSearchInfor)
-    const { listDeparture, listDestination } = useMemo(() => createListRoutes(listRoute), [])
+    const listDeparture = useSelector(selectListDeparture)
+    const listDestination = useSelector(selectListDestination)
+    // const { listDeparture, listDestination } = useMemo(() => createListRoutes(listRoute), [])
     const originPlaceInput = useRef(null);
     const [currentInfor, setCurrentInfor] = useState(searchInfor)
     const [message, setMessage] = useState({ content: '', repeat: 0 })
@@ -99,6 +102,7 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
     const handleSearch = () => {
         if (currentInfor.searchRoute) {
             setMessage({ content: '', repeat: 0 })
+            console.log(currentInfor)
             dispatch(searchAction.setSearch(currentInfor))
             if (setSearchAction)
                 setSearchAction(true)
@@ -130,6 +134,14 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
             })
         }
     }, [])
+    useEffect(() => {
+        if (listRoute.length > 0)
+        {
+            const { listDeparture, listDestination } =  createListRoutes(listRoute)
+            dispatch(searchAction.setListDeparture(listDeparture))
+            dispatch(searchAction.setListDestination(listDestination))
+        }
+    }, [listRoute.length])
     return (
         <>
             {message.content !== '' && <Message message={message.content} repeat={message.repeat} />}
