@@ -43,6 +43,7 @@ const Payment = () => {
     const [showSuccessDialog, setShowSuccessDialog] = useState(false)
     const [showCancelDialog, setShowCancelDialog] = useState(false)
     const [showInvalidDialog, setShowInvalidDialog] = useState(false)
+    const [showConfirmOutDialog, setShowConfirmOutDialog] = useState(false)
     const [isValidPayment, setValidPayment] = useState(false)
     const [showCountDown, setShowCountDown] = useState(true)
     const { bookingCode: urlBookingCode } = useParams()
@@ -116,8 +117,10 @@ const Payment = () => {
             return STATE_DICTIONARY.filter((state) => state.value === status)[0].key
         }
         const isValidBookingSession = (bookingTime) => {
-            const timeDifference = new Date().getTime() - new Date(bookingTime).getTime();
+            const today = new Date()
+            const timeDifference = new Date(today.setSeconds(today.getSeconds() + 10)).getTime() - new Date(bookingTime).getTime();
             const minutesDifference = Math.floor(timeDifference / (1000 * 60));
+            console.log(minutesDifference)
             return minutesDifference >= 0 && minutesDifference < 10
         }
         if (isValidPayment === false) {
@@ -147,10 +150,12 @@ const Payment = () => {
                     .catch((error) => {
                         if (bookingCode !== '') {
                             if (bookingSession && isValidBookingSession(bookingSession) === true) {
+                                console.log('valid')
                                 setValidPayment(true)
                                 setShowInvalidDialog(false)
                             }
                             else {
+                                console.log('invalid')
                                 setValidPayment(false)
                                 setShowInvalidDialog(true)
                             }
@@ -158,11 +163,14 @@ const Payment = () => {
                     })
             else
                 if (bookingCode !== '') {
+                    console.log(bookingCode)
                     if (bookingSession && isValidBookingSession(bookingSession) === true) {
+                        console.log('valid1')
                         setValidPayment(true)
                         setShowInvalidDialog(false)
                     }
                     else {
+                        console.log('invalid2')
                         setValidPayment(false)
                         setShowInvalidDialog(true)
                     }
@@ -173,18 +181,34 @@ const Payment = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         dispatch(bookingActions.resetMessage())
+        // const handleBeforeUnload = (event) => {
+        //     setShowConfirmOutDialog(true)
+        //     event.preventDefault(); // Hủy bỏ sự kiện mặc định để ngăn người dùng rời khỏi trang
+        //   }
+        // const handleRouteChange = (event) => {
+        //     const shouldConfirm =
+        //         !window.location.pathname.includes('/payment');
+        
+        //     if (shouldConfirm && !window.confirm('Bạn có chắc chắn muốn rời khỏi trang?')) {
+        //         event.preventDefault();
+        //     }
+        // };
+        // window.addEventListener('beforeunload', handleBeforeUnload);
+        // window.addEventListener('beforeunload', handleRouteChange);
         return () => {
             dispatch(bookingActions.resetMessage())
             // dispatch(bookingActions.clearBookingSession())
+            // window.removeEventListener('beforeunload', handleBeforeUnload);
+            // window.removeEventListener('beforeunload', handleRouteChange);
         }
     }, [])
-
     return (
         <div>
             {message !== '' && <Message message={message} messagetype={error ? 2 : 1} />}
             {isValidPayment && showPendingDialog && <SessionTimeoutDialog onCancelPayment={handleCancel} onContinue={handleContinue} type='pending'></SessionTimeoutDialog>}
             {isValidPayment && showSuccessDialog && <SessionTimeoutDialog onCancelPayment={handleBackToHome} type='success' ></SessionTimeoutDialog>}
             {isValidPayment && showCancelDialog && <SessionTimeoutDialog onCancelPayment={handleBackToHome} onContinue={remainPayment} type='success' ></SessionTimeoutDialog>}
+            {isValidPayment && showConfirmOutDialog && <SessionTimeoutDialog onCancelPayment={handleBackToHome} onContinue={remainPayment} type='cancel' ></SessionTimeoutDialog>}
             {!isValidPayment && showInvalidDialog && <SessionTimeoutDialog onCancelPayment={handleBackToHome} type='deny' ></SessionTimeoutDialog>}
             <Navbar></Navbar>
             <Header type="list" />

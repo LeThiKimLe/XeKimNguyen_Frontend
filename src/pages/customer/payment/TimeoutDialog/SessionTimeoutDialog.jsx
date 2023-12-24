@@ -83,7 +83,7 @@ const SessionTimeoutDialog = ({ onCancelPayment, onContinue, type }) => {
               <span>{`Bạn có muốn thanh toán tiếp không?`}</span>
             </p>
             <div className={styles.dialog_actions}>
-              <OptionButton onClick={onCancelPayment} text="Hủy"></OptionButton>
+              <OptionButton onClick={onCancelPayment} text="Hủy vé"></OptionButton>
               <OptionButton onClick={onContinue} text="Tiếp tục thanh toán"></OptionButton>
             </div>
           </>
