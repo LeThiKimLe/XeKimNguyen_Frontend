@@ -14,8 +14,11 @@ import { getDesandDep } from '../../../../utils/routeUtils'
 const Route = ({route, reverse}) => {
     const listRoute = useSelector(selectListRoute)
     const reverseSchedule = (schedule) => {
-        const splited = schedule.split(' -> ');
-        return splited.reverse().join(' -> ');
+        if (schedule)
+        {
+            const splited = schedule.split(' -> ');
+            return splited.reverse().join(' -> ');
+        }   
     }
     const navigate = useNavigate()
     const dispatch = useDispatch()

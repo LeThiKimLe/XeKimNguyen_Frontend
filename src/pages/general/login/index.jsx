@@ -81,7 +81,6 @@ const Login = () => {
             label: "Số điện thoại",
             pattern: "^0[0-9]{9,10}$",
             required: true,
-
         },
         {
             id: 2,

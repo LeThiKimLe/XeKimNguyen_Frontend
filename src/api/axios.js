@@ -3,6 +3,7 @@ import queryString from 'query-string'
 
 const API_URL = process.env.REACT_APP_API_URL
 
+//Tạo instance của axios
 const axiosClient = axios.create({
     baseURL: API_URL,
     headers: {
@@ -12,6 +13,7 @@ const axiosClient = axios.create({
     paramsSerializer: (params) => queryString.stringify(params),
 })
 
+//Interceptor thêm auth header vào request trước khi gửi đi
 axiosClient.interceptors.request.use((req) => {
     // Xử lý request trước khi gửi đi, thêm header token vào
     const token = getAccessToken()
@@ -40,6 +42,7 @@ const getRefreshToken = () => {
 let isRefreshing = false
 const refreshSubscribers = []
 
+//Lưu lại danh sách các request fail do 401, thực hiện lại sau khi lấy đc accessToken mới
 const subscribeTokenRefresh = (cb) => {
     refreshSubscribers.push(cb)
 }
@@ -50,6 +53,7 @@ const onRefreshed = (token) => {
     refreshSubscribers.length = 0
 }
 
+//Hàm lấy refresh token nếu request gặp lỗi 401
 const refreshAccessToken = () => {
     return new Promise((resolve, reject) => {
         const refreshToken = getRefreshToken()
