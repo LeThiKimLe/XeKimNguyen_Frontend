@@ -241,6 +241,10 @@ const Login = () => {
         }
     }, [message])
 
+    useEffect(() => {
+        dispatch(authActions.reset())
+    }, [valuesSignup, valuesLogin])
+
     const isBigScreen = useMediaQuery({ query: '(min-width: 1046px)' })
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1046px)' })
 

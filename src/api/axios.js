@@ -64,7 +64,6 @@ const refreshAccessToken = () => {
                 Authorization: `Bearer ${refreshToken}`,
             },
         })
-
         axiosRefreshClient
             .post('/auth/refresh-token')
             .then((response) => {
@@ -101,7 +100,7 @@ axiosClient.interceptors.response.use(
     // Xử lý lỗi
     async (error) => {
         const originalRequest = error.config
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/login')) {
             originalRequest._retry = true
             if (!isRefreshing) {
                 isRefreshing = true
@@ -114,7 +113,7 @@ axiosClient.interceptors.response.use(
                     })
                     .catch((refreshError) => {
                         isRefreshing = false
-                        return Promise.reject(error)
+                        return Promise.reject(refreshError)
                     })
             } else {
                 return new Promise((resolve) => {
