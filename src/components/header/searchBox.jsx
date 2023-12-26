@@ -102,7 +102,6 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
     const handleSearch = () => {
         if (currentInfor.searchRoute) {
             setMessage({ content: '', repeat: 0 })
-            console.log(currentInfor)
             dispatch(searchAction.setSearch(currentInfor))
             if (setSearchAction)
                 setSearchAction(true)

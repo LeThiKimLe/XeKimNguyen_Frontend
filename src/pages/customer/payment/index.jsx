@@ -23,9 +23,9 @@ import { selectUserBookingHistory, selectBookingSessionTime } from '../../../fea
 import { useParams } from 'react-router-dom';
 import { STATE_DICTIONARY } from '../../../utils/constants'
 import { selectIsLoggedIn } from '../../../feature/auth/auth.slice'
+import { useCallbackPrompt } from './hooks/useCallbackPrompt'
 
 const Payment = () => {
-
     const message = useSelector(selectMessage)
     const loading = useSelector(selectLoading)
     const error = useSelector(selectError)
@@ -43,34 +43,57 @@ const Payment = () => {
     const [showSuccessDialog, setShowSuccessDialog] = useState(false)
     const [showCancelDialog, setShowCancelDialog] = useState(false)
     const [showInvalidDialog, setShowInvalidDialog] = useState(false)
-    const [showConfirmOutDialog, setShowConfirmOutDialog] = useState(false)
+    // const [showConfirmOutDialog, setShowConfirmOutDialog] = useState(false)
     const [isValidPayment, setValidPayment] = useState(false)
     const [showCountDown, setShowCountDown] = useState(true)
     const { bookingCode: urlBookingCode } = useParams()
+    const [paid, setPaid] = useState(false)
+    const handleCancelOut = async () => {
+        await dispatch(bookingThunk.cancelPayment(urlBookingCode))
+            .unwrap()
+            .then(() => {
+                setPaid(true)
+            })
+            .catch((error) => {
+                setPaid(true)
+                setValidPayment(false)
+                setShowInvalidDialog(true)
+            })
+    }
+    const handleCancel = async () => {
+        await dispatch(bookingThunk.cancelPayment(urlBookingCode))
+            .unwrap()
+            .then(() => {
+                setPaid(true)
+                navigate('/')
+            })
+            .catch((error) => {
+                setPaid(true)
+                setValidPayment(false)
+                setShowInvalidDialog(true)
+            })
+    }
+
+    const [showConfirmOutDialog, confirmNavigation, cancelNavigation] =
+        useCallbackPrompt(!paid, handleCancelOut)
 
     const handlePayment = () => {
         dispatch(bookingActions.resetMessage())
         dispatch(bookingThunk.bookingPayment({ bookingCode: urlBookingCode, payment }))
             .unwrap()
             .then(() => {
+                setPaid(true)
                 setShowCountDown(false)
                 setShowSuccessDialog(true)
             })
-            .catch((error) => {})
-    }
-
-    const handleCancel = () => {
-        dispatch(bookingThunk.cancelPayment(urlBookingCode))
-            .unwrap()
-            .then(() => {
-                navigate('/')
-            })
             .catch((error) => {
-                navigate('/')
+                setPaid(true)
+                setValidPayment(false)
+                setShowInvalidDialog(true)
             })
     }
-
     const handleBackToHome = () => {
+        setPaid(true)
         navigate('/')
     }
 
@@ -78,14 +101,20 @@ const Payment = () => {
         dispatch(bookingThunk.keepPayment(urlBookingCode))
             .unwrap()
             .then(() => {
+                setPaid(false)
                 setShowPendingDialog(false)
                 setShowCountDown(true)
             })
-            .catch((error) => {})
+            .catch((error) => {
+                setPaid(true)
+                setValidPayment(false)
+                setShowInvalidDialog(true)
+            })
     }
 
     const handleTimeout = () => {
         setShowPendingDialog(true)
+        setPaid(true)
         setShowCountDown(false)
     }
 
@@ -120,7 +149,6 @@ const Payment = () => {
             const today = new Date()
             const timeDifference = new Date(today.setSeconds(today.getSeconds() + 10)).getTime() - new Date(bookingTime).getTime();
             const minutesDifference = Math.floor(timeDifference / (1000 * 60));
-            console.log(minutesDifference)
             return minutesDifference >= 0 && minutesDifference < 10
         }
         if (isValidPayment === false) {
@@ -133,6 +161,7 @@ const Payment = () => {
                             && isValidBookingSession(booking.bookingDate) === true
                             && booking.tickets.some((ticket) => ticket.state === 'Chờ thanh toán').length === 1
                         )) {
+                            setPaid(false)
                             setValidPayment(true)
                             setShowInvalidDialog(false)
                             const currentBooking = history.filter((booking) => booking.code === urlBookingCode)[0]
@@ -143,6 +172,7 @@ const Payment = () => {
                             }))
                         }
                         else {
+                            setPaid(true)
                             setValidPayment(false)
                             setShowInvalidDialog(true)
                         }
@@ -150,12 +180,12 @@ const Payment = () => {
                     .catch((error) => {
                         if (bookingCode !== '') {
                             if (bookingSession && isValidBookingSession(bookingSession) === true) {
-                                console.log('valid')
+                                setPaid(false)
                                 setValidPayment(true)
                                 setShowInvalidDialog(false)
                             }
                             else {
-                                console.log('invalid')
+                                setPaid(true)
                                 setValidPayment(false)
                                 setShowInvalidDialog(true)
                             }
@@ -163,14 +193,13 @@ const Payment = () => {
                     })
             else
                 if (bookingCode !== '') {
-                    console.log(bookingCode)
                     if (bookingSession && isValidBookingSession(bookingSession) === true) {
-                        console.log('valid1')
+                        setPaid(false)
                         setValidPayment(true)
                         setShowInvalidDialog(false)
                     }
                     else {
-                        console.log('invalid2')
+                        setPaid(true)
                         setValidPayment(false)
                         setShowInvalidDialog(true)
                     }
@@ -181,25 +210,20 @@ const Payment = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         dispatch(bookingActions.resetMessage())
-        // const handleBeforeUnload = (event) => {
-        //     setShowConfirmOutDialog(true)
-        //     event.preventDefault(); // Hủy bỏ sự kiện mặc định để ngăn người dùng rời khỏi trang
-        //   }
-        // const handleRouteChange = (event) => {
-        //     const shouldConfirm =
-        //         !window.location.pathname.includes('/payment');
-        
-        //     if (shouldConfirm && !window.confirm('Bạn có chắc chắn muốn rời khỏi trang?')) {
-        //         event.preventDefault();
-        //     }
-        // };
-        // window.addEventListener('beforeunload', handleBeforeUnload);
-        // window.addEventListener('beforeunload', handleRouteChange);
+        const handleBeforeUnload = (event) => {
+            event.preventDefault(); // Hủy bỏ sự kiện mặc định để ngăn người dùng rời khỏi trang
+            event.returnValue = 'Bạn chắc chắn muốn thoát khỏi trang? Vé sẽ bị hủy'
+          }
+        const handleUnload = (event) => {
+            dispatch(bookingThunk.cancelPayment(urlBookingCode))
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('unload', handleUnload);
         return () => {
             dispatch(bookingActions.resetMessage())
             // dispatch(bookingActions.clearBookingSession())
-            // window.removeEventListener('beforeunload', handleBeforeUnload);
-            // window.removeEventListener('beforeunload', handleRouteChange);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handleUnload);
         }
     }, [])
     return (
@@ -208,7 +232,7 @@ const Payment = () => {
             {isValidPayment && showPendingDialog && <SessionTimeoutDialog onCancelPayment={handleCancel} onContinue={handleContinue} type='pending'></SessionTimeoutDialog>}
             {isValidPayment && showSuccessDialog && <SessionTimeoutDialog onCancelPayment={handleBackToHome} type='success' ></SessionTimeoutDialog>}
             {isValidPayment && showCancelDialog && <SessionTimeoutDialog onCancelPayment={handleBackToHome} onContinue={remainPayment} type='success' ></SessionTimeoutDialog>}
-            {isValidPayment && showConfirmOutDialog && <SessionTimeoutDialog onCancelPayment={handleBackToHome} onContinue={remainPayment} type='cancel' ></SessionTimeoutDialog>}
+            {isValidPayment && showConfirmOutDialog && <SessionTimeoutDialog onCancelPayment={confirmNavigation} onContinue={cancelNavigation} type='cancel' ></SessionTimeoutDialog>}
             {!isValidPayment && showInvalidDialog && <SessionTimeoutDialog onCancelPayment={handleBackToHome} type='deny' ></SessionTimeoutDialog>}
             <Navbar></Navbar>
             <Header type="list" />

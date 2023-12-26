@@ -15,18 +15,25 @@ import SearchBox from './searchBox';
 
 import MediaQuery from 'react-responsive';
 import { memo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { navAction } from '../../feature/navigation/navigation.slice';
+import { selectActiveLink } from '../../feature/navigation/navigation.slice';
 
 const Header = ({ type, active, listRoute }) => {
 
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
+    const dispatch = useDispatch()
 
-    const [activeLink, setActiveLink] = useState(active);
+    const activeLink = useSelector(selectActiveLink)
 
     const handleNavigate = (linkId) => {
-        setActiveLink(linkId);
+        dispatch(navAction.setActiveLink(linkId))
     };
 
+    useEffect(() => {
+        dispatch(navAction.setActiveLink(active))
+    }, [])
 
     return (
         <>
