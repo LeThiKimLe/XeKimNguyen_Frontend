@@ -132,7 +132,7 @@ const BillDetail = ({ bill, cancelBill }) => {
                                 </div>
                             </div>
                         </div>
-                        <div style={{paddingTop: '10px', fontSize:'14px'}}>{`Tra cứu hóa đơn tại web: https://xekimnguyen/bill - Mã số tra cứu ${bill.id}`} </div>
+                        <div style={{paddingTop: '10px', fontSize:'14px'}}>{`Tra cứu hóa đơn tại web: https://www.xekimnguyen.id.vn/bill - Mã số tra cứu ${bill.bill?.referCode}`} </div>
                     </div>
                     <div style={{display:'flex', justifyContent:'center'}}>
                         <OptionButton text='Tải hóa đơn' onClick={downloadBill}></OptionButton>

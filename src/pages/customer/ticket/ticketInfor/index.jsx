@@ -175,8 +175,8 @@ const TicketInfor = ({booking}) => {
                                     <div className={styles.ticketDetail}>
                                         <span>Mã hóa đơn</span>
                                         <span>
-                                            <FontAwesomeIcon icon={faCopy} onClick={() => copyBillCode(ticket.billCode)} color='#504e4e' className={styles.copyBtn} />
-                                            {`${ticket.billCode ? ticket.billCode : 'Đang cập nhật'}`}
+                                            <FontAwesomeIcon icon={faCopy} onClick={() => copyBillCode(ticket.bill ? ticket.bill.referCode : '')} color='#504e4e' className={styles.copyBtn} />
+                                            {`${ticket.bill ? " " + ticket.bill.referCode : ' Đang cập nhật'}`}
                                         </span>
                                     </div>
                                     <div className={styles.ticketDetail}>

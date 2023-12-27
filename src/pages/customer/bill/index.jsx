@@ -25,6 +25,7 @@ const Bill = () => {
     const dispatch = useDispatch()
     const [message, setMessage] = useState('')
     const [billData, setBillData] = useState('')
+    const [loading, setLoading] = useState(false)
 
     const handleChangeInfor = (e) => {
         setBillInfor({...billInfor, [e.target.name] : e.target.value})
@@ -83,20 +84,22 @@ const Bill = () => {
     const handleBillSubmit = (e) => { 
         e.preventDefault()
         if (billInfor.captchaCode === captchaText) { 
+            setLoading(true)
             dispatch(ticketThunk.getTicketBill(billInfor.billCode))
             .unwrap()
             .then((res) => {
                 setBillData(res)
                 setShowBill(true)
+                setLoading(false)
             })
             .catch((error) => {
                 setMessage(error)
+                setLoading(false)
             })
         } else { 
             const canvas = canvasRef.current; 
             const ctx = canvas.getContext('2d'); 
             initializeCaptcha(ctx); 
-           
         }
     };
 
@@ -135,7 +138,7 @@ const Bill = () => {
                                 <FontAwesomeIcon icon={faRotateRight} color='#504e4e'/>
                             </button> 
                         </div>
-                        <Button className={styles["submitBtn"]}
+                        <Button className={styles["submitBtn"]} loading={loading}
                             text='Tra cứu'>
                         </Button>
                         </form>

@@ -97,7 +97,7 @@ const Navbar = () => {
                             <div className={styles.userOption}>
                                 <div className={styles.accountName}>
                                     <FontAwesomeIcon icon={faUser} />
-                                    {user.user.name}
+                                    {user && user.user?.name}
                                     <FontAwesomeIcon icon={faSortDown} />
                                 </div>
                                 <div className={styles.actionOption}> 
