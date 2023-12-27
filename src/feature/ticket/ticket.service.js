@@ -90,12 +90,32 @@ const editTicket = createAsyncThunk('tickets/edit', async ({bookingCode, pickSta
     }
 })
 
+const getTicketBill = createAsyncThunk('tickets/bill', async (refCode, thunkAPI) => {
+    try {
+        const response = await axiosClient.get('tickets/bill',
+            {
+                params: {
+                    referCode: refCode,
+                }
+            }
+        )
+        return response
+    }
+    catch (error) {
+        const message =
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+})
 
 const ticketThunk = {
     cancelTicket,
     verifyCancelTicketPolicy,
     changeTicket,
-    editTicket
+    editTicket,
+    getTicketBill,
 }
 
 export default ticketThunk

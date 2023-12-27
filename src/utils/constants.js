@@ -185,11 +185,11 @@ export const BILL_INFOR = [
     {
         id: 1,
         name: "billCode",
-        type: "number",
+        type: "text",
         placeholder: "Mã số hóa đơn",
-        errorMessage: "",
+        errorMessage: "Mã hóa đơn có 7 ký tự",
         label: "Mã hóa đơn",
-        pattern: "",
+        pattern: "^[a-zA-Z0-9]{7}$",
         required: true,
     },
     {

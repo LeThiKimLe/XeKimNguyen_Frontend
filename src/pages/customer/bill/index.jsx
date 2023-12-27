@@ -11,6 +11,9 @@ import FormInput from '../../../components/common/formInput'
 import Button from '../../../components/common/button'
 import BillDetail from './billDetai'
 import { BILL_TEST_DATA } from '../../../utils/test_data'
+import ticketThunk from '../../../feature/ticket/ticket.service'
+import { useDispatch } from 'react-redux'
+import Message from '../../../components/message'
 
 const Bill = () => {
 
@@ -19,6 +22,9 @@ const Bill = () => {
     const [userInput, setUserInput] = useState(''); 
     const canvasRef = useRef(null);
     const [showBill, setShowBill] = useState(false)
+    const dispatch = useDispatch()
+    const [message, setMessage] = useState('')
+    const [billData, setBillData] = useState('')
 
     const handleChangeInfor = (e) => {
         setBillInfor({...billInfor, [e.target.name] : e.target.value})
@@ -77,10 +83,16 @@ const Bill = () => {
     const handleBillSubmit = (e) => { 
         e.preventDefault()
         if (billInfor.captchaCode === captchaText) { 
-            // alert('Success'); 
-            setShowBill(true)
-        } else {
-            alert('Incorrect'); 
+            dispatch(ticketThunk.getTicketBill(billInfor.billCode))
+            .unwrap()
+            .then((res) => {
+                setBillData(res)
+                setShowBill(true)
+            })
+            .catch((error) => {
+                setMessage(error)
+            })
+        } else { 
             const canvas = canvasRef.current; 
             const ctx = canvas.getContext('2d'); 
             initializeCaptcha(ctx); 
@@ -91,9 +103,10 @@ const Bill = () => {
     const cancelBill = () => {
         setShowBill(false)
     }
-
+    console.log(BILL_TEST_DATA)
     return (
         <>
+            {message !== '' && <Message message={message} messagetype={2} />}
             <div>
                 <Navbar></Navbar>
                 <Header type="list" active="bill"/>
@@ -129,7 +142,7 @@ const Bill = () => {
                     </div>
                 </div>
                 <Footer></Footer>
-                {showBill===true ? (<BillDetail bill={BILL_TEST_DATA}  cancelBill={cancelBill}></BillDetail>):null}
+                {showBill===true && billData !=='' ? (<BillDetail bill={billData}  cancelBill={cancelBill}></BillDetail>):null}
             </div>
         </>
     )

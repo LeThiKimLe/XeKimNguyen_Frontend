@@ -6,6 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import format from 'date-fns/format';
+import { getTripJourney } from '../../../../utils/tripUtils';
+import { convertToDisplayDate } from '../../../../utils/unitUtils';
 
 const BillDetail = ({ bill, cancelBill }) => {
     const handleDialogClick = (e) => {
@@ -32,7 +35,7 @@ const BillDetail = ({ bill, cancelBill }) => {
         };
     }
 
-    const issueBillDate = addOneDay(bill.booking.bookingDate)
+    const issueBillDate = addOneDay(format(new Date(bill.booking.bookingDate), 'dd-MM-yyyy'))
 
     const downloadBill = () => {
         const qrCodeContainer = document.getElementById('bill');
@@ -68,7 +71,7 @@ const BillDetail = ({ bill, cancelBill }) => {
                                 <span>5K23GLL</span>
                                 <br></br>
                                 <span>Số: </span>
-                                <span style={{ fontSize: '20px', fontWeight: '600' }}>{bill.billCode}</span>
+                                <span style={{ fontSize: '20px', fontWeight: '600' }}>{bill.id}</span>
                             </div>
                             <div style={{ textAlign: 'left', fontWeight: '400' }}>
                                 <span>Địa chỉ: </span>
@@ -91,25 +94,25 @@ const BillDetail = ({ bill, cancelBill }) => {
                         <i> {`(Bản thể hiện của hóa đơn điện tử)`}</i>
                         <div className={styles.rowInfor} style={{marginTop:'15px'}}>
                             <span>Tên khách hàng: </span>
-                            <BillInput infor={bill.booking.user.name}></BillInput>
+                            <BillInput infor={bill.booking.name}></BillInput>
                             <span>Số điện thoại: </span>
-                            <BillInput infor={bill.booking.user.tel}></BillInput>
+                            <BillInput infor={bill.booking.tel}></BillInput>
                         </div>
                         <div className={styles.rowInfor}>
                             <span>Lộ trình: </span>
-                            <BillInput infor={`${bill.booking.route.departure.name} - ${bill.booking.route.destination.name}`}></BillInput>
+                            <BillInput infor={getTripJourney(bill.booking.trip)}></BillInput>
                         </div>
                         <div className={styles.rowInfor}>
                             <span>Số ghế: </span>
                             <BillInput infor={bill.seat}></BillInput>
                             <span>Số xe: </span>
-                            <BillInput infor={bill.booking.bus.licensePlate}></BillInput>
+                            <BillInput infor={bill.schedule.bus ? bill.schedule.bus.licensePlate :'Đang cập nhật'}></BillInput>
                         </div>
                         <div className={styles.rowInfor}>
                             <span>Xuất bến: </span>
-                            <BillInput infor={bill.booking.trip.departTime}></BillInput>
+                            <BillInput infor={bill.schedule.departTime.slice(0, -3)}></BillInput>
                             <span>Ngày khởi hành</span>
-                            <BillInput infor={bill.booking.trip.departDate}></BillInput>
+                            <BillInput infor={convertToDisplayDate(bill.schedule.departDate)}></BillInput>
                         </div>
                         <div className='d-flex' style={{marginTop: '20px'}}>
                             <div style={{flex: 1}}></div>
@@ -129,7 +132,7 @@ const BillDetail = ({ bill, cancelBill }) => {
                                 </div>
                             </div>
                         </div>
-                        <div style={{paddingTop: '10px', fontSize:'14px'}}>{`Tra cứu hóa đơn tại web: https://xekimnguyen/bill - Mã số tra cứu ${bill.billCode}`} </div>
+                        <div style={{paddingTop: '10px', fontSize:'14px'}}>{`Tra cứu hóa đơn tại web: https://xekimnguyen/bill - Mã số tra cứu ${bill.id}`} </div>
                     </div>
                     <div style={{display:'flex', justifyContent:'center'}}>
                         <OptionButton text='Tải hóa đơn' onClick={downloadBill}></OptionButton>
