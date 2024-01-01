@@ -9,13 +9,14 @@ import { useState, useEffect, useRef } from 'react'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import Message from "../../../components/message"
 import { useNavigate } from 'react-router-dom'
-import Button from '../../../components/common/button'
+import Button, { OptionButton } from '../../../components/common/button'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectLoading, selectMessage, selectError } from '../../../feature/auth/auth.slice'
 import { authActions } from '../../../feature/auth/auth.slice'
 import authThunk from '../../../feature/auth/auth.service'
 import { ClipLoader } from 'react-spinners';
 import { useMediaQuery } from 'react-responsive'
+import CountDownOTP from './CountDownOTP'
 
 const Login = () => {
 
@@ -23,6 +24,8 @@ const Login = () => {
     const message = useSelector(selectMessage)
     const loading = useSelector(selectLoading)
     const error = useSelector(selectError)
+    const [showCountDown, setShowCountDown] = useState(false)
+    const [showTimeOff, setShowTimeOff] = useState(false)
 
     const [valuesLogin, setValuesLogin] = useState({
         username: "",
@@ -37,6 +40,10 @@ const Login = () => {
     const formSignup = useRef(null)
     const formGetOTP = useRef(null)
     const formValidOTP = useRef(null)
+    const formGetOTP2 = useRef(null)
+    const formValidOTP2 = useRef(null)
+    const formRepass = useRef(null)
+    const [isGetPass, setIsGetPass] = useState(false)
 
     const [valuesSignup, setValuesSignup] = useState({
         telnum: "",
@@ -44,6 +51,14 @@ const Login = () => {
         repass: "",
         name: "",
         email: "",
+        otp: "",
+        process: 0
+    })
+
+    const [valuesGetNewPwd, setValuesGetNewPwd] = useState({
+        telnum: "",
+        password: "",
+        repass: "",
         otp: "",
         process: 0
     })
@@ -136,6 +151,49 @@ const Login = () => {
         }
     ]
 
+    const inputGetNewPwd = [
+        {
+            id: 1,
+            name: "telnum",
+            type: "text",
+            placeholder: "Số điện thoại",
+            errorMessage: "Sai số điện thoại",
+            label: "Nhập SĐT đã đăng ký",
+            pattern: "^0[0-9]{9,10}$",
+            required: true,
+        },
+        {
+            id: 2,
+            name: "password",
+            type: "password",
+            placeholder: "Mật khẩu",
+            errorMessage: "Mật khẩu có ít nhất 6 ký tự",
+            label: "Mật khẩu mới",
+            pattern: "^.{6,}$",
+            required: true,
+        },
+        {
+            id: 3,
+            name: "repass",
+            type: "password",
+            placeholder: "Nhập lại mật khẩu",
+            errorMessage: "Mật khẩu không khớp",
+            label: "Nhập lại mật khẩu",
+            pattern: valuesGetNewPwd.password,
+            required: true,
+        },
+        {
+            id: 4,
+            name: "otp",
+            type: "text",
+            placeholder: "OTP",
+            errorMessage: "Mã OTP có 6 ký tự",
+            label: "Nhập mã OTP",
+            pattern: "^[0-9]{6}$",
+            required: true,
+        }
+    ]
+
     const dispatch = useDispatch();
 
     const handleLogin = (e) => {
@@ -154,11 +212,11 @@ const Login = () => {
         if (signUpInfor) {
             setValuesSignup(JSON.parse(signUpInfor));
         }
-    }, []);
+    }, [])
 
     useEffect(() => {
         localStorage.setItem('signUpInfor', JSON.stringify(valuesSignup));
-    }, [valuesSignup]);
+    }, [valuesSignup])
 
     const onChangeLogin = (e) => {
         setValuesLogin({ ...valuesLogin, [e.target.name]: e.target.value })
@@ -166,7 +224,11 @@ const Login = () => {
 
     const onChangeSignup = (e) => {
         setValuesSignup({ ...valuesSignup, [e.target.name]: e.target.value })
-    }
+    } 
+
+    const onChangeRepass = (e) => {
+        setValuesGetNewPwd({ ...valuesGetNewPwd, [e.target.name]: e.target.value })
+    } 
 
     const handleGetOTP = (e) => {
         e.preventDefault();
@@ -229,6 +291,68 @@ const Login = () => {
         );
     }
 
+    const cancelForget = () => {
+        setIsGetPass(false)
+        setValuesSignup({
+            telnum: "",
+            password: "",
+            repass: "",
+            otp: "",
+            process: 0
+        }
+        );
+    }
+
+    const handleGetOTPRepass = (e) => {
+        e.preventDefault();
+        // dispatch(authThunk.getOTPRepass(valuesSignup.telnum))
+        //     .unwrap()
+        //     .then(() => {
+        //         setValuesGetNewPwd({ ...valuesGetNewPwd, process: 1 })
+        //         dispatch(authActions.reset())
+        //         setShowCountDown(true)
+        //     })
+        //     .catch((error) => {
+        //         console.log(error)
+        //     })  
+        setValuesGetNewPwd({ ...valuesGetNewPwd, process: 1 })
+        setShowCountDown(true)
+    }
+    const handleTimeout = () => {
+        setShowCountDown(false)
+    }
+    const handleValidateOTPRepass = (e) => {
+        e.preventDefault();
+        // dispatch(authThunk.validateOTP(valuesSignup.telnum, valuesSignup.otp))
+        //     .unwrap()
+        //     .then(() => {
+        //         setValuesSignup({ ...valuesSignup, process: 2 })
+        //         dispatch(authActions.reset())
+        //     })
+        //     .catch((error) => {
+        //         console.log(error)
+        //     })
+        // if (valuesSignup.otp !== "123456")
+        //     dispatch(authActions.)
+        // localStorage.setItem('temp_access_token', 'false')
+        setValuesGetNewPwd({ ...valuesGetNewPwd, process: 2 })
+    }
+    const handleRepass = (e) => {
+        e.preventDefault()
+        cancelRepass()
+        setSelectedTab(0)
+        setIsGetPass(false)
+    }
+    const cancelRepass = () => {
+        setValuesGetNewPwd({
+            telnum: "",
+            password: "",
+            repass: "",
+            otp: "",
+            process: 0
+        }
+        );
+    }
     useEffect(() => {
         if (message !== '') {
             const timer = setTimeout(() => {
@@ -266,17 +390,72 @@ const Login = () => {
                                 <Tabs className="Tabs" selectedIndex={selectedTab} onSelect={index => setSelectedTab(index)}>
                                     <TabList>
                                         <Tab onClick={cancelSignup}>Đăng nhập</Tab>
-                                        <Tab>{` Đăng ký `}</Tab>
+                                        <Tab onClick={cancelForget}>{` Đăng ký `}</Tab>
                                     </TabList>
                                     <TabPanel>
-                                        <form action="" ref={formLogin} onSubmit={handleLogin} className={styles.formInfor}>
-                                            {inputLogin.map((input) => (
-                                                <FormInput key={input.id} {...input} value={valuesLogin[input.name]} onChange={onChangeLogin}></FormInput>
-                                            ))}
-                                            <Button text="Đăng nhập" className={styles.btnLogin} ></Button>
-                                            <div className={styles.subLink}> <i> Chưa có tài khoản ? </i> <a href="#" onClick={()=> setSelectedTab(1)}> Đăng ký </a> </div>
-                                        </form>
+                                        {
+                                            isGetPass === false && (
+                                                <form action="" ref={formLogin} onSubmit={handleLogin} className={styles.formInfor}>
+                                                {inputLogin.map((input) => (
+                                                    <FormInput key={input.id} {...input} value={valuesLogin[input.name]} onChange={onChangeLogin}></FormInput>
+                                                ))}
+                                                <Button text="Đăng nhập" className={styles.btnLogin} ></Button>
+                                                <a href="#" style={{ fontSize: '15px' }} onClick={() => {setIsGetPass(true); cancelRepass()}}>Quên mật khẩu</a>
+                                                <div className={styles.subLink}> <i> Chưa có tài khoản ? </i> <a href="#" onClick={()=> setSelectedTab(1)}> Đăng ký </a> </div>
+                                            </form>
+                                            )
+                                        }
+                                        {
+                                            isGetPass && (
+                                                <>
+                                                    {valuesGetNewPwd.process === 0 && (
+                                                        <form action="" ref={formGetOTP2} onSubmit={handleGetOTPRepass}>
+                                                            <FormInput key={inputGetNewPwd[0].id} {...inputGetNewPwd[0]} value={valuesGetNewPwd.telnum} onChange={onChangeRepass}></FormInput>
+                                                            <Button text="Nhận mã OTP" className={styles.btnLogin}></Button>
+                                                            <div style={{ fontSize: '15px' }}> <i> Đã có tài khoản ? </i> <a href="#" onClick={()=> {setSelectedTab(0); setIsGetPass(false)}}> Đăng nhập </a> </div>
+                                                        </form>
+                                                    )}
+                                                    {valuesGetNewPwd.process === 1 && (
+                                                        <form action="" ref={formValidOTP2} onSubmit={handleValidateOTPRepass}>
+                                                            <FormInput key={inputGetNewPwd[3].id} {...inputGetNewPwd[3]} value={valuesGetNewPwd.otp} onChange={onChangeRepass}></FormInput>
+                                                                {showCountDown ?
+                                                                (
+                                                                    <>
+                                                                        <i style={{ color: 'red', fontSize: '14px' }}>{`Thời gian xác thực mã còn lại: `}
+                                                                            <CountDownOTP onTimeout={handleTimeout}></CountDownOTP>
+                                                                        </i>
+                                                                        <div></div>
+                                                                        <i style={{ fontSize: '14px' }}>Không nhận được mã ? </i>
+                                                                        <OptionButton   text="Gửi lại mã" 
+                                                                                        onClick={(e) => {handleGetOTPRepass(e)}}
+                                                                                        style={{ fontSize: '14px' }}
+                                                                        ></OptionButton>
+                                                                    </>
 
+                                                                )
+                                                                 : (
+                                                                    <>
+                                                                        <i style={{ color: 'red', fontSize: '14px' }}>Mã hết hạn</i>
+                                                                        <OptionButton   text="Gửi lại mã" 
+                                                                                        onClick={(e) => {handleGetOTPRepass(e)}}
+                                                                                        style={{ fontSize: '14px' }}
+                                                                        ></OptionButton>
+                                                                    </>
+                                                                 )}
+                                                            <Button text="Xác thực mã OTP" className={styles.btnLogin}></Button>
+                                                        </form>
+                                                    )}
+                                                    {valuesGetNewPwd.process === 2 && (
+                                                        <form action="" ref={formRepass} onSubmit={handleRepass}>
+                                                            {inputGetNewPwd.slice(1, 3).map((input) => (
+                                                                <FormInput key={input.id} {...input} value={valuesGetNewPwd[input.name]} onChange={onChangeRepass} ></FormInput>
+                                                            ))}
+                                                            <Button text="Đặt lại mật khẩu" className={styles.btnLogin}></Button>
+                                                        </form>
+                                                    )}
+                                                </>
+                                            )
+                                        }
                                         {loading &&
                                             <div className={styles.loading_icon}>
                                                 <ClipLoader color="#febb02" size={30} />
@@ -288,13 +467,37 @@ const Login = () => {
                                             <form action="" ref={formGetOTP} onSubmit={handleGetOTP}>
                                                 <FormInput key={inputSignup[0].id} {...inputSignup[0]} value={valuesSignup.telnum} onChange={onChangeSignup}></FormInput>
                                                 <Button text="Nhận mã OTP" className={styles.btnLogin}></Button>
-                                                <div className={styles.subLink}> <i> Đã có tài khoản ? </i> <a href="#" onClick={()=> setSelectedTab(0)}> Đăng nhập </a> </div>
+                                                <div className={styles.subLink}> <i> Đã có tài khoản ? </i> <a href="#" onClick={()=> {setSelectedTab(0); setIsGetPass(false)}}> Đăng nhập </a> </div>
                                             </form>
                                         )}
                                         {valuesSignup.process === 1 && (
                                             <form action="" ref={formValidOTP} onSubmit={handleValidateOTP}>
                                                 <FormInput key={inputSignup[5].id} {...inputSignup[5]} value={valuesSignup.otp} onChange={onChangeSignup}></FormInput>
                                                 <Button text="Xác thực mã OTP" className={styles.btnLogin}></Button>
+                                                {showCountDown ?
+                                            (
+                                                <>
+                                                    <i style={{ color: 'red', fontSize: '14px' }}>{`Thời gian xác thực mã còn lại: `}
+                                                        <CountDownOTP onTimeout={handleTimeout}></CountDownOTP>
+                                                    </i>
+                                                    <div></div>
+                                                    <i style={{ fontSize: '14px' }}>Không nhận được mã ? </i>
+                                                    <OptionButton   text="Gửi lại mã" 
+                                                                    onClick={(e) => {handleGetOTPRepass(e)}}
+                                                                    style={{ fontSize: '14px' }}
+                                                    ></OptionButton>
+                                                </>
+
+                                            )
+                                                : (
+                                                <>
+                                                    <i style={{ color: 'red', fontSize: '14px' }}>Mã hết hạn</i>
+                                                    <OptionButton   text="Gửi lại mã" 
+                                                                    onClick={(e) => {handleGetOTPRepass(e)}}
+                                                                    style={{ fontSize: '14px' }}
+                                                    ></OptionButton>
+                                                </>
+                                                )}
                                             </form>
                                         )}
                                         {valuesSignup.process === 2 && (

@@ -10,6 +10,7 @@ const initialState = {
     error: false,
     loading: false,
     loggingOut: false,
+    otpSessionTime: null,
 }
 
 const authSlice = createSlice({
@@ -121,7 +122,17 @@ const authSlice = createSlice({
                 state.loading = false
                 state.message = action.payload
             })
-            
+            .addCase(authThunk.getOTPRepass.fulfilled, (state, action) => {
+                state.loading = false
+                state.otpSessionTime = action.payload.createTime
+                state.error = false
+            })
+            .addCase(authThunk.getOTPRepass.rejected, (state, action) => {
+                state.error = true
+                state.loading = false
+                state.message = action.payload
+                state.otpSessionTime = null
+            })
     }
 })
 
@@ -146,5 +157,7 @@ export const selectUserRoleId = (state) => {
     }
     return 0
 }
+
+export const selectOTPTime = (state) => state.auth.otpSessionTime
 
 export default authSlice.reducer

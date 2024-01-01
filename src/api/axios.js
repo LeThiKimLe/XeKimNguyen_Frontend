@@ -25,9 +25,12 @@ axiosClient.interceptors.request.use((req) => {
 
 const getAccessToken = () => {
     const user = JSON.parse(localStorage.getItem('current_user'))
+    const tempAccessToken = JSON.parse(localStorage.getItem('temp_access_token'))
     if (user && user.accessToken) {
         return user.accessToken
-    } else {
+    } else if (tempAccessToken)
+        return tempAccessToken
+    else {
         return null
     }
 }

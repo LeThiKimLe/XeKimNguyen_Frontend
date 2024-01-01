@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import format from "date-fns/format";
 import storage from 'redux-persist/lib/storage';
-import { persistReducer } from 'redux-persist';
+import { persistReducer, createTransform } from 'redux-persist';
 import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2";
 import searchThunk from "./search.service";
+import parse from "date-fns/parse";
 
 const initialState = {
     infor: {
@@ -95,11 +96,27 @@ export const selectListDeparture = (state) => state.search.listDeparture
 export const selectListDestination = (state) => state.search.listDestination
 export const searchAction = searchSlice.actions;
 
+const dateTransform = createTransform(
+  (inboundState) => {
+    // Kiểm tra và cập nhật lại giá trị ngày của thông tin từ storage
+    const currentDate = new Date();
+    if (inboundState && typeof inboundState === 'object' && inboundState.search && inboundState.search.infor && parse(inboundState.search.infor.departDate, 'dd/MM/yyyy', new Date()) < currentDate) {
+      inboundState.search.infor.departDate = format(currentDate, 'dd/MM/yyyy')
+    }
+    return inboundState;
+  },
+  // Transform state coming from storage, on its way to be rehydrated into redux
+  (outboundState) => {
+    return outboundState;
+  }
+);
+
 const searchPersistConfig = {
     key: 'search',
     storage,
     stateReconciler: autoMergeLevel2,
-    whitelist: ['infor']
+    whitelist: ['infor'],
+    transforms: [dateTransform]
 }
 
 const searchReducer = persistReducer(searchPersistConfig, searchSlice.reducer)

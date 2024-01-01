@@ -73,6 +73,34 @@ const validateOTP = createAsyncThunk('auth/verify-otp', async({telno, otp}, thun
     }
 })
 
+const getOTPRepass = createAsyncThunk('auth/get-otp-repass', async({telno}, thunkAPI) => {
+    try{
+        const response = await axiosClient.get('auth/get-otp', {telno})
+        return response
+    }
+    catch(error){
+        const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+}) 
+
+const validateOTPRepass = createAsyncThunk('auth/verify-otp-repass', async({telno, otp}, thunkAPI) => {
+    try{
+        const response = await axiosClient.get('auth/verify-otp', {telno, otp})
+        return response
+    }
+    catch(error){
+        const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+})
+
 const updateProfile = createAsyncThunk('profile/update', async ({updatedInfor}, thunkAPI) => {
     try{
         const formData = new FormData();
@@ -129,7 +157,9 @@ const authThunk = {
     getOTP,
     validateOTP,
     updateProfile,
-    changePassword
+    changePassword,
+    getOTPRepass,
+    validateOTPRepass,
 }
 
 export default authThunk
