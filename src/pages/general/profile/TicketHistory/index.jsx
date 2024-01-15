@@ -101,8 +101,8 @@ const TicketHistory = () => {
     useEffect(() => {
         const cancelScan = () => {
             return (
-                selectedRow.tickets.every((ticket) => ticket.histories && ticket.histories.length === 0 ||
-                    ticket.state !== 'Đã hủy' && ticket.state !== 'Chờ hủy' && ticket.histories.every((his) => his.action !== 'Đổi'))
+                selectedRow.tickets.every((ticket) => ticket.state !== 'Chờ hủy' && ticket.histories && ticket.histories.length === 0 ||
+                    ticket.state !== 'Đã hủy' && ticket.state !== 'Chờ hủy' && ticket.histories.every((his) => his.action !== 'Đổi' && his.action !== 'Hủy'))
             )
         }
         const changeScan = () => {

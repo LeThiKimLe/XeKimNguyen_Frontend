@@ -218,7 +218,6 @@ const CancelTicket = ({ close }) => {
                                                 <br />
                                                 <i style={{ fontSize: '13px' }}>Mã vé: </i>
                                                 <i style={{ fontSize: '13px' }}>{ticket.id}</i>
-
                                             </label>
                                         </div>
                                     </div>

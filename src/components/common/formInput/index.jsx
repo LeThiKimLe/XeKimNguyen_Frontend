@@ -39,6 +39,7 @@ const FormInput = (props) => {
                 :
                 (
                     <Select {...inputProps}
+                            id={"select-" + name}
                             options={options}
                             onChange={handleSelect}
                             isDisabled= {readOnly ? readOnly : false}
@@ -46,7 +47,7 @@ const FormInput = (props) => {
                     </Select>
                 )
             }
-            <span className={styles.inputError}>{errorMessage}</span>
+            <span className={styles.inputError} id={"error-" + name}>{errorMessage}</span>
             </div>
         </div>
     )
