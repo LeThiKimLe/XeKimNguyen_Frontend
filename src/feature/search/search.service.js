@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosClient from "../../api/axios";
 import { parse, format } from 'date-fns';
 
-const getTrips = createAsyncThunk('search/trip', async (searchInfor, thunkAPI) => {
+const getTripsGo = createAsyncThunk('search/trip/go', async (searchInfor, thunkAPI) => {
     try {
         const response = await axiosClient.get('trips', {
             params: {
@@ -10,6 +10,27 @@ const getTrips = createAsyncThunk('search/trip', async (searchInfor, thunkAPI) =
                 "availability": searchInfor.numberTicket,
                 "departDate": format(parse(searchInfor.departDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd'),
                 "turn": searchInfor.turn
+            }
+        })
+        return response
+    }
+    catch (error) {
+        const message = 'Không tìm thấy chuyến xe' ||
+            (error.response && error.response.data && error.response.data.message) ||
+            error.message ||
+            error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+})
+
+const getTripsReturn = createAsyncThunk('search/trip/return', async (searchInfor, thunkAPI) => {
+    try {
+        const response = await axiosClient.get('trips', {
+            params: {
+                "routeId": searchInfor.searchRoute.id,
+                "availability": searchInfor.numberTicket,
+                "departDate": format(parse(searchInfor.arrivalDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd'),
+                "turn": !searchInfor.turn
             }
         })
         return response
@@ -43,8 +64,9 @@ const getSameTrips = createAsyncThunk('trips/same-trip', async ({tripId, departD
 })
 
 const searchThunk = {
-    getTrips,
-    getSameTrips
+    getTripsGo,
+    getSameTrips,
+    getTripsReturn,
 }
 
 export default searchThunk

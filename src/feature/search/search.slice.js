@@ -11,7 +11,7 @@ const initialState = {
         searchRoute: null,
         departDate: format(new Date(), 'dd/MM/yyyy'),
         numberTicket: 1,
-        turn: 1,
+        turn: true,
         oneway: true,
         arrivalDate: format(new Date(), 'dd/MM/yyyy'),
         departLocation: null,
@@ -19,7 +19,8 @@ const initialState = {
     },
     result: {
         message: '',
-        listTrip: []
+        listTripGo: [],
+        listTripReturn: [],
     },
     listDeparture: [],
     listDestination: [],
@@ -40,7 +41,8 @@ const searchSlice = createSlice({
         resetResult: (state) => {
             state.result = {
                 message: '',
-                listTrip: []
+                listTripGo: [],
+                listTripReturn: [],
             }
         },
         setListDeparture: (state, action) => {
@@ -48,11 +50,11 @@ const searchSlice = createSlice({
         },
         setListDestination: (state, action) => {
             state.listDestination = action.payload
-        },
+        }
     },
     extraReducers: (builder) => {
         builder
-            .addCase(searchThunk.getTrips.fulfilled, (state, action) => {
+            .addCase(searchThunk.getTripsGo.fulfilled, (state, action) => {
                 const listSchedule = []
                 const listTrip = action.payload
                 listTrip.forEach((trip) => {
@@ -64,14 +66,31 @@ const searchSlice = createSlice({
                         })
                     })
                 })
-                state.result.listTrip = listSchedule
+                state.result.listTripGo = listSchedule
             })
-            .addCase(searchThunk.getTrips.rejected, (state, action) => {
+            .addCase(searchThunk.getTripsGo.rejected, (state, action) => {
                 state.result.message = action.payload
-                state.result.listTrip = []
+                state.result.listTripGo = []
+            })
+            .addCase(searchThunk.getTripsReturn.fulfilled, (state, action) => {
+                const listSchedule = []
+                const listTrip = action.payload
+                listTrip.forEach((trip) => {
+                    const { schedules, ...tripInfor } = trip
+                    schedules.forEach((schedule) => {
+                        listSchedule.push({
+                            ...schedule,
+                            tripInfor: tripInfor
+                        })
+                    })
+                })
+                state.result.listTripReturn = listSchedule
+            })
+            .addCase(searchThunk.getTripsReturn.rejected, (state, action) => {
+                state.result.message = action.payload
+                state.result.listTripReturn = []
             })
             .addCase(searchThunk.getSameTrips.fulfilled, (state, action) => {
-
                 const listSchedule = []
                 const trip = action.payload
                 const { schedules, ...tripInfor } = trip
@@ -81,19 +100,20 @@ const searchSlice = createSlice({
                         tripInfor: tripInfor
                     })
                 })
-                state.result.listTrip = listSchedule
+                state.result.listTripGo = listSchedule
             })
             .addCase(searchThunk.getSameTrips.rejected, (state, action) => {
                 state.result.message = action.payload
-                state.result.listTrip = []
+                state.result.listTripGo = []
             })
     }
 })
 
 export const selectSearchInfor = (state) => state.search.infor
-export const selectRearchResult = (state) => state.search.result.listTrip
+export const selectRearchResult = (state) => state.search.result
 export const selectListDeparture = (state) => state.search.listDeparture
 export const selectListDestination = (state) => state.search.listDestination
+export const selectRound = (state) => state.search.infor.oneway
 export const searchAction = searchSlice.actions;
 
 const dateTransform = createTransform(

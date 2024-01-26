@@ -14,9 +14,9 @@ export const createListRoutes = (routeData) => {
 
 const addRoute = (route, round) => {
 
-    const roundkey = round === 'forward' ? 1 : 0
+    const roundkey = round === 'forward' ? true : false
 
-    const cusRoute = roundkey === 1 ? route : {
+    const cusRoute = roundkey === true ? route : {
         ...route,
         departure: route.destination,
         destination: route.departure

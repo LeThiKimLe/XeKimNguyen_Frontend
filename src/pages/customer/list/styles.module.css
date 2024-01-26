@@ -198,3 +198,29 @@
     font-weight: 600;
     margin: 0
 }
+
+.tripSum {
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.tripSum .header {
+    height: 45px;
+    background-color: #b2afaf;
+    border-radius: 5px 5px 0 0;
+    padding: 5px;
+    border-bottom: 1px solid #4e4d4d;
+    display: flex;
+    align-items: center;
+}
+
+.tripSum .header .title {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.tripSum .body {
+    padding: 5px;
+}

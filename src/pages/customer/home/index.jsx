@@ -39,6 +39,7 @@ const Home = () => {
         <div>
             <Navbar></Navbar>
             <div style={{position:'relative'}}>
+            <a href="/map.html">Click me to go to Map</a>
             {loading ? (<Loading scale={0.8}></Loading>) : 
             (
                 <>

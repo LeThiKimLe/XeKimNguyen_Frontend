@@ -12,7 +12,7 @@ import { selectListRoute } from '../../../../feature/route/route.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRouteJourney } from '../../../../utils/tripUtils';
 import {getDesandDep} from '../../../../utils/routeUtils'
-import { searchAction } from '../../../../feature/search/seach.slice';
+import { searchAction } from '../../../../feature/search/search.slice';
 import format from 'date-fns/format';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';

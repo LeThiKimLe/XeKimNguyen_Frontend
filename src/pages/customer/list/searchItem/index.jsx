@@ -3,28 +3,39 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCircleDot, faLocationDot, faBusSimple } from "@fortawesome/free-solid-svg-icons"
 import { useNavigate } from 'react-router-dom'
 import { convertToStamp, addHoursToTime, convertToDisplayDate } from '../../../../utils/unitUtils'
-import { selectSearchInfor } from '../../../../feature/search/seach.slice'
+import { selectSearchInfor } from '../../../../feature/search/search.slice'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../../../components/common/button'
 import { tripActions } from '../../../../feature/trip/trip.slice'
 import Trip from '../../trip'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ticketAction } from '../../../../feature/ticket/ticket.slice'
 import { selectNewTrip } from '../../../../feature/ticket/ticket.slice'
-
+import { selectRound } from '../../../../feature/search/search.slice'
+import { selectReturnTrip, selectCurrentTrip} from '../../../../feature/trip/trip.slice'
+import { set } from 'date-fns'
 const SearchItem = ({ trip, sameTrip }) => {
-
+    const [choose, setChoose] = useState(false)
+    const round = useSelector(selectRound)
+    const returnTrip = useSelector(selectReturnTrip)
+    const currentTrip = useSelector(selectCurrentTrip) 
     const dispatch = useDispatch()
-
     const searchInfor = useSelector(selectSearchInfor)
-
     const newTrip = useSelector(selectNewTrip)
-
     const navigate = useNavigate()
 
     const handleChooseTrip = () => {
-        dispatch(tripActions.getCurTrip(trip))
-        navigate(`/trip/${trip.id}`)
+        if (round === true)
+            dispatch(tripActions.getCurTrip(trip))
+        else{
+            if (trip.tripInfor.turn === searchInfor.turn) {
+                dispatch(tripActions.getCurTrip(trip))
+            }
+            else{
+                dispatch(tripActions.getReturnTrip(trip))
+            }
+        }
+        setChoose(true)
     }
 
     const showDetailSelector =  () => {
@@ -40,6 +51,15 @@ const SearchItem = ({ trip, sameTrip }) => {
     const departure = trip.tripInfor.turn ===  true? trip.tripInfor.route.departure : trip.tripInfor.route.destination
     const destination = trip.tripInfor.turn === true ? trip.tripInfor.route.destination : trip.tripInfor.route.departure
 
+    useEffect(() => {
+        if (choose === true) { 
+            setChoose(false)
+            if (round && currentTrip)
+                navigate(`/trip/${trip.id}`)
+            else if (!round && currentTrip && returnTrip)
+                navigate(`/trip/${trip.id}`)
+        }
+    }, [choose, currentTrip, returnTrip])
     return (
         <div className={styles.cover}>
             <div className={styles.searchResult}>

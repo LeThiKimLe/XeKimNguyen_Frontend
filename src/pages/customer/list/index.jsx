@@ -8,7 +8,7 @@ import { faMagnifyingGlass, faCalendarDays, faLocationDot, faTicketSimple, faArr
 import { format } from 'date-fns';
 import SearchItem from './searchItem'
 import { useSelector } from 'react-redux'
-import { selectSearchInfor, selectRearchResult } from '../../../feature/search/seach.slice'
+import { selectSearchInfor, selectRearchResult } from '../../../feature/search/search.slice'
 import { selectListRoute } from '../../../feature/route/route.slice'
 import { search } from 'slick/finder'
 import SearchBox from '../../../components/header/searchBox'
@@ -21,19 +21,69 @@ import { useDispatch } from 'react-redux'
 import Loading from '../../../components/loading'
 import notfound from '../../../assets/notfound.png'
 import searchThunk from '../../../feature/search/search.service'
-import { convertTimeToInt } from '../../../utils/unitUtils'
+import { convertTimeToInt, convertToDisplayDate } from '../../../utils/unitUtils'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import './styles.css'
+import { tripActions } from '../../../feature/trip/trip.slice'
+import { selectCurrentTrip, selectReturnTrip } from '../../../feature/trip/trip.slice'
+
+const ListResult = ({filterResult}) => {
+    return (
+        <div>
+            {filterResult.length === 0 ? (
+                <div className={styles.notfound}>
+                    <p>Không tìm thấy chuyến xe</p>
+                    <img src={notfound} alt="" />
+                </div>
+            ) :
+                (
+                    <>
+                        {filterResult.map((trip) => (
+                            <SearchItem trip={trip} key={trip.id}></SearchItem>
+                        ))}
+                    </>
+                )}
+        </div>
+    )
+}
+
+const TripSum = ({trip, turn}) => {
+    console.log(trip)
+    return (
+        <div className={styles.tripSum}>
+            <div className={`${styles.header}`}>
+                <span className={styles.title}>
+                    {
+                        turn === true ? 'Chuyến đi' : 'Chuyến về'
+                    }
+                </span>
+            </div>
+            <div className={styles.body}>
+                <b>{`${trip.departTime.slice(0,-3)} - ${convertToDisplayDate(trip.departDate)}`}</b>
+                <br></br>
+                <span>{
+                    trip.tripInfor.turn === true ? trip.tripInfor.startStation.name : trip.tripInfor.endStation.name
+                }</span>
+                <span>{` - `}</span>
+                <span>{
+                    trip.tripInfor.turn === true ? trip.tripInfor.endStation.name : trip.tripInfor.startStation.name
+                }</span>
+            </div>
+        </div>
+    )
+}
 
 const List = () => {
 
     const [loading, setLoading] = useState(true)
     const dispatch = useDispatch()
     const listRoute = useSelector(selectListRoute)
-    const listTrip = useSelector(selectRearchResult)
-
+    const {listTripGo, listTripReturn} = useSelector(selectRearchResult)
+    const [selectedTab, setSelectedTab] = useState(0)
     const [search, setSearch] = useState(true)
     const seatMap = useSelector(selectSeatMap)
     const [resetFilter, setResetFilter] = useState(false)
-
+    const [currentListTrip, setCurrentListTrip] = useState(listTripGo)
     const [sortOptions, setSortOptions] = useState({
         'soon': {
             value: false,
@@ -45,8 +95,9 @@ const List = () => {
         }
     })
 
-    const [backupTrips, setBackupTrips] = useState(listTrip)
-
+    const [backupTrips, setBackupTrips] = useState(currentListTrip)
+    const currentTrip = useSelector(selectCurrentTrip)
+    const returnTrip = useSelector(selectReturnTrip)
     const [sortState, setSortState] = useState('')
 
     const handleSortClick = (event) => {
@@ -83,8 +134,8 @@ const List = () => {
     const searchInfor = useSelector(selectSearchInfor)
 
     //search result
-    const [filterResult, setFilterResult] = useState(listTrip)
-    const [unsortTrip, setUnsortTrip] = useState(listTrip)
+    const [filterResult, setFilterResult] = useState(currentListTrip)
+    const [unsortTrip, setUnsortTrip] = useState(currentListTrip)
 
     const setTripResult = (listResult, unsortList) => {
         setFilterResult(listResult)
@@ -125,28 +176,45 @@ const List = () => {
             setResetFilter(true)
             window.scrollTo(0, 330);
             setTimeout(() => {
-                dispatch(searchThunk.getTrips(searchInfor))
-                .unwrap()
-                .then(() => {
-                    setLoading(false)
-                    setSearch(false)
-                    setResetFilter(false)
-                }
-                )
-                .catch((error) => {
-                    setLoading(false)
-                    setSearch(false)
-                    setResetFilter(false)
-                })
+                dispatch(searchThunk.getTripsGo(searchInfor))
+                    .unwrap()
+                    .then(() => {
+                        if (searchInfor.oneway === false)
+                        {
+                            dispatch(searchThunk.getTripsReturn(searchInfor))
+                            .unwrap()
+                            .then(() => {
+                                setLoading(false)
+                                setSearch(false)
+                                setSelectedTab(0)
+                            }
+                            )
+                            .catch((error) => {
+                                setLoading(false)
+                                setSearch(false)
+                            })
+                        } 
+                        else{
+                            setLoading(false)
+                            setSearch(false)
+                        }
+                    }
+                    )
+                    .catch((error) => {
+                        setLoading(false)
+                        setSearch(false)
+                    }) 
             }, 1000)
+            dispatch(tripActions.getCurTrip(null))
+            dispatch(tripActions.getReturnTrip(null))
         }
     }, [search]);
 
     useEffect(() => {
-        setFilterResult(listTrip)
-        setUnsortTrip(listTrip)
-        setBackupTrips(listTrip)
-    }, [listTrip])
+        setFilterResult(currentListTrip)
+        setUnsortTrip(currentListTrip)
+        setBackupTrips(currentListTrip)
+    }, [currentListTrip])
 
     useEffect(() => {
         if (resetFilter === true) {
@@ -160,9 +228,17 @@ const List = () => {
                         }
                     }))
                 })
+            setResetFilter(false)
         }
     }, [resetFilter])
 
+    useEffect(() => {
+        setResetFilter(true)
+        if (selectedTab === 0)
+            setCurrentListTrip(listTripGo)
+        else
+            setCurrentListTrip(listTripReturn)
+    }, [selectedTab, listTripGo, listTripReturn])
     return (
         <div>
             <Navbar></Navbar>
@@ -170,81 +246,96 @@ const List = () => {
             {
                 searchInfor.searchRoute && (
                     <div className={styles.listContainer}>
-                <div className={styles.subContainer}>
-                    <SearchBox listRoute={listRoute} parentClass={styles.searchBox} setSearchAction={triggerSearch}></SearchBox>
-                    <div className={styles.listWrapper}>
-                        <FilterBar listTrip={backupTrips} sort={sortState} setResult={setTripResult} reset={resetFilter}></FilterBar>
-                        <div className={styles.listResult} >
-                            <div className={styles.searchBar}>
-                                <div className={`${styles.searchItem} ${styles.searchPlace}`}>
-                                    <div>
-                                        <FontAwesomeIcon icon={faLocationDot} className={styles.searchItemIcon} />
-                                        <input type="text"
-                                            className={styles.searchInput}
-                                            readOnly
-                                            value={(searchInfor.turn === true ||  searchInfor.turn === 1) ? searchInfor.searchRoute.departure.name
-                                                : searchInfor.searchRoute.destination.name} />
-                                    </div>
-                                    <div className={styles.exchangeBtn}>
-                                        <FontAwesomeIcon icon={faArrowRight} className={styles.searchItemIcon} />
-                                    </div>
-                                    <div>
-                                        <FontAwesomeIcon icon={faLocationDot} className={styles.searchItemIcon} />
-                                        <input type="text"
-                                            className={styles.searchInput}
-                                            readOnly
-                                            value={(searchInfor.turn === true ||  searchInfor.turn === 1)? searchInfor.searchRoute.destination.name
-                                                : searchInfor.searchRoute.departure.name} />
-                                    </div>
-                                </div>
-                                <div className={`${styles.searchItem} ${styles.searchDate}`}>
-                                    <FontAwesomeIcon icon={faCalendarDays} className={styles.searchItemIcon} />
-                                    <input type="text" className={styles.searchInput} readOnly value={searchInfor.departDate} />
-                                </div>
-                                <div className={`${styles.searchItem} ${styles.searchNumber}`}>
-                                    <FontAwesomeIcon icon={faTicketSimple} className={styles.searchItemIcon} />
-                                    <input type="text" className={styles.searchInput} readOnly value={searchInfor.numberTicket + ' vé'} />
-                                </div>
-                            </div>
-                            <div className={styles.searchTotal}>
-                                {`Kết quả tìm kiếm : ${loading ? '-' : filterResult.length} chuyến`}
-                            </div>
-                            <div className={styles.sortArea}>
-                                <div>Sắp xếp theo: </div>
-                                {Object.entries(sortOptions).map(([key, value]) => (
-                                    <div className={value.value === true ? `${styles.optionChoice} ${styles['optionChoice-active']}`
-                                        : styles.optionChoice}
-                                        onClick={handleSortClick}
-                                        data-name={key}
-                                        key={key}
-                                    >
-                                        {value.label}
-                                    </div>
-                                ))}
-                            </div>
-                            <div className={styles.resultContainer}>
-                                {loading ? (<Loading scale={0.7}></Loading>) : (
-                                    <div>
-                                        {filterResult.length === 0 ? (
-                                            <div className={styles.notfound}>
-                                                <p>Không tìm thấy chuyến xe</p>
-                                                <img src={notfound} alt="" />
+                        <div className={styles.subContainer}>
+                            <SearchBox listRoute={listRoute} parentClass={styles.searchBox} setSearchAction={triggerSearch}></SearchBox>
+                            <div className={styles.listWrapper}>
+                                <div>
+                                    {
+                                        searchInfor.oneway === false && (
+                                            <div>
+                                                {currentTrip && (<TripSum trip={currentTrip} turn={true}></TripSum>)}
+                                                {returnTrip && (<TripSum trip={returnTrip} turn={false}></TripSum>)}
                                             </div>
-                                        ) :
-                                            (
-                                                <>
-                                                    {filterResult.map((trip) => (
-                                                        <SearchItem trip={trip} key={trip.id}></SearchItem>
-                                                    ))}
-                                                </>
-                                            )}
+                                        )
+                                    }
+                                    <FilterBar listTrip={backupTrips} sort={sortState} setResult={setTripResult} reset={resetFilter}></FilterBar>
+                                </div>
+                                <div className={styles.listResult} >
+                                    <div className={styles.searchBar}>
+                                        <div className={`${styles.searchItem} ${styles.searchPlace}`}>
+                                            <div>
+                                                <FontAwesomeIcon icon={faLocationDot} className={styles.searchItemIcon} />
+                                                <input type="text"
+                                                    className={styles.searchInput}
+                                                    readOnly
+                                                    value={(searchInfor.turn === true || searchInfor.turn === 1) ? searchInfor.searchRoute.departure.name
+                                                        : searchInfor.searchRoute.destination.name} />
+                                            </div>
+                                            <div className={styles.exchangeBtn}>
+                                                <FontAwesomeIcon icon={faArrowRight} className={styles.searchItemIcon} />
+                                            </div>
+                                            <div>
+                                                <FontAwesomeIcon icon={faLocationDot} className={styles.searchItemIcon} />
+                                                <input type="text"
+                                                    className={styles.searchInput}
+                                                    readOnly
+                                                    value={(searchInfor.turn === true || searchInfor.turn === 1) ? searchInfor.searchRoute.destination.name
+                                                        : searchInfor.searchRoute.departure.name} />
+                                            </div>
+                                        </div>
+                                        <div className={`${styles.searchItem} ${styles.searchDate}`}>
+                                            <FontAwesomeIcon icon={faCalendarDays} className={styles.searchItemIcon} />
+                                            <input type="text" className={styles.searchInput} readOnly value={searchInfor.departDate} />
+                                        </div>
+                                        <div className={`${styles.searchItem} ${styles.searchNumber}`}>
+                                            <FontAwesomeIcon icon={faTicketSimple} className={styles.searchItemIcon} />
+                                            <input type="text" className={styles.searchInput} readOnly value={searchInfor.numberTicket + ' vé'} />
+                                        </div>
                                     </div>
-                                )}
+                                    <div className={styles.searchTotal}>
+                                        {`Kết quả tìm kiếm : ${loading ? '-' : filterResult.length} chuyến`}
+                                    </div>
+                                    <div className={styles.sortArea}>
+                                        <div>Sắp xếp theo: </div>
+                                        {Object.entries(sortOptions).map(([key, value]) => (
+                                            <div className={value.value === true ? `${styles.optionChoice} ${styles['optionChoice-active']}`
+                                                : styles.optionChoice}
+                                                onClick={handleSortClick}
+                                                data-name={key}
+                                                key={key}
+                                            >
+                                                {value.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className={styles.resultContainer}>
+                                        {loading ? (<Loading scale={0.7}></Loading>) : (
+                                            <div>
+                                                {
+                                                    searchInfor.oneway ? (
+                                                        <ListResult filterResult={filterResult}></ListResult>
+                                                    ) : (
+                                                        <Tabs className="tabStyle" selectedIndex={selectedTab} onSelect={index => setSelectedTab(index)}>
+                                                            <TabList>
+                                                                <Tab>{`Chuyến đi ${searchInfor.departDate}`}</Tab>
+                                                                <Tab>{`Chuyến về ${searchInfor.arrivalDate}`}</Tab>
+                                                            </TabList>
+                                                            <TabPanel>
+                                                                <ListResult filterResult={filterResult}></ListResult>
+                                                            </TabPanel>
+                                                            <TabPanel>
+                                                                <ListResult filterResult={filterResult}></ListResult>
+                                                            </TabPanel>
+                                                        </Tabs>
+                                                    )
+                                                }
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
                 )
             }
             <Footer></Footer>

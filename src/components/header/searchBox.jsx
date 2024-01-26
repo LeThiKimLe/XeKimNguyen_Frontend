@@ -1,8 +1,8 @@
 import styles from './styles.module.css'
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { searchAction } from '../../feature/search/seach.slice';
-import { selectSearchInfor, selectListDeparture, selectListDestination } from '../../feature/search/seach.slice';
+import { searchAction } from '../../feature/search/search.slice';
+import { selectSearchInfor, selectListDeparture, selectListDestination } from '../../feature/search/search.slice';
 import { createListRoutes } from '../../utils/routeUtils';
 import { useState, useRef, useEffect, useMemo, memo } from 'react'
 import Message from '../message';
@@ -126,13 +126,18 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
         if (currentInfor.departDate)
         {
             if (parse(currentInfor.departDate, 'dd/MM/yyyy', new Date()).getDate() - new Date().getDate() < 0)
-                if (currentInfor.seatchRoute)
+                if (currentInfor.searchRoute)
                     setCurrentInfor({
                         ...currentInfor,
                         departDate: format(new Date(), 'dd/MM/yyyy')
             })
+            if (parse(currentInfor.departDate, 'dd/MM/yyyy', new Date()) - parse(currentInfor.arrivalDate, 'dd/MM/yyyy', new Date()) > 0)
+                    setCurrentInfor({
+                        ...currentInfor,
+                        arrivalDate: currentInfor.departDate
+            })
         }
-    }, [])
+    }, [currentInfor?.departDate])
     useEffect(() => {
         if (listRoute.length > 0)
         {
@@ -193,7 +198,6 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
                             <FontAwesomeIcon icon={faLocationDot} className={styles.headerIcon} />
                             <div className={styles.selectArea}>
                                 <div className={styles.selectTitle}>{t('header.searchbox.destination')}</div>
-
                                 <Select options={desOptions}
                                     value={currentInfor.desLocation}
                                     onFocus={checkOrigin}
@@ -236,7 +240,7 @@ const SearchBox = ({ listRoute, intro, parentClass, setSearchAction }) => {
                                                 className={styles.headerSearchInput}
                                                 dateFormat="dd/MM/yyyy"
                                                 placeholderText="Arrival Date"
-                                                minDate={today}
+                                                minDate={parse(currentInfor.departDate, 'dd/MM/yyyy', new Date())}
                                                 maxDate={twoMonthsLater}
                                             />
                                         </div>

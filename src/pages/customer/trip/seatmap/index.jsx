@@ -6,7 +6,7 @@ import seat_disabled from '../../../../assets/seat_disabled.svg'
 import seat_selecting from '../../../../assets/seat_selecting.svg'
 import Seat from './Seat';
 
-const SeatMap = ({ seatMap, booked, selectedSeats, handleSeatClick }) => {
+const SeatMap = ({ seatMap, booked, selectedSeats, handleSeatClick, turn, time }) => {
 
   const handleSeatChoose = (seatName) => {
     handleSeatClick(seatName)
@@ -14,6 +14,7 @@ const SeatMap = ({ seatMap, booked, selectedSeats, handleSeatClick }) => {
 
   return (
     <div className={styles.seat_area}>
+      <i>{turn === true ? `Chuyến đi - ${time}` : `Chuyến về - ${time}`}</i>
       <div className={styles.seat_container}>
         <div className={styles.map_container}>
           {Array.from({ length: seatMap.floorNo }, (_, index) => index + 1).map((floorNumber) => (
@@ -33,7 +34,7 @@ const SeatMap = ({ seatMap, booked, selectedSeats, handleSeatClick }) => {
                           <Seat
                             seatName={seat.name}
                             key={`${floorNumber}-${rowNumber}-${colNumber}`}
-                            state={booked.map((ticket)=> ticket.seat).includes(seat.name) ? 'booked' : (selectedSeats.includes(seat.name) ? 'selecting' : 'active')}
+                            state={booked.map((ticket) => ticket.seat).includes(seat.name) ? 'booked' : (selectedSeats.includes(seat.name) ? 'selecting' : 'active')}
                             chooseSeat={() => handleSeatChoose(seat.name)}
                           />
                         </div>
@@ -54,21 +55,25 @@ const SeatMap = ({ seatMap, booked, selectedSeats, handleSeatClick }) => {
           ))}
         </div>
       </div>
-      <div className={styles.seat_note}>
-        <h3>Chú thích</h3>
-        <div className={styles['seat_note-decs']}>
-          <img src={seat_active} alt="" />
-          Còn trống
-        </div>
-        <div className={styles['seat_note-decs']}>
-          <img src={seat_disabled} alt="" />
-          Đã bán
-        </div>
-        <div className={styles['seat_note-decs']}>
-          <img src={seat_selecting} alt="" />
-          Đang chọn
-        </div>
-      </div>
+      {
+        turn === true && (
+          <div className={styles.seat_note}>
+            <h3>Chú thích</h3>
+            <div className={styles['seat_note-decs']}>
+              <img src={seat_active} alt="" />
+              Còn trống
+            </div>
+            <div className={styles['seat_note-decs']}>
+              <img src={seat_disabled} alt="" />
+              Đã bán
+            </div>
+            <div className={styles['seat_note-decs']}>
+              <img src={seat_selecting} alt="" />
+              Đang chọn
+            </div>
+          </div>
+        )
+      }
     </div>
   );
 };

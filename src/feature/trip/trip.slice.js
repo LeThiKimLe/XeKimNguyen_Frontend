@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    currentTrip: null
+    currentTrip: null,
+    returnTrip: null,
 }
 
 const tripSlice = createSlice({
@@ -10,7 +11,10 @@ const tripSlice = createSlice({
     reducers: {
         getCurTrip: (state, action) => {
             state.currentTrip = action.payload
-        }
+        },
+        getReturnTrip: (state, action) => {
+            state.returnTrip = action.payload
+        },
     }
 }
 )
@@ -18,5 +22,6 @@ const tripSlice = createSlice({
 export const tripActions = tripSlice.actions
 
 export const selectCurrentTrip = state => state.trip.currentTrip
+export const selectReturnTrip = state => state.trip.returnTrip
 
 export default tripSlice.reducer

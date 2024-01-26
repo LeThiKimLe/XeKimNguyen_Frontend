@@ -319,8 +319,6 @@ const FilterBar = ({ listTrip, sort, setResult, reset }) => {
         setFloorFilter(listTrip)
     }, [listTrip])
 
-    console.log(listTrip)
-
     useEffect(() => {
 
         if (reset === true) {

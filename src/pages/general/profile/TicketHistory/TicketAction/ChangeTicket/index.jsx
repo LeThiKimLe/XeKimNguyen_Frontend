@@ -10,10 +10,10 @@ import DatePicker from 'react-datepicker';
 import { parse, format } from 'date-fns'
 import { useDispatch } from 'react-redux'
 import { ticketAction } from '../../../../../../feature/ticket/ticket.slice'
-import { searchAction } from '../../../../../../feature/search/seach.slice'
+import { searchAction } from '../../../../../../feature/search/search.slice'
 import './custom.css'
 import searchThunk from '../../../../../../feature/search/search.service'
-import { selectRearchResult } from '../../../../../../feature/search/seach.slice'
+import { selectRearchResult } from '../../../../../../feature/search/search.slice'
 import notfound from '../../../../../../assets/notfound.png'
 import SearchItem from '../../../../../customer/list/searchItem'
 import { convertToDisplayDate } from '../../../../../../utils/unitUtils'
@@ -32,7 +32,8 @@ const ChangeTicket = ({ close }) => {
     const [action, setAction] = useState('changeSeat')
     const [selectedSeats, setSelectedSeats] = useState([])
     const [newDepDate, setNewDepDate] = useState(parse(currrentTickets.tickets[0].schedule.departDate, 'yyyy-MM-dd', new Date()))
-    const searchResult = useSelector(selectRearchResult)
+    const {listTripGo} = useSelector(selectRearchResult)
+    const [searchResult, setSearchResult] = useState(listTripGo)
     const [loading, setLoading] = useState(false)
     const newTrip = useSelector(selectNewTrip)
     const newSeats = useSelector(selectNewSeat)

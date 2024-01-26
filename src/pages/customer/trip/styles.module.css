@@ -21,17 +21,21 @@
     flex: 3
 }
 
-.trip_sum{
+.trip_sum_container{
+    position: sticky;
+    top: 10px;
     flex: 1;
+    height: max-content;
+}
+
+.trip_sum{
     border: 1px solid #ccc;
     border-radius: 10px;
     padding: 10px;
-    position: sticky;
-    top: 10px;
     height: max-content;
     background-color: rgb(246, 240, 130);
+    margin-bottom: 10px;
 }
-
 
 @media only screen and (max-width: 930px) {
     .trip_wrapper{
