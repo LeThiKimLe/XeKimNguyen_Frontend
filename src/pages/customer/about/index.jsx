@@ -5,6 +5,7 @@ import SectionTitle from '../../../components/common/sectionTitle'
 import busImage from '../../../assets/bus.png'
 import coreValue from '../../../assets/core-value.png'
 import Footer from '../../../components/footer'
+import './custom.css'
 
 const About = () => {
     return (
@@ -24,9 +25,9 @@ const About = () => {
                         Thấu hiểu những nhu cầu đi lại của khách hàng, chúng tôi hi vọng quý khách hàng sẽ luôn tin tưởng
                         và chọn đồng hành cùng Kim Nguyên trong những chuyến hành trình của mình.
                         <br></br>
-                        <div className='d-flex' style={{ marginTop: '30px' }}>
+                        <div className='about d-flex' style={{ marginTop: '30px' }}>
                             <div style={{ flex: 1, padding: '20px' }}>
-                                <img src={busImage} alt="" style={{ width: '400px', height: '400px', borderRadius: '50%' }} />
+                                <img src={busImage} alt="" style={{ width: '300px', height: '300px', borderRadius: '50%' }} />
                             </div>
                             <div style={{ flex: 1 }}>
                                 <SectionTitle title="Tầm nhìn và sứ mệnh" subtitle=""></SectionTitle>
@@ -37,7 +38,6 @@ const About = () => {
                                     </li>
                                     <li>
                                         Xây dựng một mạng lưới vận tải hiệu quả và bền vững, cung cấp dịch vụ vượt trội và trải nghiệm tốt nhất cho khách hàng.
-
                                     </li>
                                     <li>
                                         Đóng góp tích cực vào phát triển và mở rộng hệ thống giao thông công cộng, đóng vai trò quan trọng trong việc kết nối các địa điểm và cộng đồng trong nước.
@@ -57,7 +57,7 @@ const About = () => {
 
                             </div>
                         </div>
-                        <div className='d-flex' style={{ marginTop: '30px' }}>
+                        <div className='about d-flex' style={{ marginTop: '30px' }}>
                             <div style={{ flex: 1, justifyContent:'space-between' }}>
                                 <SectionTitle title="Giá trị cốt lõi" subtitle=""></SectionTitle>
                                 <ul>
@@ -82,7 +82,7 @@ const About = () => {
                                 </ul>
                             </div>
                             <div style={{ flex: 1, padding: '20px' }}>
-                                <img src={coreValue} alt="" style={{ width: '400px', height: '400px' }} />
+                                <img src={coreValue} alt="" style={{ width: '300px', height: '300px' }} />
                             </div>
                         </div>
                     </div>

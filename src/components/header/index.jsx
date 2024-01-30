@@ -3,16 +3,11 @@ import { faBus, faHouse, faTicket, faFileInvoice, faUsers, faChevronDown } from 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { isDisabled } from "@testing-library/user-event/dist/utils";
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom'
-
 import { useTranslation } from 'react-i18next';
-
 import { Outlet, Link } from "react-router-dom";
-
 import SearchBox from './searchBox';
-
 import MediaQuery from 'react-responsive';
 import { memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -55,7 +50,6 @@ const Header = ({ type, active, listRoute }) => {
                             <span>{t('header.menu.schedule')}</span>
                         </Link>
                         <MediaQuery minWidth={878}>
-
                             <Link className={`${styles.headerListItem} ${activeLink === 'ticket' ? styles.active : ''}`}
                                 to="/ticket"
                                 onClick={() => handleNavigate('ticket')}

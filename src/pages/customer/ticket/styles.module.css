@@ -35,3 +35,10 @@
     display: inline-block;
     margin-top: 10px;
 }
+
+@media only screen and (max-width: 878px) {
+    .captcha{
+        transform: scale(0.8);
+        transform-origin: left;
+    }
+}

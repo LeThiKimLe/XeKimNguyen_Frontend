@@ -9,7 +9,7 @@ import Select from 'react-select'
 // import { ticketHistory } from '../../../../utils/test_data'
 import { convertToTime, convertToDisplayDate } from '../../../../utils/unitUtils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUpRightFromSquare, faCaretDown } from '@fortawesome/free-solid-svg-icons'
+import { faArrowUpRightFromSquare, faCaretDown,faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import TicketAction from './TicketAction'
 import { ticketAction } from '../../../../feature/ticket/ticket.slice'
 import { useDispatch } from 'react-redux'
@@ -20,9 +20,9 @@ import { STATE_DICTIONARY } from '../../../../utils/constants'
 import DetailTicket from './DetailTicket'
 import { selectCurrentTicket } from '../../../../feature/ticket/ticket.slice'
 import { sort } from 'slick/finder'
+import ReviewForm from './ReviewForm'
 
 const TicketHistory = () => {
-
     const ticketHistory = useSelector(selectUserBookingHistory)
     const [ticketActionOp, setTicketActionOp] = useState('')
     const dispatch = useDispatch()
@@ -41,42 +41,34 @@ const TicketHistory = () => {
         { value: 'cancel', label: 'Đã hủy' },
         { value: 'success', label: 'Thành công' },
     ]
-
     const [ticketActions, setTicketActions] = useState([
         { value: 'change', label: 'Đổi vé', active: true },
         { value: 'cancel', label: 'Hủy vé', active: true },
         { value: 'edit', label: 'Sửa vé', active: true }
     ])
-
     const [openDate, setOpenDate] = useState(false)
     const [openAction, setOpenAction] = useState(false)
-
     const [searchCode, setSearchCode] = useState('')
     const [searchState, setSearchState] = useState('')
     const [searchSpan, setSearchSpan] = useState('')
-
+    const [showReview, setShowReview] = useState(null)
     const isEvenRow = (index) => {
         return index % 2 === 0;
     };
-
     const [selectedRow, setSelectedRow] = useState(null);
-
     const handleRowSelect = (booking) => {
         setSelectedRow(booking);
         dispatch(ticketAction.setCurrentTicket(booking))
         setOpenAction(false)
     };
-
     const handleAction = (action) => {
         setOpenAction(false)
         setTicketActionOp(action);
     };
-
     const resetTicketChoose = () => {
         setSelectedRow(null)
         setTicketActionOp('')
     }
-
     const validateTime = () => {
         if (selectedRow) {
             return selectedRow.tickets.every((ticket) => {
@@ -196,7 +188,7 @@ const TicketHistory = () => {
             {showTicket && <DetailTicket booking={showTicket} onClose={() => setShowTicket(null)}></DetailTicket>}
             <Container fluid>
                 <Row>
-                    <Col>
+                    <Col sm={12} md={4}>
                         <p className={styles.filterTitle}>Mã đặt vé</p>
                         <input type="text"
                             placeholder='Mã vé'
@@ -204,7 +196,7 @@ const TicketHistory = () => {
                             value={searchCode}
                             onChange={(e) => setSearchCode(e.target.value)} />
                     </Col>
-                    <Col>
+                    <Col sm={12} md={4}>
                         <p className={styles.filterTitle}>Trạng thái</p>
                         <div style={{ width: '100%' }}>
                             <Select options={stateOptions}
@@ -217,7 +209,7 @@ const TicketHistory = () => {
                             </Select>
                         </div>
                     </Col>
-                    <Col style={{ position: 'relative' }}>
+                    <Col sm={12} md={4} style={{ position: 'relative' }}>
                         <p className={styles.filterTitle}>Thời gian đặt vé</p>
                         <input type="text"
                             value={`${format(dateRange[0].startDate, 'dd/MM/yyyy')} - ${format(dateRange[0].endDate, 'dd/MM/yyyy')}`}
@@ -288,6 +280,7 @@ const TicketHistory = () => {
                                             <th>Thanh toán</th>
                                             <th>Trạng thái</th>
                                             <th>Chi tiết</th>
+                                            <th>Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -324,6 +317,12 @@ const TicketHistory = () => {
                                                 )}
                                                 <td><span className={styles[STATE_DICTIONARY.filter((state) => state.value === booking.status)[0].key]}>{booking.status}</span></td>
                                                 <td><a href='#' onClick={() => setShowTicket(booking)} ><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></td>
+                                                <td>
+                                                    <a href='#' onClick={() => setShowReview(booking)}>
+                                                        {`Viết đánh giá `}
+                                                        <FontAwesomeIcon icon={faPenToSquare} />
+                                                    </a>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -338,6 +337,11 @@ const TicketHistory = () => {
                 <TicketAction type={ticketActionOp.value} close={() => setTicketActionOp('')}></TicketAction>
             )
                 : null}
+            {
+                showReview && (
+                    <ReviewForm closeForm={()=> setShowReview(null)} trip={showReview}></ReviewForm>
+                )
+            }
         </div>
     )
 }

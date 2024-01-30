@@ -13,6 +13,7 @@ import LogoutConfirmation from '../logout/Logout';
 import authThunk from '../../feature/auth/auth.service';
 import { PROFILE_ACTION } from '../../utils/constants';
 import { profileAction } from '../../feature/profile/profile.slice';
+import MediaQuery from 'react-responsive';
 
 const Navbar = () => {
 
@@ -112,11 +113,18 @@ const Navbar = () => {
                                     ))
                                 }
                                 </div>
-                            </div>
-                            
+                            </div> 
                         )
-                        :
-                        (<button className={styles.navButton} onClick={goToLogin}> {t("header.login/signup")} </button>)
+                        : (
+                            <>
+                                <MediaQuery minWidth={878}>
+                                    <button className={styles.navButton} onClick={goToLogin}> {t("header.login/signup")} </button>
+                                </MediaQuery>
+                                    <MediaQuery maxWidth={878}>
+                                    <button className={styles.navButton} onClick={goToLogin}> {t("header.login")} </button>
+                                </MediaQuery>
+                            </>
+                        )
                     }
                 </div>
             </div>

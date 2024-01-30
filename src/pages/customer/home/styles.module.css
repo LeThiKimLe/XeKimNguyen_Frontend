@@ -31,15 +31,17 @@
 @media only screen and (max-width: 542px){
     /* styles for devices with a minimum screen width of 480px */
  
-.homeContainer
-{
-    margin-top: 257px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* gap: 30px; */
-    position: relative;
-}
+    .homeContainer
+    {
+        margin-top: 257px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* gap: 30px; */
+        position: relative;
+    }
+
+    
 
 }
 

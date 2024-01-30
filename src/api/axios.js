@@ -17,6 +17,7 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use((req) => {
     // Xử lý request trước khi gửi đi, thêm header token vào
     const token = getAccessToken()
+    console.log('token: ', token)
     if (token) {
         req.headers.Authorization = `Bearer ${token}`
     }
@@ -24,13 +25,22 @@ axiosClient.interceptors.request.use((req) => {
 })
 
 const getAccessToken = () => {
-    const user = JSON.parse(localStorage.getItem('current_user'))
-    const tempAccessToken = JSON.parse(localStorage.getItem('temp_access_token'))
-    if (user && user.accessToken) {
-        return user.accessToken
-    } else if (tempAccessToken)
-        return tempAccessToken
-    else {
+    try{
+        const user = JSON.parse(localStorage.getItem('current_user'))
+        const tempAccessToken = localStorage.getItem('temp_access_token')
+        if (user && user.accessToken) {
+            return user.accessToken
+        } 
+        else if (tempAccessToken)
+        {
+            return tempAccessToken
+        }
+        else {
+            return null
+        }
+    }
+    catch(error){
+        console.log(error)
         return null
     }
 }

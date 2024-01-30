@@ -75,11 +75,13 @@ const authSlice = createSlice({
             .addCase(authThunk.getOTP.fulfilled, (state, action) => {
                 state.loading = false
                 state.message = action.payload.message || "Đã gửi OTP thành công"
+                state.otpSessionTime = action.payload
                 state.error = false
             })
             .addCase(authThunk.getOTP.rejected, (state, action) => {
                 state.error = true
                 state.loading = false
+                state.otpSessionTime = null
                 state.message = action.payload
             })
             .addCase(authThunk.validateOTP.pending, (state) => {
@@ -88,12 +90,15 @@ const authSlice = createSlice({
             .addCase(authThunk.validateOTP.fulfilled, (state, action) => {
                 state.loading = false
                 state.message = action.payload.message || "Xác thực số điện thoại thành công"
+                localStorage.setItem('temp_access_token', action.payload.substring(12))
+                state.otpSessionTime = null
                 state.error = false
             })
             .addCase(authThunk.validateOTP.rejected, (state, action) => {
                 state.error = true
                 state.loading = false
                 state.message = action.payload
+                localStorage.removeItem('temp_access_token');
             })
             .addCase(authThunk.updateProfile.pending, (state) => {
                 state.loading = true
@@ -122,17 +127,21 @@ const authSlice = createSlice({
                 state.loading = false
                 state.message = action.payload
             })
-            .addCase(authThunk.getOTPRepass.fulfilled, (state, action) => {
-                state.loading = false
-                state.otpSessionTime = action.payload.createTime
-                state.error = false
+            .addCase(authThunk.resetPass.pending, (state) => {
+                state.loading = true
             })
-            .addCase(authThunk.getOTPRepass.rejected, (state, action) => {
+            .addCase(authThunk.resetPass.fulfilled, (state) => {
+                state.loading = false
+                state.message = "Đặt lại mật khẩu thành công"
+                state.error = false
+                localStorage.removeItem('temp_access_token');
+            })
+            .addCase(authThunk.resetPass.rejected, (state, action) => {
                 state.error = true
                 state.loading = false
                 state.message = action.payload
-                state.otpSessionTime = null
             })
+
     }
 })
 

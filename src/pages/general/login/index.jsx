@@ -60,7 +60,7 @@ const Login = () => {
         password: "",
         repass: "",
         otp: "",
-        process: 0
+        process: 2,
     })
 
     const inputLogin = [
@@ -232,32 +232,30 @@ const Login = () => {
 
     const handleGetOTP = (e) => {
         e.preventDefault();
-        // dispatch(authThunk.getOTP(valuesSignup.telnum))
-        //     .unwrap()
-        //     .then(() => {
-        //         setValuesSignup({ ...valuesSignup, process: 1 })
-        //         dispatch(authActions.reset())
-        //     })
-        //     .catch((error) => {
-        //         console.log(error)
-        //     })
-        setValuesSignup({ ...valuesSignup, process: 1 })
+        dispatch(authThunk.getOTP(valuesSignup.telnum))
+            .unwrap()
+            .then(() => {
+                setValuesSignup({ ...valuesSignup, process: 1 })
+                dispatch(authActions.reset())
+                setShowCountDown(true)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+        // setValuesSignup({ ...valuesSignup, process: 1 })
     }
 
     const handleValidateOTP = (e) => {
         e.preventDefault();
-        // dispatch(authThunk.validateOTP(valuesSignup.telnum, valuesSignup.otp))
-        //     .unwrap()
-        //     .then(() => {
-        //         setValuesSignup({ ...valuesSignup, process: 2 })
-        //         dispatch(authActions.reset())
-        //     })
-        //     .catch((error) => {
-        //         console.log(error)
-        //     })
-        // if (valuesSignup.otp !== "123456")
-        //     dispatch(authActions.)
-        setValuesSignup({ ...valuesSignup, process: 2 })
+        dispatch(authThunk.validateOTP({telno: valuesSignup.telnum, otp:valuesSignup.otp}))
+            .unwrap()
+            .then(() => {
+                setValuesSignup({ ...valuesSignup, process: 2 })
+                dispatch(authActions.reset())
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     }
 
     const handleSignUp = (e) => {
@@ -305,43 +303,48 @@ const Login = () => {
 
     const handleGetOTPRepass = (e) => {
         e.preventDefault();
-        // dispatch(authThunk.getOTPRepass(valuesSignup.telnum))
-        //     .unwrap()
-        //     .then(() => {
-        //         setValuesGetNewPwd({ ...valuesGetNewPwd, process: 1 })
-        //         dispatch(authActions.reset())
-        //         setShowCountDown(true)
-        //     })
-        //     .catch((error) => {
-        //         console.log(error)
-        //     })  
-        setValuesGetNewPwd({ ...valuesGetNewPwd, process: 1 })
-        setShowCountDown(true)
+        dispatch(authThunk.getOTP(valuesGetNewPwd.telnum))
+            .unwrap()
+            .then(() => {
+                setValuesGetNewPwd({ ...valuesGetNewPwd, process: 1 })
+                dispatch(authActions.reset())
+                setShowCountDown(true)
+            })
+            .catch((error) => {
+                console.log(error)
+            })  
+        // setValuesGetNewPwd({ ...valuesGetNewPwd, process: 1 })
+        // setShowCountDown(true)
     }
     const handleTimeout = () => {
         setShowCountDown(false)
     }
     const handleValidateOTPRepass = (e) => {
         e.preventDefault();
-        // dispatch(authThunk.validateOTP(valuesSignup.telnum, valuesSignup.otp))
-        //     .unwrap()
-        //     .then(() => {
-        //         setValuesSignup({ ...valuesSignup, process: 2 })
-        //         dispatch(authActions.reset())
-        //     })
-        //     .catch((error) => {
-        //         console.log(error)
-        //     })
-        // if (valuesSignup.otp !== "123456")
-        //     dispatch(authActions.)
+        dispatch(authThunk.validateOTP({telno: valuesGetNewPwd.telnum, otp: valuesGetNewPwd.otp}))
+            .unwrap()
+            .then(() => {
+                setValuesGetNewPwd({ ...valuesGetNewPwd, process: 2 })
+                dispatch(authActions.reset())
+            })
+            .catch((error) => {
+                console.log(error)
+            })
         // localStorage.setItem('temp_access_token', 'false')
-        setValuesGetNewPwd({ ...valuesGetNewPwd, process: 2 })
+        // setValuesGetNewPwd({ ...valuesGetNewPwd, process: 2 })
     }
     const handleRepass = (e) => {
         e.preventDefault()
-        cancelRepass()
-        setSelectedTab(0)
-        setIsGetPass(false)
+        dispatch(authThunk.resetPass(valuesGetNewPwd.repass))
+            .unwrap()
+            .then(() => {
+                cancelRepass()
+                setSelectedTab(0)
+                setIsGetPass(false)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     }
     const cancelRepass = () => {
         setValuesGetNewPwd({
@@ -443,6 +446,7 @@ const Login = () => {
                                                                     </>
                                                                  )}
                                                             <Button text="Xác thực mã OTP" className={styles.btnLogin}></Button>
+                                                            <div style={{ fontSize: '15px' }}> <i> Đã có tài khoản ? </i> <a href="#" onClick={()=> {setSelectedTab(0); setIsGetPass(false)}}> Đăng nhập </a> </div>
                                                         </form>
                                                     )}
                                                     {valuesGetNewPwd.process === 2 && (
@@ -483,17 +487,16 @@ const Login = () => {
                                                     <div></div>
                                                     <i style={{ fontSize: '14px' }}>Không nhận được mã ? </i>
                                                     <OptionButton   text="Gửi lại mã" 
-                                                                    onClick={(e) => {handleGetOTPRepass(e)}}
+                                                                    onClick={(e) => {handleGetOTP(e)}}
                                                                     style={{ fontSize: '14px' }}
                                                     ></OptionButton>
                                                 </>
-
                                             )
                                                 : (
                                                 <>
                                                     <i style={{ color: 'red', fontSize: '14px' }}>Mã hết hạn</i>
                                                     <OptionButton   text="Gửi lại mã" 
-                                                                    onClick={(e) => {handleGetOTPRepass(e)}}
+                                                                    onClick={(e) => {handleGetOTP(e)}}
                                                                     style={{ fontSize: '14px' }}
                                                     ></OptionButton>
                                                 </>

@@ -4,7 +4,7 @@ import Header from "../../../components/header"
 import styles from './styles.module.css'
 import { useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMagnifyingGlass, faCalendarDays, faLocationDot, faTicketSimple, faArrowRight } from "@fortawesome/free-solid-svg-icons"
+import { faMagnifyingGlass, faCalendarDays, faLocationDot, faTicketSimple, faArrowRight, faFilter, faXmark } from "@fortawesome/free-solid-svg-icons"
 import { format } from 'date-fns';
 import SearchItem from './searchItem'
 import { useSelector } from 'react-redux'
@@ -26,7 +26,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './styles.css'
 import { tripActions } from '../../../feature/trip/trip.slice'
 import { selectCurrentTrip, selectReturnTrip } from '../../../feature/trip/trip.slice'
-
+import MediaQuery from 'react-responsive'
 const ListResult = ({filterResult}) => {
     return (
         <div>
@@ -99,7 +99,7 @@ const List = () => {
     const currentTrip = useSelector(selectCurrentTrip)
     const returnTrip = useSelector(selectReturnTrip)
     const [sortState, setSortState] = useState('')
-
+    const [showFilter, setShowFilter] = useState(false)
     const handleSortClick = (event) => {
         const name = event.currentTarget.dataset.name
         const value = !sortOptions[name].value
@@ -247,9 +247,12 @@ const List = () => {
                 searchInfor.searchRoute && (
                     <div className={styles.listContainer}>
                         <div className={styles.subContainer}>
-                            <SearchBox listRoute={listRoute} parentClass={styles.searchBox} setSearchAction={triggerSearch}></SearchBox>
+                            <MediaQuery minWidth={878}>
+                                <SearchBox listRoute={listRoute} parentClass={styles.searchBox} setSearchAction={triggerSearch}></SearchBox>
+                            </MediaQuery>
                             <div className={styles.listWrapper}>
                                 <div>
+                                    <MediaQuery minWidth={878}>
                                     {
                                         searchInfor.oneway === false && (
                                             <div>
@@ -258,7 +261,19 @@ const List = () => {
                                             </div>
                                         )
                                     }
-                                    <FilterBar listTrip={backupTrips} sort={sortState} setResult={setTripResult} reset={resetFilter}></FilterBar>
+                                    </MediaQuery>
+                                    <MediaQuery maxWidth={878}>
+                                        <div className={`${styles.filterContainer} ${!showFilter ? styles.hidden : ''}`}>
+                                            {showFilter &&
+                                                <div className={styles.closeFilter} onClick={() =>  setShowFilter(false)}>
+                                                    <FontAwesomeIcon icon={faXmark} />
+                                                </div>
+                                            }
+                                            <FilterBar listTrip={backupTrips} sort={sortState} setResult={setTripResult} reset={resetFilter}>
+                                            </FilterBar>
+                                        </div>
+                                        <div className={`${styles.mask} ${!showFilter ? styles.hidden : ''}`} />
+                                    </MediaQuery>
                                 </div>
                                 <div className={styles.listResult} >
                                     <div className={styles.searchBar}>
@@ -287,13 +302,19 @@ const List = () => {
                                             <FontAwesomeIcon icon={faCalendarDays} className={styles.searchItemIcon} />
                                             <input type="text" className={styles.searchInput} readOnly value={searchInfor.departDate} />
                                         </div>
-                                        <div className={`${styles.searchItem} ${styles.searchNumber}`}>
+                                        {/* <div className={`${styles.searchItem} ${styles.searchNumber}`}>
                                             <FontAwesomeIcon icon={faTicketSimple} className={styles.searchItemIcon} />
                                             <input type="text" className={styles.searchInput} readOnly value={searchInfor.numberTicket + ' vé'} />
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className={styles.searchTotal}>
-                                        {`Kết quả tìm kiếm : ${loading ? '-' : filterResult.length} chuyến`}
+                                        <span>{`Kết quả tìm kiếm : ${loading ? '-' : filterResult.length} chuyến`}</span>
+                                        <MediaQuery maxWidth={878}>
+                                            <button className={styles.filterBtn} onClick={() => setShowFilter(true)}>
+                                                Bộ lọc
+                                                <FontAwesomeIcon icon={faFilter} />
+                                            </button>
+                                        </MediaQuery>
                                     </div>
                                     <div className={styles.sortArea}>
                                         <div>Sắp xếp theo: </div>
@@ -311,6 +332,16 @@ const List = () => {
                                     <div className={styles.resultContainer}>
                                         {loading ? (<Loading scale={0.7}></Loading>) : (
                                             <div>
+                                                <MediaQuery maxWidth={878}>
+                                                {
+                                                    searchInfor.oneway === false && (
+                                                        <div>
+                                                            {currentTrip && (<TripSum trip={currentTrip} turn={true}></TripSum>)}
+                                                            {returnTrip && (<TripSum trip={returnTrip} turn={false}></TripSum>)}
+                                                        </div>
+                                                    )
+                                                }
+                                                </MediaQuery>
                                                 {
                                                     searchInfor.oneway ? (
                                                         <ListResult filterResult={filterResult}></ListResult>

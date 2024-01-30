@@ -10,14 +10,30 @@
     
 }
 
-.searchBar{
-    width: 100%;
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 0;
+@media only screen and (max-width: 878px) {
+    .searchBar{
+        width: 100%;
+        margin: 10px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 0;
+    }
 }
+
+@media only screen and (min-width: 878px) {
+    .searchBar{
+        width: 100%;
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 0;
+    }
+}
+
+
 
 @keyframes fade {
     from {

@@ -17,7 +17,7 @@
 }
 
 .navButton{
-    margin-left: 20px;
+    /* margin-left: 20px; */
     border: none;
     padding: 10px 20px;
     cursor: pointer;
@@ -51,7 +51,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 30px;
+    /* gap: 30px; */
 }
 
 .userOption{
@@ -63,7 +63,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     cursor: pointer;
 }
 

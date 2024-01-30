@@ -41,11 +41,11 @@ const CountDownOTP = ({onTimeout}) => {
 	}
 
 	const getDeadTime = () => {
-        return  new Date(((new Date()).getTime() + 2 * 60000)); 
+        return new Date(((new Date(otpTime).getTime() + 2 * 60000))); 
 	}
 
 	useEffect(() => {
-		// if (validSession)
+		if (otpTime)
 			clearTimer(getDeadTime())
 	}, [otpTime]);
 

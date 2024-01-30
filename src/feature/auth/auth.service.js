@@ -41,13 +41,17 @@ const register = createAsyncThunk('auth/signup', async({tel, name, email, passwo
         error.message ||
         error.toString();
         return thunkAPI.rejectWithValue(message);
-    }
+        }
     }
 )
 
-const getOTP = createAsyncThunk('auth/get-otp', async({telno}, thunkAPI) => {
+const getOTP = createAsyncThunk('auth/send-otp', async(telno, thunkAPI) => {
     try{
-        const response = await axiosClient.get('auth/get-otp', {telno})
+        const response = await axiosClient.post('auth/send-sms', null, {
+            params: {
+                phoneNumber: telno
+            }
+        })
         return response
     }
     catch(error){
@@ -61,7 +65,9 @@ const getOTP = createAsyncThunk('auth/get-otp', async({telno}, thunkAPI) => {
 
 const validateOTP = createAsyncThunk('auth/verify-otp', async({telno, otp}, thunkAPI) => {
     try{
-        const response = await axiosClient.get('auth/verify-otp', {telno, otp})
+        const response = await axiosClient.post('auth/sms-verify', 
+            {tel: telno, otp: otp}
+        )
         return response
     }
     catch(error){
@@ -73,23 +79,15 @@ const validateOTP = createAsyncThunk('auth/verify-otp', async({telno, otp}, thun
     }
 })
 
-const getOTPRepass = createAsyncThunk('auth/get-otp-repass', async({telno}, thunkAPI) => {
+const resetPass = createAsyncThunk('auth/reset-pass', async(newpass, thunkAPI) => {
     try{
-        const response = await axiosClient.get('auth/get-otp', {telno})
-        return response
-    }
-    catch(error){
-        const message =
-        (error.response && error.response.data && error.response.data.message) ||
-        error.message ||
-        error.toString();
-        return thunkAPI.rejectWithValue(message);
-    }
-}) 
-
-const validateOTPRepass = createAsyncThunk('auth/verify-otp-repass', async({telno, otp}, thunkAPI) => {
-    try{
-        const response = await axiosClient.get('auth/verify-otp', {telno, otp})
+        const response = await axiosClient.post('auth/password-reset', null,
+            {
+                params: {
+                    password: newpass
+                }
+            }
+        )
         return response
     }
     catch(error){
@@ -100,6 +98,8 @@ const validateOTPRepass = createAsyncThunk('auth/verify-otp-repass', async({teln
         return thunkAPI.rejectWithValue(message);
     }
 })
+
+
 
 const updateProfile = createAsyncThunk('profile/update', async ({updatedInfor}, thunkAPI) => {
     try{
@@ -158,8 +158,7 @@ const authThunk = {
     validateOTP,
     updateProfile,
     changePassword,
-    getOTPRepass,
-    validateOTPRepass,
+    resetPass,
 }
 
 export default authThunk

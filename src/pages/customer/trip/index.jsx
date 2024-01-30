@@ -5,7 +5,7 @@ import SeatMap from './seatmap'
 import PickLocation from './pickLocation'
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import FormInput from '../../../components/common/formInput'
-import Button from '../../../components/common/button'
+import Button, { OptionButton } from '../../../components/common/button'
 import Footer from '../../../components/footer'
 import Message from '../../../components/message'
 import { useSelector } from 'react-redux'
@@ -20,8 +20,9 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import bookingThunk from '../../../feature/booking/booking.service'
 import './custom.css'
 import { selectChangeInfor, ticketAction, selectNewSeat } from '../../../feature/ticket/ticket.slice'
+import MediaQuery from 'react-responsive'
 
-const TripSum = ({turn, trip, selectedSeats}) => {
+const TripSum = ({ turn, trip, selectedSeats }) => {
     return (
         <div className={styles.trip_sum}>
             <h3 className={styles.sum_title}>{turn ? 'Thông tin lượt đi' : 'Thông tin lượt về'}</h3>
@@ -149,6 +150,7 @@ const Trip = ({ tabStyle }) => {
     const newInfor = useSelector(selectNewSeat)
     const [selectedSeats, setSelectedSeats] = useState(newInfor.length > 0 ? newInfor : []);
     const [selectedReturnSeats, setSelectedReturnSeats] = useState([]);
+    const [selectedTab, setSelectedTab] = useState(0);
     const handleSeatClick = useCallback((seatName) => {
         if (selectedSeats.includes(seatName)) {
             setSelectedSeats(selectedSeats.filter((seat) => seat !== seatName));
@@ -189,26 +191,25 @@ const Trip = ({ tabStyle }) => {
                 dropPoint: dropLocation
             }
             dispatch(bookingActions.saveInfor(bookingInfor))
-            setMessage({message:'', messagetype:3})
+            setMessage({ message: '', messagetype: 3 })
             if (user)
                 dispatch(bookingThunk.bookingForUser(bookingInfor))
-                .unwrap()
-                .then((response)=>{
-                    navigate(`/payment/${response.code}`)  
-                })
-                .catch((error) => {
-                    setMessage({message: error, messagetype: 2})
-                })
-            else
-            {
+                    .unwrap()
+                    .then((response) => {
+                        navigate(`/payment/${response.code}`)
+                    })
+                    .catch((error) => {
+                        setMessage({ message: error, messagetype: 2 })
+                    })
+            else {
                 dispatch(bookingThunk.bookingForGuest(bookingInfor))
-                .unwrap()
-                .then((response)=>{
-                    navigate(`/payment/${response.code}`)
-                })
-                .catch((error) => {
-                    setMessage({message: error, messagetype: 2})
-                })
+                    .unwrap()
+                    .then((response) => {
+                        navigate(`/payment/${response.code}`)
+                    })
+                    .catch((error) => {
+                        setMessage({ message: error, messagetype: 2 })
+                    })
             }
         }
     }
@@ -216,7 +217,7 @@ const Trip = ({ tabStyle }) => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [])
-    
+
     const handleSeatTabStyle = useCallback((seatName) => {
         if (selectedSeats.includes(seatName)) {
             setSelectedSeats(selectedSeats.filter((seat) => seat !== seatName));
@@ -241,120 +242,252 @@ const Trip = ({ tabStyle }) => {
                     <div className={styles.trip_container}>
                         <div className={styles.trip_wrapper}>
                             <div className={styles.trip_infor}>
-                                <div className={styles.infor_segment}>
-                                    <h2>Chọn ghế</h2>
-                                    <SeatMap 
-                                        seatMap={currentTrip.tripInfor.route.busType.seatMap} 
-                                        booked={currentTrip.tickets.filter((tk) => tk.state !== "Đã hủy" && tk.state !== "Chờ hủy")} 
-                                        selectedSeats={selectedSeats} 
-                                        handleSeatClick={handleSeatClick}
-                                        turn={true}
-                                        time={currentTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(currentTrip.departDate)}
+                                <MediaQuery minWidth={878}>
+                                    <div className={styles.infor_segment}>
+                                        <h2>Chọn ghế</h2>
+                                        <SeatMap
+                                            seatMap={currentTrip.tripInfor.route.busType.seatMap}
+                                            booked={currentTrip.tickets.filter((tk) => tk.state !== "Đã hủy" && tk.state !== "Chờ hủy")}
+                                            selectedSeats={selectedSeats}
+                                            handleSeatClick={handleSeatClick}
+                                            turn={true}
+                                            time={currentTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(currentTrip.departDate)}
                                         >
-                                    </SeatMap>
-                                    {
-                                        returnTrip && (
-                                            <SeatMap 
-                                                seatMap={returnTrip.tripInfor.route.busType.seatMap} 
-                                                booked={returnTrip.tickets.filter((tk) => tk.state !== "Đã hủy" && tk.state !== "Chờ hủy")} 
-                                                selectedSeats={selectedReturnSeats} 
-                                                handleSeatClick={handleSeatReturnClick}
-                                                turn={false}
-                                                time={returnTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(returnTrip.departDate)}
-                                            >
-                                            </SeatMap>
-                                        )
-                                    }
-                
-                                </div>
-                                <div className={styles.infor_segment}>
-                                    <h2>Thông tin đón trả</h2>
-                                    <i>{`Chuyến đi ${currentTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(currentTrip.departDate)}`}</i>
-                                    <div className={styles.pick_area}>
-                                        <PickLocation 
-                                            pick={true} 
-                                            listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')} 
-                                            setLocation={handlePickLocation} 
-                                            selected={pickLocation}>
-                                        </PickLocation>
-                                        <PickLocation 
-                                            pick={false} 
-                                            listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')} 
-                                            setLocation={handleDropLocation} 
-                                            selected={dropLocation}>
-                                        </PickLocation>
+                                        </SeatMap>
+                                        {
+                                            returnTrip && (
+                                                <SeatMap
+                                                    seatMap={returnTrip.tripInfor.route.busType.seatMap}
+                                                    booked={returnTrip.tickets.filter((tk) => tk.state !== "Đã hủy" && tk.state !== "Chờ hủy")}
+                                                    selectedSeats={selectedReturnSeats}
+                                                    handleSeatClick={handleSeatReturnClick}
+                                                    turn={false}
+                                                    time={returnTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(returnTrip.departDate)}
+                                                >
+                                                </SeatMap>
+                                            )
+                                        }
+
                                     </div>
-                                    {
-                                        returnTrip && (
-                                            <div>
-                                                <i>{`Chuyến về ${returnTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(returnTrip.departDate)}`}</i>
-                                                <div className={styles.pick_area}>
-                                                    <PickLocation 
-                                                        pick={true} 
-                                                        listLocation={returnTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')} 
-                                                        setLocation={handlePickReturnLocation} 
-                                                        selected={pickReturnLocation}>
-                                                    </PickLocation>
-                                                    <PickLocation 
-                                                        pick={false} 
-                                                        listLocation={returnTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')} 
-                                                        setLocation={handleDropReturnLocation} 
-                                                        selected={dropReturnLocation}>
-                                                    </PickLocation>
+                                    <div className={styles.infor_segment}>
+                                        <h2>Thông tin đón trả</h2>
+                                        <i>{`Chuyến đi ${currentTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(currentTrip.departDate)}`}</i>
+                                        <div className={styles.pick_area}>
+                                            <PickLocation
+                                                pick={true}
+                                                listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')}
+                                                setLocation={handlePickLocation}
+                                                selected={pickLocation}>
+                                            </PickLocation>
+                                            <PickLocation
+                                                pick={false}
+                                                listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')}
+                                                setLocation={handleDropLocation}
+                                                selected={dropLocation}>
+                                            </PickLocation>
+                                        </div>
+                                        {
+                                            returnTrip && (
+                                                <div>
+                                                    <i>{`Chuyến về ${returnTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(returnTrip.departDate)}`}</i>
+                                                    <div className={styles.pick_area}>
+                                                        <PickLocation
+                                                            pick={true}
+                                                            listLocation={returnTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')}
+                                                            setLocation={handlePickReturnLocation}
+                                                            selected={pickReturnLocation}>
+                                                        </PickLocation>
+                                                        <PickLocation
+                                                            pick={false}
+                                                            listLocation={returnTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')}
+                                                            setLocation={handleDropReturnLocation}
+                                                            selected={dropReturnLocation}>
+                                                        </PickLocation>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                    <div className={styles.infor_segment}>
+                                        <div className={styles.user_infor_container}>
+                                            <form className={`${styles.infor_box} ${styles.personal_infor}`} ref={inforForm}>
+                                                <h2>Thông tin khách hàng</h2>
+                                                {userInput.map((input) => (
+                                                    <FormInput key={input.id} {...input}
+                                                        value={userInfor[input.name]}
+                                                        onChange={onChangeUserInfor}
+                                                        inputWidth='80%'
+                                                    >
+                                                    </FormInput>
+                                                ))}
+                                            </form>
+                                            <div className={`${styles.infor_box} ${styles.policy_infor}`}>
+                                                <h2>Điều khoản và lưu ý</h2>
+                                                <div className={styles.policy_content}>
+                                                    (*) Quý khách vui lòng có mặt tại bến xuất phát của xe trước ít nhất 30 phút giờ xe khởi hành,
+                                                    mang theo thông báo đã thanh toán vé thành công có chứa mã vé được gửi từ hệ thống XE KIM NGUYÊN.
+                                                    Vui lòng liên hệ Trung tâm tổng đài 084-228-1119 để được hỗ trợ.
                                                 </div>
                                             </div>
-                                        )
-                                    }
-                                </div>
-                                <div className={styles.infor_segment}>
-                                    <div className={styles.user_infor_container}>
-                                        <form className={`${styles.infor_box} ${styles.personal_infor}`} ref={inforForm}>
-                                            <h2>Thông tin khách hàng</h2>
-                                            {userInput.map((input) => (
-                                                <FormInput key={input.id} {...input}
-                                                    value={userInfor[input.name]}
-                                                    onChange={onChangeUserInfor}
-                                                    inputWidth='80%'
-                                                >
-                                                </FormInput>
-                                            ))}
-                                        </form>
-                                        <div className={`${styles.infor_box} ${styles.policy_infor}`}>
-                                            <h2>Điều khoản và lưu ý</h2>
-                                            <div className={styles.policy_content}>
-                                                (*) Quý khách vui lòng có mặt tại bến xuất phát của xe trước ít nhất 30 phút giờ xe khởi hành,
-                                                mang theo thông báo đã thanh toán vé thành công có chứa mã vé được gửi từ hệ thống XE KIM NGUYÊN.
-                                                Vui lòng liên hệ Trung tâm tổng đài 084-228-1119 để được hỗ trợ.
-                                            </div>
+                                        </div>
+                                        <div className={styles.infor_confirm}>
+                                            <input
+                                                type="checkbox"
+                                                checked={isConfirmed}
+                                                onChange={handleConfirmChange}
+                                            />
+                                            <label>Chấp nhận điều khoản đặt vé & chính sách bảo mật thông tin của Xe Kim Nguyên</label>
                                         </div>
                                     </div>
-                                    <div className={styles.infor_confirm}>
-                                        <input
-                                            type="checkbox"
-                                            checked={isConfirmed}
-                                            onChange={handleConfirmChange}
-                                        />
-                                        <label>Chấp nhận điều khoản đặt vé & chính sách bảo mật thông tin của Xe Kim Nguyên</label>
-                                    </div>
-                                </div>
-                                <div className={styles.payment_direct}>
-                                    <span>
-                                        {`Tổng cộng: ${(returnTrip ? currentTrip.ticketPrice * selectedSeats.length + returnTrip.ticketPrice*selectedReturnSeats.length : currentTrip.ticketPrice * selectedSeats.length).toLocaleString()} đ`}
-                                    </span>
-                                    <Button text="Thanh toán"
+                                    <div className={styles.payment_direct}>
+                                        <span>
+                                            {`Tổng cộng: ${(returnTrip ? currentTrip.ticketPrice * selectedSeats.length + returnTrip.ticketPrice * selectedReturnSeats.length : currentTrip.ticketPrice * selectedSeats.length).toLocaleString()} đ`}
+                                        </span>
+                                        <Button text="Thanh toán"
                                             className={styles.btnCheckout}
                                             onClick={handlePayment}
-                                            loading = {loading}
+                                            loading={loading}
                                         >
-                                    </Button>
-                                </div>
+                                        </Button>
+                                    </div>
+                                </MediaQuery>
+                                <MediaQuery maxWidth={878}>
+                                    <Tabs className="tabMobileStyle" selectedIndex={selectedTab} onSelect={index => setSelectedTab(index)}>
+                                        <div className='tabListContainer'>
+                                            <TabList>
+                                                <Tab>1. Chọn ghế</Tab>
+                                                <Tab>2. Điểm đón - trả</Tab>
+                                                <Tab>3. Thông tin khách hàng</Tab>
+                                            </TabList>
+                                        </div>
+                                        <TabPanel>
+                                        <div className={styles.infor_segment}>
+                                            <h2>Chọn ghế</h2>
+                                            <SeatMap
+                                                seatMap={currentTrip.tripInfor.route.busType.seatMap}
+                                                booked={currentTrip.tickets.filter((tk) => tk.state !== "Đã hủy" && tk.state !== "Chờ hủy")}
+                                                selectedSeats={selectedSeats}
+                                                handleSeatClick={handleSeatClick}
+                                                turn={true}
+                                                time={currentTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(currentTrip.departDate)}
+                                            >
+                                            </SeatMap>
+                                            {
+                                                returnTrip && (
+                                                    <SeatMap
+                                                        seatMap={returnTrip.tripInfor.route.busType.seatMap}
+                                                        booked={returnTrip.tickets.filter((tk) => tk.state !== "Đã hủy" && tk.state !== "Chờ hủy")}
+                                                        selectedSeats={selectedReturnSeats}
+                                                        handleSeatClick={handleSeatReturnClick}
+                                                        turn={false}
+                                                        time={returnTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(returnTrip.departDate)}
+                                                    >
+                                                    </SeatMap>
+                                                )
+                                            }
+                                            <div>
+                                                <Button text="Tiếp tục" onClick={() => setSelectedTab(1)}></Button>
+                                            </div>
+                                        </div>
+                                        </TabPanel>
+                                        <TabPanel>
+                                            <div className={styles.infor_segment}>
+                                                <h2>Thông tin đón trả</h2>
+                                                <i>{`Chuyến đi ${currentTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(currentTrip.departDate)}`}</i>
+                                                <div className={styles.pick_area}>
+                                                    <PickLocation
+                                                        pick={true}
+                                                        listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')}
+                                                        setLocation={handlePickLocation}
+                                                        selected={pickLocation}>
+                                                    </PickLocation>
+                                                    <PickLocation
+                                                        pick={false}
+                                                        listLocation={currentTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')}
+                                                        setLocation={handleDropLocation}
+                                                        selected={dropLocation}>
+                                                    </PickLocation>
+                                                </div>
+                                                {
+                                                    returnTrip && (
+                                                        <div>
+                                                            <i>{`Chuyến về ${returnTrip.departTime.slice(0, -3) + ' ' + convertToDisplayDate(returnTrip.departDate)}`}</i>
+                                                            <div className={styles.pick_area}>
+                                                                <PickLocation
+                                                                    pick={true}
+                                                                    listLocation={returnTrip.tripInfor.stopStations.filter((station) => station.stationType === 'pick')}
+                                                                    setLocation={handlePickReturnLocation}
+                                                                    selected={pickReturnLocation}>
+                                                                </PickLocation>
+                                                                <PickLocation
+                                                                    pick={false}
+                                                                    listLocation={returnTrip.tripInfor.stopStations.filter((station) => station.stationType === 'drop')}
+                                                                    setLocation={handleDropReturnLocation}
+                                                                    selected={dropReturnLocation}>
+                                                                </PickLocation>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+                                                <div>
+                                                    <Button text="Tiếp tục" onClick={() => setSelectedTab(2)}></Button>
+                                                </div>
+                                            </div>
+                                        </TabPanel>
+                                        <TabPanel>
+                                            <div className={styles.infor_segment}>
+                                                <div className={styles.user_infor_container}>
+                                                    <form className={`${styles.infor_box} ${styles.personal_infor}`} ref={inforForm}>
+                                                        <h2>Thông tin khách hàng</h2>
+                                                        {userInput.map((input) => (
+                                                            <FormInput key={input.id} {...input}
+                                                                value={userInfor[input.name]}
+                                                                onChange={onChangeUserInfor}
+                                                                inputWidth='80%'
+                                                            >
+                                                            </FormInput>
+                                                        ))}
+                                                    </form>
+                                                    <div className={`${styles.infor_box} ${styles.policy_infor}`}>
+                                                        <h2>Điều khoản và lưu ý</h2>
+                                                        <div className={styles.policy_content}>
+                                                            (*) Quý khách vui lòng có mặt tại bến xuất phát của xe trước ít nhất 30 phút giờ xe khởi hành,
+                                                            mang theo thông báo đã thanh toán vé thành công có chứa mã vé được gửi từ hệ thống XE KIM NGUYÊN.
+                                                            Vui lòng liên hệ Trung tâm tổng đài 084-228-1119 để được hỗ trợ.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={styles.infor_confirm}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isConfirmed}
+                                                        onChange={handleConfirmChange}
+                                                    />
+                                                    <label>Chấp nhận điều khoản đặt vé & chính sách bảo mật thông tin của Xe Kim Nguyên</label>
+                                                </div>
+                                            </div>
+                                            <div className={styles.payment_direct}>
+                                            <span style={{fontSize: '18px'}}>
+                                                {`Tổng cộng: ${(returnTrip ? currentTrip.ticketPrice * selectedSeats.length + returnTrip.ticketPrice * selectedReturnSeats.length : currentTrip.ticketPrice * selectedSeats.length).toLocaleString()} đ`}
+                                            </span>
+                                            <Button text="Thanh toán"
+                                                className={styles.btnCheckout}
+                                                onClick={handlePayment}
+                                                loading={loading}
+                                            >
+                                            </Button>
+                                            </div>
+                                        </TabPanel>
+                                    </Tabs>
+                                   
+                                </MediaQuery>
                             </div>
                             <div className={styles['trip_sum_container']}>
                                 <TripSum turn={true} trip={currentTrip} selectedSeats={selectedSeats}></TripSum>
                                 {
                                     returnTrip && (
-                                    <TripSum turn={false} trip={returnTrip} selectedSeats={selectedReturnSeats}></TripSum>)
-                                }             
+                                        <TripSum turn={false} trip={returnTrip} selectedSeats={selectedReturnSeats}></TripSum>)
+                                }
                             </div>
                         </div>
                     </div>
@@ -372,9 +505,9 @@ const Trip = ({ tabStyle }) => {
                     </TabList>
                     <TabPanel>
                         <SeatMap seatMap={currentTrip.tripInfor.route.busType.seatMap}
-                                 booked={currentTrip.tickets}
-                                 selectedSeats={selectedSeats}
-                                 handleSeatClick={handleSeatTabStyle}>
+                            booked={currentTrip.tickets}
+                            selectedSeats={selectedSeats}
+                            handleSeatClick={handleSeatTabStyle}>
                         </SeatMap>
                         <Button onClick={handleNext} text='Tiếp tục'></Button>
                     </TabPanel>

@@ -8,7 +8,7 @@ const Footer = () =>
             <div className={styles.fLists}>
                 <Container fluid>
                     <Row>
-                        <Col>
+                        <Col md="6">
                             <h3>Trung tâm tổng đài & CSKH</h3>
                             <h2>0333 843 250</h2>
                             <h3>Công ty cổ phần Xe khách Kim Nguyên - XEKIMNGUYEN</h3>
@@ -23,7 +23,7 @@ const Footer = () =>
                                 <b>0333 843 250</b>
                             </p>
                         </Col>
-                        <Col>
+                        <Col md="6">
                         <Row>
                             <Col>
                                 <h3>Xe Kim Nguyên</h3>
