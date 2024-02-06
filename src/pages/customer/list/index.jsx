@@ -261,6 +261,8 @@ const List = () => {
                                             </div>
                                         )
                                     }
+                                    <FilterBar listTrip={backupTrips} sort={sortState} setResult={setTripResult} reset={resetFilter}>
+                                    </FilterBar>
                                     </MediaQuery>
                                     <MediaQuery maxWidth={878}>
                                         <div className={`${styles.filterContainer} ${!showFilter ? styles.hidden : ''}`}>

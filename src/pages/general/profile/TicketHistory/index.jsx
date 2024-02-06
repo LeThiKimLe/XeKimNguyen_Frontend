@@ -21,6 +21,8 @@ import DetailTicket from './DetailTicket'
 import { selectCurrentTicket } from '../../../../feature/ticket/ticket.slice'
 import { sort } from 'slick/finder'
 import ReviewForm from './ReviewForm'
+import reviewThunk from '../../../../feature/review/review.service'
+import { selectUserReview } from '../../../../feature/review/review.slice'
 
 const TicketHistory = () => {
     const ticketHistory = useSelector(selectUserBookingHistory)
@@ -52,6 +54,7 @@ const TicketHistory = () => {
     const [searchState, setSearchState] = useState('')
     const [searchSpan, setSearchSpan] = useState('')
     const [showReview, setShowReview] = useState(null)
+    const listReview = useSelector(selectUserReview)
     const isEvenRow = (index) => {
         return index % 2 === 0;
     };
@@ -149,8 +152,13 @@ const TicketHistory = () => {
         return timeA - timeB;
     }
 
+    const updateListReview = () => {
+        dispatch(reviewThunk.getUserReview())
+    }
+
     useEffect(() => {
         dispatch(bookingThunk.getUserHistory())
+        dispatch(reviewThunk.getUserReview())
     }, [])
 
     useEffect(() => {
@@ -319,7 +327,11 @@ const TicketHistory = () => {
                                                 <td><a href='#' onClick={() => setShowTicket(booking)} ><FontAwesomeIcon icon={faArrowUpRightFromSquare} /></a></td>
                                                 <td>
                                                     <a href='#' onClick={() => setShowReview(booking)}>
-                                                        {`Viết đánh giá `}
+                                                        {
+                                                            listReview.filter((review) => 
+                                                                                review.schedule.id === booking.tickets[0].schedule.id).length > 0 
+                                                                                ? 'Xem đánh giá' : 'Viết đánh giá'
+                                                        }
                                                         <FontAwesomeIcon icon={faPenToSquare} />
                                                     </a>
                                                 </td>
@@ -339,7 +351,12 @@ const TicketHistory = () => {
                 : null}
             {
                 showReview && (
-                    <ReviewForm closeForm={()=> setShowReview(null)} trip={showReview}></ReviewForm>
+                    <ReviewForm 
+                        closeForm={()=> setShowReview(null)} 
+                        trip={showReview}
+                        updateList={updateListReview}
+                    >
+                    </ReviewForm>
                 )
             }
         </div>

@@ -6,8 +6,9 @@ import male from '../../../../assets/male.svg'
 import female from '../../../../assets/female.svg'
 import SectionTitle from '../../../../components/common/sectionTitle'
 import { useTranslation } from 'react-i18next';
-
-
+import { convertToDisplayDate } from '../../../../utils/unitUtils'
+import { format } from 'date-fns'
+import { getRouteJourney } from '../../../../utils/tripUtils'
 const Comment = ({listComment}) => {
 
     const {t, i18n} = useTranslation();
@@ -68,16 +69,18 @@ const Comment = ({listComment}) => {
                             {Array.from({ length: 5 }, (_, index) => index + 1).map((item, index)=> (
                                 <FontAwesomeIcon key={index} icon={faStar} color={item<=comment.rate ? 'yellow' : 'gray'}/>
                             ))}
-                            <div><i style={{fontSize:'13px'}}>{` Đăng ngày ${comment.sendDate}`}</i></div>
+                            <div><i style={{fontSize:'13px'}}>
+                              {` Đăng ngày ${format(new Date(comment.sendDate), 'dd/MM/yyyy')}`}
+                              </i>
+                            </div>
                         </div>
                         </div>
                     </div>
                     <p style={{margin:'10px 0', height:'130px', width:'100%', overflow:'auto'}}>{comment.comment}</p>
                     <div style={{ textAlign:'right' }}>
                     <i style={{fontSize:'13px'}}>
-                        {`Chuyến ${comment.trip.route.departure.name} - ${comment.trip.route.destination.name}`}
-                        <br></br>
-                        { `Ngày ${comment.trip.departDate}`}
+                    {` Chuyến: ${getRouteJourney(comment.scheduleTrip.route,)} - Khởi hành:
+                     ${comment.schedule.departTime.slice(0,-3)} ngày ${convertToDisplayDate(comment.schedule.departDate)}`}
                     </i>
                     </div>
                     </div>
